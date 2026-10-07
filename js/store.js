@@ -1,11 +1,14 @@
 /* Salvataggio in localStorage, esporta e importa JSON.
-   Due chiavi:
+   Tre chiavi:
    - tolc-i:giorni    stato dei giorni del piano: { "2026-10-05": { fatto, fattoIl, esercizi: { argomento: { fatti, sbagliati } } } }
-   - tolc-i:sessioni  sessioni finite nei moduli: la scrive moduli/modulo.js (stessa chiave). */
+   - tolc-i:sessioni  sessioni finite nei moduli: la scrive moduli/modulo.js (stessa chiave).
+   - tolc-i:letti     paragrafi di teoria letti: { "4.4": "2026-10-09" } (data in cui è stato segnato). */
 "use strict";
 const Store = (() => {
   const K_GIORNI = "tolc-i:giorni";
   const K_SESSIONI = "tolc-i:sessioni";
+  const K_LETTI = "tolc-i:letti";
+  const PAR = /^\d+\.\d+$/;
   const ISO = /^\d{4}-\d{2}-\d{2}$/;
 
   function leggi(k, vuoto) {
@@ -20,6 +23,8 @@ const Store = (() => {
   function giorni() { const g = leggi(K_GIORNI, {}); return isObj(g) ? g : {}; }
   function sessioni() { const s = leggi(K_SESSIONI, []); return Array.isArray(s) ? s.filter(isObj) : []; }
   function giorno(data) { const d = giorni()[data]; return isObj(d) ? d : {}; }
+  function letti() { const l = leggi(K_LETTI, {}); return isObj(l) ? l : {}; }
+  const letto = num => !!letti()[num];
 
   /* Legge sempre da localStorage prima di scrivere: un modulo può aver scritto nel frattempo. */
   function aggiornaGiorno(data, fn) {
@@ -53,8 +58,15 @@ const Store = (() => {
     });
   }
 
+  /* Segna (o toglie) come letti uno o più paragrafi. */
+  function impostaLetti(nums, on, oggi) {
+    const l = letti();
+    for (const n of nums) { if (on) l[n] = oggi; else delete l[n]; }
+    return scrivi(K_LETTI, l);
+  }
+
   function esporta() {
-    return { app: "TOLC-I", versione: 1, esportatoIl: new Date().toISOString(), giorni: giorni(), sessioni: sessioni() };
+    return { app: "TOLC-I", versione: 2, esportatoIl: new Date().toISOString(), giorni: giorni(), sessioni: sessioni(), letti: letti() };
   }
 
   /* Controlla il file e restituisce i dati puliti, oppure un messaggio di errore. */
@@ -77,11 +89,15 @@ const Store = (() => {
     if (Array.isArray(obj.sessioni)) for (const x of obj.sessioni) {
       if (isObj(x) && ISO.test(x.data) && typeof x.modulo === "string") s.push(x);
     }
-    return { giorni: g, sessioni: s };
+    const l = {};  // i backup della versione 1 non hanno "letti"
+    if (isObj(obj.letti)) for (const [n, d] of Object.entries(obj.letti)) {
+      if (PAR.test(n) && ISO.test(d)) l[n] = d;
+    }
+    return { giorni: g, sessioni: s, letti: l };
   }
   function importa(pulito) {
-    return scrivi(K_GIORNI, pulito.giorni) && scrivi(K_SESSIONI, pulito.sessioni);
+    return scrivi(K_GIORNI, pulito.giorni) && scrivi(K_SESSIONI, pulito.sessioni) && scrivi(K_LETTI, pulito.letti);
   }
 
-  return { giorni, sessioni, giorno, contatore, impostaContatore, impostaFatto, esporta, controlla, importa };
+  return { giorni, sessioni, giorno, contatore, impostaContatore, impostaFatto, letto, impostaLetti, esporta, controlla, importa };
 })();

@@ -77,3 +77,62 @@ button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{o
 .tabbar a[aria-current="page"]{color:var(--accent);border-top-color:var(--accent)}
 
 @media (max-width:420px){body{font-size:18px}.materia{font-size:1.3rem}}
+
+/* ---------- teoria ---------- */
+.legenda{list-style:none;padding:0;margin:12px 0 16px}
+.legenda li{margin:6px 0;font-size:.95em}
+.etichetta{display:inline-block;font-size:.68em;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:5px;vertical-align:.2em;color:var(--surface);background:var(--muted);white-space:nowrap}
+.etichetta.ripasso{background:var(--ok)}
+.etichetta.rinfrescare{background:var(--accent)}
+.etichetta.studiare{background:var(--ko)}
+.pars{list-style:none;margin:0;padding:0}
+.pars li{border-top:1px solid var(--line)}
+.pars a{display:flex;gap:10px;align-items:baseline;padding:12px 2px;color:var(--ink);text-decoration:none;min-height:48px}
+.pars .pn{flex:0 0 2.6em;font-weight:700;color:var(--accent)}
+.pars .pt{flex:1 1 auto}
+.pars .st{flex:0 0 auto;font-size:.85em;color:var(--muted)}
+.pars .st.si{color:var(--ok);font-weight:700}
+.indietro{margin:0 0 4px}
+.indietro a{display:inline-block;padding:8px 0;font-weight:700}
+.teo .letti{display:block;font-size:.85em;color:var(--muted);margin-top:4px}
+.btn.small{min-height:44px;padding:6px 14px;font-size:.95em;margin-top:6px}
+.teoria{line-height:1.6}
+.teoria h2{font-size:1.35em;margin:22px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+.teoria h4{font-size:1.1em;margin:20px 0 6px;color:var(--ko)}
+.teoria ul{padding-left:1.2em}
+.teoria li{margin:6px 0}
+.teoria sup,.teoria sub{font-size:.72em;line-height:0}
+.teoria .nota,.teoria p.nota{color:var(--muted);font-size:.9em}
+.teoria .neg{color:var(--ko)}
+.teoria .cap-intro{margin-top:12px}
+.box{border-left:4px solid var(--ink);border-radius:0 10px 10px 0;padding:8px 14px;margin:14px 0;background:var(--surface)}
+.box p{margin:6px 0}
+.box-t{display:inline-block;font-size:.66em;font-weight:700;letter-spacing:.06em;padding:1px 7px;border-radius:4px;margin-right:4px;vertical-align:.2em;color:var(--surface);background:var(--ink)}
+.box.formula{border-color:var(--accent);background:var(--accent-soft)}
+.box.formula .box-t{background:var(--accent)}
+.box.formula b{color:var(--accent)}
+.box.trappola{border-color:var(--ko);background:var(--ko-soft)}
+.box.trappola .box-t{background:var(--ko)}
+.box.trappola b{color:var(--ko)}
+.box.esempio{border-color:var(--ok);background:var(--ok-soft)}
+.box.esempio .box-t{background:var(--ok)}
+.box.esempio b{color:var(--ok)}
+.box.figura{border-left-color:var(--line);margin:16px 0}
+.box.figura figcaption{margin:4px 0 8px}
+.box.figura .box-t{background:var(--muted)}
+.pannelli{display:flex;flex-wrap:wrap;gap:8px;overflow-x:auto;padding-bottom:4px}
+.pannelli img{display:block;flex:0 0 auto;height:auto;max-width:none;width:min(var(--w),max(100%,var(--min)));border-radius:8px;background:#fff}
+.fig-nota{flex:1 0 100%;font-size:.85em;color:var(--muted);margin:2px 0}
+.fig-scorri{font-size:.85em;color:var(--muted);margin:4px 0 0}
+.tab{overflow-x:auto;margin:14px 0}
+.tab table{border-collapse:collapse;font-size:.88em;min-width:100%}
+.tab th{background:var(--ink);color:var(--surface);text-align:left;padding:6px 8px;font-weight:700}
+.tab td{border:1px solid var(--line);padding:6px 8px;background:var(--surface);vertical-align:top}
+.tab tbody tr:nth-child(odd) td{background:var(--bg)}
+.verifica{display:inline-block;font-size:.72em;font-weight:700;color:var(--ko);border:1.5px solid var(--ko);border-radius:5px;padding:0 6px;vertical-align:.1em}
+.btnrow.letto{margin:14px 0 26px}
+.succ{margin:24px 0 8px}
+.filtro-par{font-size:1.05em;margin:22px 0 4px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pannelli img{filter:brightness(.9)}}
+:root[data-theme="dark"] .pannelli img{filter:brightness(.9)}
+@media (max-width:480px){.box{padding:8px 10px}.box.figura{padding:8px 8px}}

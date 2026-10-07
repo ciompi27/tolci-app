@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 230" width="360" height="230" font-family="DejaVu Sans, Segoe UI, Arial, sans-serif">
+  <!-- Paragrafo 3.9 (nuovo): lente convergente, scala 6 px = 1 cm.
+       f = 10 cm, p = 30 cm → q = 15 cm (1/30 + 1/15 = 1/10), G = −q/p = −0,5.
+       Lente in x = 205, oggetto in x = 25 (alto 8 cm), immagine in x = 295 (alta 4 cm, capovolta). -->
+  <defs>
+    <marker id="pn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9 z" fill="#0f2c4a"/></marker>
+    <marker id="pd" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#56626f"/></marker>
+  </defs>
+  <rect x="0.5" y="0.5" width="359" height="229" rx="8" fill="#ffffff" stroke="#dde4eb"/>
+  <!-- asse ottico e lente -->
+  <line x1="10" y1="115" x2="350" y2="115" stroke="#8a96a3" stroke-width="1"/>
+  <ellipse cx="205" cy="115" rx="8" ry="68" fill="#e6eff8" stroke="#2d6ca8" stroke-width="1.5"/>
+  <!-- fuochi -->
+  <circle cx="145" cy="115" r="3" fill="#0f2c4a"/>
+  <circle cx="265" cy="115" r="3" fill="#0f2c4a"/>
+  <text x="145" y="131" font-size="12" fill="#0f2c4a" text-anchor="middle">F</text>
+  <text x="265" y="131" font-size="12" fill="#0f2c4a" text-anchor="middle">F'</text>
+  <!-- raggi -->
+  <polyline points="25,67 205,67 310,151" fill="none" stroke="#c0392b" stroke-width="1.8"/>
+  <polyline points="25,67 310,143" fill="none" stroke="#2d6ca8" stroke-width="1.8"/>
+  <polyline points="25,67 205,139 310,139" fill="none" stroke="#2d9e5b" stroke-width="1.8"/>
+  <!-- oggetto e immagine -->
+  <line x1="25" y1="115" x2="25" y2="68" stroke="#0f2c4a" stroke-width="3" marker-end="url(#pn)"/>
+  <line x1="295" y1="115" x2="295" y2="138" stroke="#0f2c4a" stroke-width="3" marker-end="url(#pn)"/>
+  <text x="25" y="58" font-size="12" fill="#0f2c4a" text-anchor="middle">oggetto</text>
+  <text x="350" y="170" font-size="12" fill="#0f2c4a" text-anchor="end">immagine:</text>
+  <text x="350" y="184" font-size="12" fill="#0f2c4a" text-anchor="end">reale, capovolta</text>
+  <!-- quote -->
+  <line x1="205" y1="32" x2="265" y2="32" stroke="#56626f" marker-start="url(#pd)" marker-end="url(#pd)"/>
+  <text x="235" y="26" font-size="11" fill="#56626f" text-anchor="middle">f = 10 cm</text>
+  <line x1="25" y1="205" x2="205" y2="205" stroke="#56626f" marker-start="url(#pd)" marker-end="url(#pd)"/>
+  <text x="115" y="221" font-size="11" fill="#56626f" text-anchor="middle">p = 30 cm</text>
+  <line x1="205" y1="205" x2="295" y2="205" stroke="#56626f" marker-start="url(#pd)" marker-end="url(#pd)"/>
+  <text x="250" y="221" font-size="11" fill="#56626f" text-anchor="middle">q = 15 cm</text>
+</svg>

@@ -80,7 +80,7 @@ function dettaglioHtml(g, oggi) {
   const es = g.esercizi || [];
   const testoEs = es.length ? es.join(", ") + (g.nota ? ` (${g.nota})` : "") : (g.nota || "—");
   const fatto = !!Store.giorno(g.data).fatto;
-  return `<dl class="kv"><dt>Teoria (PDF)</dt><dd>${esc(g.teoria || "—")}</dd>
+  return `<dl class="kv"><dt>Teoria</dt><dd class="teo">${Teoria.pianoHtml(g)}</dd>
     <dt>Esercizi su The Faculty</dt><dd>${esc(testoEs)}</dd></dl>
     ${(g.moduli || []).length ? `<h3>Pagina interattiva</h3>${g.moduli.map(linkModulo).join("")}` : ""}
     ${contatoreHtml(g)}
@@ -101,7 +101,7 @@ function renderOggi(main) {
   if (oggi < primo.data) {
     h += `<section class="card"><h2>Il piano non è ancora iniziato</h2>
       <p>Si parte ${esc(dataMedia(primo.data))}, fra ${giorniTra(oggi, primo.data)} ${giorniTra(oggi, primo.data) === 1 ? "giorno" : "giorni"}.</p>
-      <p>Primo giorno: <b>${esc(primo.materia)}</b>, teoria PDF ${esc(primo.teoria || "—")}.</p></section>`;
+      <p>Primo giorno: <b>${esc(primo.materia)}</b>, teoria ${esc(primo.teoria || "—")}.</p></section>`;
   } else if (oggi > esame) {
     const tot = PLAN.giorni.filter(x => x.tipo !== "pausa" && x.tipo !== "esame"), fatti = tot.filter(x => Store.giorno(x.data).fatto);
     h += `<section class="card"><h2>Il piano è finito</h2><p>Il TOLC-I era ${esc(dataLunga(esame))}.</p>
@@ -154,10 +154,12 @@ function renderPiano(main, scorri) {
   if (scorri) { const t = main.querySelector("details.is-today"); if (t) t.scrollIntoView({ block: "start" }); }
 }
 
-/* ---------- segnaposto ---------- */
-function renderTeoria(main) {
-  main.innerHTML = `<h1>Teoria</h1><section class="card"><p>La teoria dal PDF (sezioni 1-4 e 6) e il capitolo nuovo di ottica arrivano nella <b>fase 2</b>.</p></section>`;
+/* ---------- schermata Teoria (js/teoria.js) ---------- */
+function renderTeoria(main, arg) {
+  if (arg) Teoria.renderLettura(main, arg); else Teoria.renderIndice(main);
 }
+
+/* ---------- segnaposto ---------- */
 function renderErrori(main) {
   main.innerHTML = `<h1>Errori</h1><section class="card"><p>Il diario degli errori arriva nella <b>fase 4</b>.</p></section>`;
 }
@@ -165,18 +167,22 @@ function renderErrori(main) {
 /* ---------- navigazione ---------- */
 const VISTE = { oggi: renderOggi, piano: renderPiano, teoria: renderTeoria, errori: renderErrori };
 let vistaCorrente = null;
-function vista() { const v = location.hash.slice(1); return VISTE[v] ? v : "oggi"; }
+/* "#teoria/4.4-4.6" -> { v: "teoria", arg: "4.4-4.6" } */
+function vista() {
+  const [v, ...resto] = location.hash.slice(1).split("/");
+  return VISTE[v] ? { v, arg: decodeURIComponent(resto.join("/")) } : { v: "oggi", arg: "" };
+}
 function render() {
-  const main = $("#main"), v = vista(), nuova = v !== vistaCorrente;
+  const main = $("#main"), { v, arg } = vista(), chiave = v + "/" + arg, nuova = chiave !== vistaCorrente;
   document.querySelectorAll(".tabbar a").forEach(a => {
     if (a.getAttribute("href") === "#" + v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   });
   if (!PLAN) return;
   if (nuova && v === "piano" && giornoAperto === null) giornoAperto = oggiISO();
   const y = window.scrollY;
-  if (v === "piano") renderPiano(main, nuova); else VISTE[v](main);
+  if (v === "piano") renderPiano(main, nuova); else VISTE[v](main, arg);
   if (nuova) { if (v !== "piano") window.scrollTo(0, 0); } else window.scrollTo(0, y);
-  vistaCorrente = v;
+  vistaCorrente = chiave;
 }
 
 /* ---------- eventi ---------- */
@@ -200,6 +206,13 @@ document.addEventListener("click", e => {
   if (op) {
     const k = op.dataset.k, inp = op.closest(".step").querySelector("input");
     aggiornaContatore(op, k, Math.max(0, (+inp.value || 0) + Number(op.dataset.op)));
+    return;
+  }
+  const l = e.target.closest("button[data-letto], button[data-letti]");
+  if (l) {
+    const nums = l.dataset.letto ? [l.dataset.letto] : Teoria.intervallo(l.dataset.letti).map(p => p.num);
+    if (!Store.impostaLetti(nums, l.dataset.on === "1", oggiISO())) erroreSalvataggio();
+    render();
     return;
   }
   const f = e.target.closest("button[data-fatto]");
@@ -232,8 +245,9 @@ document.addEventListener("change", e => {
       try { dati = Store.controlla(JSON.parse(r.result)); } catch (err) { dati = { errore: "Il file non è un JSON valido." }; }
       inp.value = "";
       if (dati.errore) { avviso(dati.errore); return; }
-      const nf = Object.values(dati.giorni).filter(d => d.fatto).length;
-      if (!confirm(`Importare il backup? Contiene ${nf} giorni fatti e ${dati.sessioni.length} sessioni dei moduli. I dati attuali su questo dispositivo verranno sostituiti.`)) return;
+      const nf = Object.values(dati.giorni).filter(d => d.fatto).length, nl = Object.keys(dati.letti).length;
+      const pl = (n, uno, molti) => `${n} ${n === 1 ? uno : molti}`;
+      if (!confirm(`Importare il backup? Contiene ${pl(nf, "giorno fatto", "giorni fatti")}, ${pl(dati.sessioni.length, "sessione dei moduli", "sessioni dei moduli")} e ${pl(nl, "paragrafo letto", "paragrafi letti")}. I dati attuali su questo dispositivo verranno sostituiti.`)) return;
       if (!Store.importa(dati)) { erroreSalvataggio(); return; }
       render();
       avviso("Dati importati.");
@@ -251,7 +265,7 @@ window.addEventListener("storage", render);
 /* ---------- avvio ---------- */
 fetch("data/plan.json", { cache: "no-cache" })
   .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then(p => { PLAN = p; render(); })
+  .then(p => { PLAN = p; render(); Teoria.carica().then(render).catch(() => {}); })
   .catch(() => {
     $("#main").innerHTML = `<h1>TOLC-I</h1><p class="warn">Non riesco a leggere <b>data/plan.json</b>.${location.protocol === "file:"
       ? " Aperta come file dal computer il browser blocca la lettura: aprila da un indirizzo web (vedi LEGGIMI.md)."

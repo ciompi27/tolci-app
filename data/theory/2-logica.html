@@ -1,0 +1,43 @@
+<!-- Capitolo 2: testo dal PDF "TOLC-I_teoria_con_figure.pdf", non riscritto. -->
+<article class="capitolo" data-cap="2" data-titolo="Logica" data-etichetta="DA STUDIARE">
+<div class="cap-intro">
+<p class="nota">Non è materia scolastica: nessuno l'ha fatta. Sono però poche regole, e si ripetono sempre uguali.</p>
+</div>
+<section class="par" data-par="2.1" data-titolo="Connettivi" data-etichetta="DA STUDIARE">
+<h2>2.1 Connettivi <span class="etichetta studiare">DA STUDIARE</span></h2>
+<div class="tab"><table><thead><tr><th>Connettivo</th><th>Simbolo</th><th>È vero quando…</th></tr></thead><tbody><tr><td>Negazione — non</td><td>¬A</td><td>A è falsa</td></tr><tr><td>Congiunzione — e</td><td>A ∧ B</td><td>sono vere <b>entrambe</b></td></tr><tr><td>Disgiunzione — o</td><td>A ∨ B</td><td>ne è vera <b>almeno una</b></td></tr><tr><td>Implicazione — se… allora</td><td>A ⇒ B</td><td><b>sempre</b>, tranne se A vera e B falsa</td></tr><tr><td>Doppia implicazione</td><td>A ⇔ B</td><td>A e B hanno lo <b>stesso</b> valore</td></tr></tbody></table></div>
+</section>
+<section class="par" data-par="2.2" data-titolo="L&#x27;implicazione: la regola che vale metà sezione" data-etichetta="DA STUDIARE">
+<h2>2.2 L'implicazione: la regola che vale metà sezione <span class="etichetta studiare">DA STUDIARE</span></h2>
+<div class="box sapere"><p><span class="box-t">DA SAPERE</span> Da <b>A ⇒ B</b> puoi dedurre <b>solo</b> la <b>contronominale</b>:&nbsp; <b>¬B ⇒ ¬A</b><br><span class="neg">NON</span> valgono l'inversa (B ⇒ A) né la contraria (¬A ⇒ ¬B).</p></div>
+<div class="box esempio"><p><span class="box-t">ESEMPIO</span> "Se piove, la strada è bagnata."<br>La strada <b>non</b> è bagnata → <b>non</b> piove&nbsp; <b>(valido)</b><br>La strada è bagnata → piove&nbsp; <span class="neg">(non valido: poteva passare l'autobotte)</span></p></div>
+<figure class="box figura"><figcaption><span class="box-t">FIGURA</span> <b>L'implicazione A ⇒B vista come insiemi: A sta tutto dentro B</b></figcaption><div class="pannelli"><img src="assets/figure/2-2-1a.png" alt="A dentro B: A è sufficiente per B, B è necessaria per A" width="1188" height="416" style="--w:475px;--min:356px"><img src="assets/figure/2-2-1b.png" alt="A ⇒B" width="986" height="416" style="--w:394px;--min:296px"></div></figure>
+<p><b>Equivalenze:</b> A ⇒ B equivale a ¬A ∨ B&nbsp; ·&nbsp; ¬(A ⇒ B) equivale a A ∧ ¬B.</p>
+<div class="box sapere"><p><span class="box-t">DA SAPERE</span> In <b>A ⇒ B</b>: A è <b>sufficiente</b> per B, B è <b>necessaria</b> per A.<br>"A <b>solo se</b> B" = A ⇒ B&nbsp; ·&nbsp; "A <b>se</b> B" = B ⇒ A&nbsp; ·&nbsp; "se e solo se" = ⇔</p></div>
+</section>
+<section class="par" data-par="2.3" data-titolo="Negazione dei quantificatori" data-etichetta="DA STUDIARE">
+<h2>2.3 Negazione dei quantificatori <span class="etichetta studiare">DA STUDIARE</span></h2>
+<div class="tab"><table><thead><tr><th>Frase</th><th>Negazione corretta</th></tr></thead><tbody><tr><td>Tutti gli X sono Y</td><td><b>Almeno un</b> X non è Y</td></tr><tr><td>Nessun X è Y</td><td><b>Almeno un</b> X è Y</td></tr><tr><td>Qualche X è Y</td><td><b>Nessun</b> X è Y</td></tr></tbody></table></div>
+<div class="box trappola"><p><span class="box-t">TRAPPOLA</span> La negazione di "tutti sono" <span class="neg">non</span> è "tutti non sono", ma "<b>almeno uno non è</b>". Basta un controesempio per smentire un "tutti".</p></div>
+<div class="box formula"><p><span class="box-t">FORMULA</span> <b>De Morgan:</b> ¬(A ∧ B) = ¬A ∨ ¬B&nbsp;&nbsp;&nbsp;&nbsp; ¬(A ∨ B) = ¬A ∧ ¬B</p></div>
+</section>
+<section class="par" data-par="2.4" data-titolo="Sillogismi e insiemi" data-etichetta="DA STUDIARE">
+<h2>2.4 Sillogismi e insiemi <span class="etichetta studiare">DA STUDIARE</span></h2>
+<ul><li>Tutti A sono B + Tutti B sono C ⇒ Tutti A sono C&nbsp; <b>(valido)</b></li><li>Nessun A è B + Tutti C sono A ⇒ Nessun C è B&nbsp; <b>(valido)</b></li><li>Tutti A sono B + Qualche B è C ⇒ <span class="neg">nulla di certo</span> · da due premesse negative non si conclude nulla</li></ul>
+<div class="box formula"><p><span class="box-t">FORMULA</span> |A ∪ B| = |A| + |B| − |A ∩ B|&nbsp; <span class="nota">(chi sta in entrambi verrebbe contato due volte)</span></p></div>
+<div class="box esempio"><p><span class="box-t">ESEMPIO</span> Classe di 25: 15 calcio, 12 basket, 5 entrambi. Almeno uno sport: 15+12−5 = 22 → nessuno dei due: <b>3</b>.</p></div>
+<figure class="box figura"><figcaption><span class="box-t">FIGURA</span> <b>Insiemi: la formula dell'unione e i sillogismi disegnati</b></figcaption><div class="pannelli"><img src="assets/figure/2-4-1a.png" alt="Classe di 25: calcio 15, basket 12, entrambi 5" width="869" height="472" style="--w:348px;--min:261px"><img src="assets/figure/2-4-1b.png" alt="Sillogismo valido" width="587" height="472" style="--w:235px;--min:176px"><img src="assets/figure/2-4-1c.png" alt="Tutti A sono B + qualche B è C" width="693" height="472" style="--w:277px;--min:208px"></div></figure>
+</section>
+<section class="par" data-par="2.5" data-titolo="Successioni e problemi ricorrenti" data-etichetta="DA STUDIARE">
+<h2>2.5 Successioni e problemi ricorrenti <span class="etichetta studiare">DA STUDIARE</span></h2>
+<ul><li><b>Aritmetica</b> (somma sempre lo stesso numero): a<sub>n</sub> = a<sub>1</sub> + (n−1)d&nbsp; ·&nbsp; <b>geometrica</b> (moltiplica): a<sub>n</sub> = a<sub>1</sub>·q<sup>n−1</sup></li><li>Somma primi n interi: <b>n(n+1)/2</b> · somma geometrica: a<sub>1</sub>(q<sup>n</sup>−1)/(q−1)</li><li>Altri schemi: quadrati (1,4,9,16), <b>Fibonacci</b>, differenze crescenti, due serie <b>intrecciate</b> a termini alterni</li><li><b>Lavoro:</b> A in a ore, B in b ore, insieme → 1/t = 1/a + 1/b&nbsp; ·&nbsp; <b>velocità:</b> v = s/t</li></ul>
+<div class="box esempio"><p><span class="box-t">ESEMPIO</span> Un rubinetto riempie la vasca in 3 ore, un altro in 6. Insieme?<br>1/t = 1/3 + 1/6 = 3/6 = 1/2 → t = <b>2 ore</b>. (Non 4,5: le velocità si sommano, non i tempi.)</p></div>
+</section>
+<section class="par" data-par="2.6" data-titolo="Problemi di ragionamento" data-etichetta="DA STUDIARE">
+<h2>2.6 Problemi di ragionamento <span class="etichetta studiare">DA STUDIARE</span></h2>
+<div class="box sapere"><p><span class="box-t">DA SAPERE</span> <b>Verità e menzogna.</b> Quando alcuni personaggi dicono sempre il vero e altri sempre il falso, si procede per <b>ipotesi</b>: si suppone che uno dica il vero, si vede se ne nasce una contraddizione; se nasce, l'ipotesi è sbagliata e si prova l'altra. Con due possibilità basta escluderne una.</p></div>
+<div class="box sapere"><p><span class="box-t">DA SAPERE</span> <b>Problemi di disposizione</b> (chi siede dove, chi arriva prima). Conviene disegnare uno schema con le posizioni vuote e piazzare per prime le informazioni <b>più vincolanti</b>: quelle che nominano una posizione precisa ("X è terzo") o che escludono ("Y non è accanto a Z"). Le informazioni vaghe si usano per ultime.</p></div>
+<div class="box sapere"><p><span class="box-t">DA SAPERE</span> <b>Condizioni sufficienti a rispondere.</b> Alcune domande non chiedono la soluzione ma se le informazioni <b>bastano</b> a trovarla. Lì non serve calcolare il risultato: basta verificare se il sistema di vincoli ha <b>una sola</b> soluzione possibile o più di una.</p></div>
+<div class="box trappola"><p><span class="box-t">TRAPPOLA</span> Nei problemi con "almeno", "al più", "esattamente": <b>al più 3</b> significa 0, 1, 2 o 3 · <b>almeno 3</b> significa 3 o più · <b>esattamente 3</b> solo 3. Sono i tre casi che vengono scambiati più spesso.</p></div>
+</section>
+</article>

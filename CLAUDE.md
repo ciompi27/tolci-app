@@ -22,6 +22,15 @@ App web personale per preparare il **TOLC-I (CISIA) del 12 novembre 2026**: 1 or
 - `Calendario_TOLC-I.pdf`: il piano giorno per giorno (stessa tabella qui sotto).
 - `moduli_esistenti/logica_INT-1.html`: la pagina interattiva di logica (INT-1), già fatta e funzionante (890 righe, tutto in un file: teoria, generatori di esercizi, modalità Impara/Allenati, timer, ripasso risposte). Qualità buona: **è la base del modulo Logica**.
 
+## Teoria nell'app (fase 2)
+- Il PDF non va su GitHub (`.gitignore`): la teoria è stata convertita in `data/theory/`, un file HTML per capitolo (`1-matematica.html`, `2-logica.html`, `3-fisica.html`, `4-chimica.html`, `6-comprensione-verbale.html`) più `indice.json` (ordine dei file e legenda delle etichette).
+- Ogni paragrafo è `<section class="par" data-par="4.4" data-titolo="…" data-etichetta="DA STUDIARE">`. Riquadri: `div.box.formula|trappola|esempio|sapere`, `figure.box.figura`. Segnalazioni: `span.verifica` (DA VERIFICARE).
+- Testo e figure vengono dal PDF senza riscritture. Le figure sono ritagli PNG del PDF in `assets/figure/` (nome `capitolo-paragrafo-figura+pannello`, es. `1-2-1a.png`).
+- **3.9 Ottica** è un paragrafo nuovo (etichetta NUOVO), con due figure SVG fatte a mano (`3-9-1a.svg`, `3-9-2a.svg`).
+- In `plan.json` il campo `paragrafi` (es. `"4.4-4.6"`, `"3.8-3.9"`) collega il giorno ai paragrafi; il campo `box` (`"trappola"` o `"formula"`) apre il filtro dei box.
+- Stato "letto" in localStorage, chiave `tolc-i:letti`, incluso nel backup JSON (versione 2; i backup della versione 1 si importano ancora).
+- Se si aggiunge un file all'app va aggiunto alla lista `FILE` di `sw.js` e va cambiata `VERSIONE`.
+
 ## Regole per importare INT-1
 - Non riscriverla e non cambiarne il comportamento: spostarla in `moduli/logica/` (index, css, js separati solo se il comportamento resta identico) e collegarla alla barra in basso e al piano.
 - Unico difetto da correggere: carica **Atkinson Hyperlegible da Google Fonts** (non funziona offline). Scaricare il font e metterlo in `assets/fonts/` (formato woff2), oppure usare il font di sistema.
@@ -63,7 +72,7 @@ Legenda: **PDF** = sezione del PDF di teoria. **TF** = esercizi su The Faculty. 
 | Dom 11 ott | PAUSA | | |
 | Lun 12 ott | Fisica: meccanica | 3.1-3.5, cinematica con attenzione | meccanica |
 | Mar 13 ott | Fisica | 3.6 calore, 3.7 elettricità e magnetismo | termodinamica, circuiti |
-| Mer 14 ott | Fisica | ottica (capitolo NUOVO), 3.8 onde | ottica, onde |
+| Mer 14 ott | Fisica | 3.9 ottica (capitolo NUOVO), 3.8 onde | ottica, onde |
 | Gio 15 ott | Chimica | 4.7-4.10 soluzioni, pH, ossidoriduzione, organica semplice | soluzioni, pH, ossidoriduzione |
 | Ven 16 ott | Matematica | ripasso 1.8 | combinatoria, statistica |
 | Sab 17 ott | Logica + Verbale | sez. 6 (15 min) | logica, comprensione verbale |

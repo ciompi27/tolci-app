@@ -1,0 +1,15 @@
+{
+  "fonte": "Testo e figure dal PDF «TOLC-I_teoria_con_figure.pdf», sezioni 1, 2, 3, 4 e 6. La sezione 5 (biologia e Scienze della Terra) non fa parte del TOLC-I e non è inclusa. Il paragrafo 3.9 Ottica è nuovo: nel PDF non c'è.",
+  "legenda": [
+    { "etichetta": "RIPASSO", "testo": "l'hai già fatto: solo formule e promemoria" },
+    { "etichetta": "DA RINFRESCARE", "testo": "fatto al biennio, ripreso più a fondo" },
+    { "etichetta": "DA STUDIARE", "testo": "mai fatto davvero: spiegato da zero" }
+  ],
+  "capitoli": [
+    "1-matematica.html",
+    "2-logica.html",
+    "3-fisica.html",
+    "4-chimica.html",
+    "6-comprensione-verbale.html"
+  ]
+}
