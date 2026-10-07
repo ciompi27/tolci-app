@@ -1,0 +1,79 @@
+/* Stile dell'app TOLC-I. Variabili e tema chiaro/scuro presi dal modulo INT-1 (logica).
+   Colori: blu (accent), verde (ok), rosso (ko). Il resto è grigio. */
+:root{--bg:#F2F4F6;--surface:#FFFFFF;--ink:#17212B;--muted:#56626F;--line:#D2D9E0;--accent:#2350B5;--accent-soft:#E2EAF8;
+ --ok:#15704A;--ok-soft:#E1F1E8;--ko:#B3261E;--ko-soft:#FBE6E4;
+ --barh:64px;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11161C;--surface:#1A2129;--ink:#E7ECF1;--muted:#A2AEBB;--line:#334050;--accent:#93B2F4;--accent-soft:#22324E;
+ --ok:#63C996;--ok-soft:#163223;--ko:#F2918A;--ko-soft:#3A1F1D;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11161C;--surface:#1A2129;--ink:#E7ECF1;--muted:#A2AEBB;--line:#334050;--accent:#93B2F4;--accent-soft:#22324E;
+ --ok:#63C996;--ok-soft:#163223;--ko:#F2918A;--ko-soft:#3A1F1D;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:19px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(var(--barh) + 32px + env(safe-area-inset-bottom,0px))}
+h1{font-size:1.6rem;line-height:1.2;margin:8px 0 4px}
+h2{font-size:1.3rem;line-height:1.25;margin:0 0 10px}
+h3{font-size:1.1rem;margin:18px 0 8px}
+p{margin:8px 0}
+a{color:var(--accent)}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 16px}
+.card.today{border:2px solid var(--accent)}
+.big{font-size:1.15rem}
+.countdown{font-size:1.25rem;margin:4px 0 16px}
+.countdown b{font-size:2rem;color:var(--accent)}
+.kv{margin:10px 0}
+.kv dt{font-size:.9rem;color:var(--muted);margin-top:10px}
+.kv dd{margin:2px 0 0;font-size:1.1rem}
+.materia{font-size:1.45rem;font-weight:700;margin:2px 0 6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-size:1.05rem;min-height:48px;padding:10px 18px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700}
+.btn.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ok);font-weight:700}
+.btn.wide{width:100%}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.link{font:inherit;font-size:.95rem;background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer;padding:8px 4px}
+button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:8px 12px}
+.warn{border-left:4px solid var(--ko);background:var(--ko-soft);border-radius:0 8px 8px 0;padding:8px 12px}
+.modlink{display:block;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;background:var(--surface)}
+.modlink b{color:var(--accent)}
+.modlink span{display:block;font-size:.92rem;color:var(--muted)}
+
+/* contatore esercizi */
+.cnt{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.cnt-t{font-weight:700;margin:0 0 6px}
+.cnt-row{display:flex;flex-wrap:wrap;gap:8px 18px}
+.step{display:flex;align-items:center;gap:6px}
+.step>span{min-width:5.2em;color:var(--muted);font-size:.95rem}
+.step button{font:inherit;font-size:1.3rem;font-weight:700;width:48px;height:48px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.step input{font:inherit;font-size:1.2rem;width:3.4em;height:48px;text-align:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.tot{margin-top:12px;font-size:1.05rem}
+
+/* stati */
+.badge{display:inline-block;font-size:.85rem;font-weight:700;padding:2px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.b-fatto{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.b-arretrato{background:var(--ko-soft);border-color:var(--ko);color:var(--ko)}
+.b-dafare{border-color:var(--accent);color:var(--accent)}
+.b-esame{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+
+/* piano */
+.legend{display:flex;flex-wrap:wrap;gap:8px 12px;margin:8px 0 14px}
+.days{list-style:none;margin:0;padding:0}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:0 0 8px}
+.day.is-today{border:2px solid var(--accent)}
+.day.pausa{background:transparent}
+.day summary{list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;min-height:56px}
+.day summary::-webkit-details-marker{display:none}
+.day .d{flex:0 0 4.6em;font-weight:700}
+.day .m{flex:1 1 auto;min-width:0}
+.day .oggi{font-size:.8rem;font-weight:700;color:var(--accent);display:block}
+.day .body{padding:0 14px 14px}
+.day.pausa .m{color:var(--muted)}
+
+/* barra in basso */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabbar a{flex:1;display:flex;align-items:center;justify-content:center;height:var(--barh);font-size:1.05rem;color:var(--muted);text-decoration:none;font-weight:700;border-top:3px solid transparent}
+.tabbar a[aria-current="page"]{color:var(--accent);border-top-color:var(--accent)}
+
+@media (max-width:420px){body{font-size:18px}.materia{font-size:1.3rem}}

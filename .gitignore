@@ -1,0 +1,3 @@
+# Materiali di studio: restano solo in locale (non vanno pubblicati con l'app)
+*.pdf
+.claude/settings.local.json

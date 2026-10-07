@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Logica per il TOLC-I</title>
+<link rel="stylesheet" href="../../assets/fonts/atkinson-hyperlegible.css">
+<link rel="stylesheet" href="../modulo.css">
+<script src="../modulo.js"></script>
+<style>
+:root{--bg:#F2F4F6;--surface:#FFFFFF;--ink:#17212B;--muted:#56626F;--line:#D2D9E0;--accent:#2350B5;--accent-soft:#E2EAF8;
+ --ok:#15704A;--ok-soft:#E1F1E8;--ko:#B3261E;--ko-soft:#FBE6E4;--mid:#8A5A00;--mid-soft:#FBF0D9;
+ --setA:#9FBBEE;--setB:#DCE6F7;--full:#C3D5F5;--hbg:#ECEFF2;--hln:#A3ADB9;--hl:#F3C54F;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11161C;--surface:#1A2129;--ink:#E7ECF1;--muted:#A2AEBB;--line:#334050;--accent:#93B2F4;--accent-soft:#22324E;
+ --ok:#63C996;--ok-soft:#163223;--ko:#F2918A;--ko-soft:#3A1F1D;--mid:#E6B65C;--mid-soft:#3A2E14;
+ --setA:#3E5F9E;--setB:#25344D;--full:#2F4B80;--hbg:#1F262E;--hln:#566270;--hl:#A8801C;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11161C;--surface:#1A2129;--ink:#E7ECF1;--muted:#A2AEBB;--line:#334050;--accent:#93B2F4;--accent-soft:#22324E;
+ --ok:#63C996;--ok-soft:#163223;--ko:#F2918A;--ko-soft:#3A1F1D;--mid:#E6B65C;--mid-soft:#3A2E14;
+ --setA:#3E5F9E;--setB:#25344D;--full:#2F4B80;--hbg:#1F262E;--hln:#566270;--hl:#A8801C;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:19px;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+header h1{font-size:2rem;line-height:1.15;margin:8px 0 4px;letter-spacing:-.01em}
+header p{margin:0 0 16px;color:var(--muted)}
+.modes{display:flex;gap:0;border:2px solid var(--ink);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.modetab{flex:1;font:inherit;font-weight:700;font-size:1.1rem;padding:12px;border:0;background:var(--surface);color:var(--ink);cursor:pointer}
+.modetab[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.topics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{font:inherit;font-size:.95rem;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 20px;margin-bottom:16px}
+h2{font-size:1.4rem;margin:0 0 12px}
+h3{font-size:1.15rem;margin:22px 0 8px}
+.keys{margin:0;padding-left:1.2em}.keys li{margin:6px 0}
+q{quotes:"«" "»"}
+q.blockq{display:block;margin:10px 0 12px;padding:10px 14px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:1.08rem}
+q.blockq::before,q.blockq::after{content:none}
+.big{font-size:1.1rem}
+.small{font-size:.9rem;color:var(--muted)}
+.sym{display:inline-block;font-weight:700;padding:0 6px;border-radius:6px;background:var(--accent-soft);white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:6px 0;font-size:.95rem}
+.field{display:block;margin:6px 0 10px;font-size:.95rem;color:var(--muted)}
+.field.inline{display:inline-block;margin-left:8px}
+select,input[type=number]{display:block;width:100%;max-width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:4px}
+.field.inline input{display:inline-block;width:5.5em}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row2 select{margin-bottom:6px}
+@media (max-width:560px){.row2{grid-template-columns:1fr}}
+.btn{font:inherit;font-size:1rem;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700}
+:root[data-theme="dark"] .btn.primary{color:#0F1620}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.primary{color:#0F1620}}
+.btn.big{font-size:1.1rem;padding:12px 20px;margin-top:14px}
+.btn.small{font-size:.92rem;padding:7px 12px;margin:4px 0}
+.btn:disabled{opacity:.5;cursor:default}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.link{font:inherit;font-size:.92rem;background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer;padding:2px 4px}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.seg button{font:inherit;font-size:.95rem;flex:1 1 auto;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.panel{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;background:var(--bg)}
+.panel p{margin:6px 0}
+.figwrap{margin:8px 0}.figwrap.narrow{max-width:420px}
+svg.impl,svg.venn{width:100%;height:auto;display:block;max-width:460px}
+svg.clickable{cursor:pointer}
+.zU{fill:var(--surface);stroke:var(--line);stroke-width:2}
+.zB{fill:var(--setB);stroke:var(--ink);stroke-width:2}
+.zA{fill:var(--setA);stroke:var(--ink);stroke-width:2}
+.zhl{fill:var(--hl)}
+.zl{font:700 26px "Atkinson Hyperlegible",system-ui,sans-serif;fill:var(--ink);text-anchor:middle}
+.zs{font:15px "Atkinson Hyperlegible",system-ui,sans-serif;fill:var(--muted)}
+.zmark{fill:var(--ink);stroke:var(--surface);stroke-width:3}
+.rfull{fill:var(--full)}.runk{fill:var(--surface)}.hbg{fill:var(--hbg)}.hln{stroke:var(--hln);stroke-width:2.5}
+.rdot{fill:var(--ink)}
+.rq{font:700 18px "Atkinson Hyperlegible",system-ui,sans-serif;fill:var(--muted);text-anchor:middle}
+.vout{fill:none;stroke:var(--ink);stroke-width:2}
+.vlab{font:700 22px "Atkinson Hyperlegible",system-ui,sans-serif;fill:var(--ink);text-anchor:middle}
+.vleg{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.sw{display:inline-block;width:18px;height:14px;border:1px solid var(--ink);border-radius:3px;vertical-align:middle}
+.sw-full{background:var(--full)}.sw-unk{background:var(--surface)}
+.sw-empty{background:repeating-linear-gradient(45deg,var(--hbg) 0 3px,var(--hln) 3px 5px)}
+.badge{display:inline-block;font-size:.8rem;font-weight:700;padding:1px 8px;border-radius:999px;margin-right:6px;vertical-align:1px}
+.b-ok{background:var(--ok-soft);color:var(--ok)}.b-ko{background:var(--ko-soft);color:var(--ko)}.b-mid{background:var(--mid-soft);color:var(--mid)}
+.ok{color:var(--ok)}.ko{color:var(--ko)}
+.vf{list-style:none;padding:0;margin:6px 0}.vf li{margin:6px 0}
+.pairs{display:grid;gap:10px;margin-top:8px}.pair{border:1px solid var(--line);border-radius:10px;padding:6px 12px}
+.pt{font-weight:700;margin:4px 0;font-size:.95rem}
+.note{border-left:4px solid var(--mid);padding:6px 12px;background:var(--mid-soft);border-radius:0 8px 8px 0;font-size:.95rem}
+.prem2{padding-left:1.4em;margin:10px 0}.prem2 li{margin:4px 0}
+.stem{font-size:1.08rem}
+.stem ol.roman{list-style:none;padding:0;margin:8px 0}.stem ol.roman li{margin:6px 0}
+.stem ul.prem{margin:8px 0;padding-left:1.2em}.stem ul.prem li{margin:4px 0;font-weight:700}
+.opts{list-style:none;padding:0;margin:14px 0}.opts li{margin:8px 0}
+.opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font:inherit;font-size:1.05rem;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.is-ok,.opts.static li.is-ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.is-ko{border-color:var(--ko);background:var(--ko-soft)}
+.opts.static li{display:flex;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:12px}
+.lt{flex:0 0 auto;display:inline-grid;place-items:center;width:1.8em;height:1.8em;border-radius:50%;border:1.5px solid currentColor;font-weight:700;font-size:.9rem}
+.steps{padding-left:1.4em}.steps li{margin:8px 0}
+.rev{list-style:none;padding:0}.rev>li{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+.rev>li.r-ok{border-color:var(--ok)}.rev>li.r-me.r-ko{border-color:var(--ko)}
+.r-h{display:flex;gap:10px;align-items:flex-start;font-weight:700}
+.r-tag{margin:4px 0;font-size:.88rem;color:var(--muted)}
+.r-ok .r-tag{color:var(--ok)}.r-me.r-ko .r-tag{color:var(--ko)}
+.rev p{margin:6px 0}
+.err{background:var(--bg);border-radius:8px;padding:6px 10px}
+.verdict{font-size:1.25rem;font-weight:700;padding:12px 14px;border-radius:12px;margin-top:6px}
+.verdict.good{background:var(--ok-soft);color:var(--ok)}.verdict.bad{background:var(--ko-soft);color:var(--ko)}.verdict.blank{background:var(--mid-soft);color:var(--mid)}
+.bar{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:2}
+#clock.low{color:var(--ko)}
+.topic-tag{margin:0 0 6px;color:var(--muted);font-size:.92rem}
+fieldset{border:1px solid var(--line);border-radius:10px;margin:0 0 12px;padding:8px 14px 12px}
+legend{font-weight:700;padding:0 6px}
+.check{display:flex;gap:10px;align-items:center;margin:8px 0;cursor:pointer}
+.check input{width:22px;height:22px;accent-color:var(--accent)}
+.fig{margin:14px 0;padding:0}.fig figcaption{font-size:.92rem;color:var(--muted);margin-top:6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+.tt-wrap{overflow-x:auto;margin:8px 0}
+.tt{border-collapse:collapse;font-size:.95rem}.tt th,.tt td{border:1px solid var(--line);padding:5px 10px;text-align:center}
+.tt th{background:var(--bg)}
+.score{font-size:1.4rem;margin:4px 0}.score b{font-size:2.4rem}
+.hist{padding-left:1.4em}.hist li{margin:8px 0}
+summary{cursor:pointer}
+.revbox h3:first-child{margin-top:12px}
+@media (max-width:480px){body{font-size:18px}header h1{font-size:1.6rem}.card{padding:14px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<nav class="tolc-nav"><a class="tolc-back" href="../../index.html" data-tolc-back>← Indietro</a><span class="tolc-stato" data-tolc-stato role="status"></span></nav>
+<div class="wrap">
+<header><h1>Logica per il TOLC-I</h1><p>Implicazioni, condizioni, quantificatori e sillogismi.</p>
+<div class="modes" role="tablist"><button class="modetab" role="tab" data-mode="learn" aria-selected="true">Impara</button><button class="modetab" role="tab" data-mode="practice" aria-selected="false">Allenati</button></div></header>
+<main id="main"></main>
+</div>
+<script>
+"use strict";
+/* ================= UTILITÀ ================= */
+const rnd=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rnd(a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);const t=a[i];a[i]=a[j];a[j]=t;}return a;}
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const low=s=>s.charAt(0).toLowerCase()+s.slice(1);
+const OPT={patto:true};
+
+/* ================= FRASI PER IMPLICAZIONE E CONDIZIONI =================
+   Ogni coppia è un'implicazione A ⇒ B realistica. ce = esempio di "B vera, A falsa". */
+function C(subj,vi,vc){const s=subj?subj+' ':'';return{i:s+vi,c:s+vc,ni:s+'non '+vi,nc:s+'non '+vc};}
+const PAIRS=[
+ {a:C('','piove','piova'),b:C('la strada','è bagnata','sia bagnata'),ce:'è passata l’autobotte: la strada è bagnata ma non piove'},
+ {a:C('il triangolo','è equilatero','sia equilatero'),b:C('il triangolo','è isoscele','sia isoscele'),ce:'un triangolo con due soli lati uguali è isoscele ma non equilatero'},
+ {a:C('il quadrilatero','è un quadrato','sia un quadrato'),b:C('il quadrilatero','è un rettangolo','sia un rettangolo'),ce:'un rettangolo con lati 3 e 5 non è un quadrato'},
+ {a:C('Luca','vive a Bologna','viva a Bologna'),b:C('Luca','vive in Emilia-Romagna','viva in Emilia-Romagna'),ce:'Luca vive a Modena: in Emilia-Romagna, ma non a Bologna'},
+ {a:C('Marco','è a Parigi','sia a Parigi'),b:C('Marco','è in Francia','sia in Francia'),ce:'Marco è a Lione: in Francia, ma non a Parigi'},
+ {a:C('il numero','termina con 0','termini con 0'),b:C('il numero','è divisibile per 5','sia divisibile per 5'),ce:'il numero 15 è divisibile per 5 ma non termina con 0'},
+ {a:C('il numero','è divisibile per 4','sia divisibile per 4'),b:C('il numero','è pari','sia pari'),ce:'il numero 6 è pari ma non è divisibile per 4'},
+ {a:C('il numero','è multiplo di 9','sia multiplo di 9'),b:C('il numero','è multiplo di 3','sia multiplo di 3'),ce:'il numero 12 è multiplo di 3 ma non di 9'},
+ {a:C('l’acqua','bolle','bolla'),b:C('l’acqua','è calda','sia calda'),ce:'l’acqua a 60 °C è calda ma non bolle'},
+ {a:C('Sara','ha la patente B','abbia la patente B'),b:C('Sara','è maggiorenne','sia maggiorenne'),ce:'Sara ha 20 anni ma non ha mai preso la patente'},
+ {a:C('Anna','vince la gara','vinca la gara'),b:C('Anna','partecipa alla gara','partecipi alla gara'),ce:'Anna partecipa alla gara ma arriva terza'},
+ {a:C('Giulia','supera l’esame','superi l’esame'),b:C('Giulia','è iscritta all’esame','sia iscritta all’esame'),ce:'Giulia è iscritta all’esame ma non lo supera'},
+ {a:C('il telefono','squilla','squilli'),b:C('il telefono','è acceso','sia acceso'),ce:'il telefono è acceso ma nessuno chiama'},
+ {a:C('la lampadina','è accesa','sia accesa'),b:C('','c’è corrente','ci sia corrente'),ce:'c’è corrente ma l’interruttore è spento'},
+ {a:C('il cantiere','è aperto','sia aperto'),b:C('il permesso di costruire','è stato rilasciato','sia stato rilasciato'),ce:'il permesso è stato rilasciato ma i lavori non sono ancora iniziati'},
+ {a:C('la trave','è in acciaio','sia in acciaio'),b:C('la trave','è metallica','sia metallica'),ce:'una trave in alluminio è metallica ma non in acciaio'},
+ {a:C('Fido','è un cane','sia un cane'),b:C('Fido','è un mammifero','sia un mammifero'),ce:'Fido è un gatto: un mammifero, ma non un cane'},
+ {a:C('il frigorifero','funziona','funzioni'),b:C('il frigorifero','è collegato alla corrente','sia collegato alla corrente'),ce:'il frigorifero è collegato ma è guasto'},
+ {a:C('il treno','parte','parta'),b:C('il macchinista','è a bordo','sia a bordo'),ce:'il macchinista è a bordo ma il treno è fermo per un guasto'},
+ {a:C('Paolo','entra in palestra','entri in palestra'),b:C('Paolo','ha l’abbonamento','abbia l’abbonamento'),ce:'Paolo ha l’abbonamento ma oggi resta a casa'},
+ {a:C('la piscina','è aperta','sia aperta'),b:C('il bagnino','è presente','sia presente'),ce:'il bagnino è presente per le pulizie, a piscina chiusa'},
+ {a:C('Chiara','è nata a Napoli','sia nata a Napoli'),b:C('Chiara','è nata in Italia','sia nata in Italia'),ce:'Chiara è nata a Torino'},
+ {a:C('la caldaia','è accesa','sia accesa'),b:C('il gas','arriva alla caldaia','arrivi alla caldaia'),ce:'il gas arriva ma la caldaia è spenta'},
+ {a:C('Davide','guida l’auto','guidi l’auto'),b:C('Davide','ha le chiavi dell’auto','abbia le chiavi dell’auto'),ce:'Davide ha le chiavi ma oggi va a piedi'},
+ {a:C('il cellulare','si carica','si carichi'),b:C('il caricabatterie','è collegato','sia collegato'),ce:'il caricabatterie è collegato ma la batteria è già piena'},
+ {a:C('Tommaso','abita a Milano','abiti a Milano'),b:C('Tommaso','abita in Lombardia','abiti in Lombardia'),ce:'Tommaso abita a Bergamo'},
+ {a:C('il negozio','accetta la carta','accetti la carta'),b:C('il negozio','ha il POS','abbia il POS'),ce:'il negozio ha il POS ma oggi è guasto'},
+ {a:C('','è domenica','sia domenica'),b:C('la scuola','è chiusa','sia chiusa'),ce:'in un giorno di festa infrasettimanale la scuola è chiusa ma non è domenica'},
+];
+
+/* ================= LOGICA PROPOSIZIONALE (tavole di verità) ================= */
+const WORLDS=[{A:true,B:true},{A:true,B:false},{A:false,B:true},{A:false,B:false}];
+const L=(v,n=false)=>({v,n});
+const imp=(x,y)=>({t:'imp',x,y}), iff=(x,y)=>({t:'iff',x,y}), and=(x,y)=>({t:'and',x,y});
+const evL=(l,w)=>l.n?!w[l.v]:w[l.v];
+function ev(f,w){const a=evL(f.x,w),b=evL(f.y,w);return f.t==='imp'?(!a||b):f.t==='iff'?(a===b):(a&&b);}
+const tab=f=>WORLDS.map(w=>ev(f,w));
+const sameTab=(f,g)=>{const a=tab(f),b=tab(g);return a.every((v,i)=>v===b[i]);};
+const entails=(f,g)=>{const a=tab(f),b=tab(g);return a.every((v,i)=>!v||b[i]);};
+const isNeg=(f,g)=>{const a=tab(f),b=tab(g);return a.every((v,i)=>v!==b[i]);};
+const symL=l=>(l.n?'¬':'')+l.v;
+const sym=f=>symL(f.x)+(f.t==='imp'?' ⇒ ':f.t==='iff'?' ⇔ ':' e ')+symL(f.y);
+function clauseOf(p,l){const c=l.v==='A'?p.a:p.b;return l.n?{i:c.ni,c:c.nc}:{i:c.i,c:c.c};}
+function fText(p,f){const x=clauseOf(p,f.x).i,y=clauseOf(p,f.y).i;
+ if(f.t==='imp')return `Se ${x}, ${y}.`;
+ if(f.t==='iff')return `${cap(x)} se e solo se ${y}.`;
+ return `${cap(x)} e ${y}.`;}
+const worldTxt=(p,w)=>`${w.A?p.a.i:p.a.ni} e ${w.B?p.b.i:p.b.ni}`;
+const worldFull=(p,w)=>worldTxt(p,w)+(!w.A&&w.B?` (per esempio: ${p.ce})`:'');
+const worldSym=w=>`A ${w.A?'vera':'falsa'} e B ${w.B?'vera':'falsa'}`;
+const worldRegion=w=>w.A&&w.B?'in':(!w.A&&w.B?'ring':(!w.A&&!w.B?'out':null));
+const VF=b=>b?'V':'F';
+function truthTable(p,cols){
+ let h='<div class="tt-wrap"><table class="tt"><thead><tr><th>A</th><th>B</th>'+cols.map(c=>`<th>${c.h}</th>`).join('')+'</tr></thead><tbody>';
+ WORLDS.forEach(w=>{h+=`<tr><td>${VF(w.A)}</td><td>${VF(w.B)}</td>`+cols.map(c=>`<td>${VF(ev(c.f,w))}</td>`).join('')+'</tr>';});
+ return h+`</tbody></table></div><p class="small">A = «${p.a.i}», B = «${p.b.i}». V = vera, F = falsa.</p>`;}
+const BASE=imp(L('A'),L('B'));
+
+const IMP_ST={
+ frase:{name:'la frase stessa',f:imp(L('A'),L('B'))},
+ contronominale:{name:'la contronominale',f:imp(L('B',true),L('A',true))},
+ inversa:{name:'l’inversa',f:imp(L('B'),L('A'))},
+ contraria:{name:'la contraria',f:imp(L('A',true),L('B',true))},
+};
+
+/* --- Implicazione 1: quali frasi si deducono --- */
+function genImpDeduce(){
+ const pi=rnd(PAIRS.length),p=PAIRS[pi],prem=BASE;
+ const keys=shuffle(Object.keys(IMP_ST)),R4=['I','II','III','IV'],lab={};
+ keys.forEach((k,i)=>lab[k]=R4[i]);
+ const ded=keys.filter(k=>entails(prem,IMP_ST[k].f));
+ const same=(a,b)=>a.length===b.length&&a.every(x=>b.includes(x));
+ const setLabel=set=>{const r=set.map(k=>lab[k]).sort((a,b)=>R4.indexOf(a)-R4.indexOf(b));
+  if(r.length===4)return 'Tutte e quattro: I, II, III e IV';
+  if(r.length===1)return 'Solo '+r[0];
+  return 'Solo '+r.slice(0,-1).join(', ')+' e '+r[r.length-1];};
+ const CAND=[
+  {set:['frase','inversa'],err:'Hai girato la freccia: da A ⇒ B hai preso anche B ⇒ A (errore detto «affermazione del conseguente»).'},
+  {set:['frase','contraria'],err:'Hai negato le due parti senza scambiarle: è la contraria, che non segue (errore detto «negazione dell’antecedente»).'},
+  {set:['frase','contronominale','inversa','contraria'],err:'Hai letto «se» come «se e solo se»: solo così varrebbero anche inversa e contraria.'},
+  {set:['frase'],err:'Hai dimenticato la contronominale: dice la stessa cosa della frase, quindi segue sempre.'},
+  {set:['frase','inversa','contraria'],err:'Hai scambiato i ruoli: inversa e contraria non seguono, la contronominale sì.'},
+ ];
+ const cw=g=>WORLDS.find(w=>ev(prem,w)&&!ev(g,w));
+ const explain=set=>{const bad=set.filter(k=>!ded.includes(k)),miss=ded.filter(k=>!set.includes(k));const out=[];
+  if(bad.length){const w=cw(IMP_ST[bad[0]].f);const nm=bad.map(k=>`${lab[k]} (${IMP_ST[k].name})`).join(' e ');
+   out.push(`${nm} non ${bad.length>1?'seguono':'segue'}: nella situazione «${worldFull(p,w)}» la frase data è vera ma ${bad.length>1?'loro sono false':bad.map(k=>lab[k])[0]+' è falsa'}.`);}
+  miss.forEach(k=>out.push(`Manca ${lab[k]} (${IMP_ST[k].name}), che è vera in tutte le situazioni permesse dalla frase.`));
+  return out.join(' ');};
+ const wrong=shuffle(CAND.filter(c=>!same(c.set,ded))).slice(0,4);
+ const options=shuffle([{set:ded,err:null},...wrong]).map(c=>{
+  const ok=same(c.set,ded);
+  return{html:setLabel(c.set),correct:ok,why:ok?'Si deducono solo la frase stessa e la sua contronominale: nessuna situazione permessa dalla frase le rende false.':explain(c.set),err:ok?null:c.err};});
+ const allowed=WORLDS.filter(w=>ev(prem,w));
+ const ringNames=keys.filter(k=>{const w=cw(IMP_ST[k].f);return w&&worldRegion(w)==='ring';}).map(k=>`${lab[k]} (${IMP_ST[k].name})`);
+ return{topic:'imp',key:'d'+pi+keys.join(''),
+  stem:`È vera la frase:<q class="blockq">${fText(p,prem)}</q>Quali delle seguenti affermazioni si possono dedurre con certezza?<ol class="roman">${keys.map(k=>`<li><b>${lab[k]}.</b> ${fText(p,IMP_ST[k].f)}</li>`).join('')}</ol>`,
+  options,
+  steps:[
+   `Dai un nome alle due parti: A = «${p.a.i}», B = «${p.b.i}». La frase è A ⇒ B.`,
+   `Scrivi le quattro affermazioni in simboli: ${keys.map(k=>`${lab[k]} = ${sym(IMP_ST[k].f)} (${IMP_ST[k].name})`).join('; ')}.`,
+   `A ⇒ B esclude una sola situazione: A vera e B falsa. Restano possibili: ${allowed.map(worldSym).join('; ')}.`,
+   ...keys.map(k=>{const w=cw(IMP_ST[k].f);return w?`${lab[k]} è falsa quando ${worldSym(w)} (per esempio: ${p.ce}), situazione che la frase permette: non si deduce.`:`${lab[k]} è vera in tutte le situazioni rimaste: si deduce.`;}),
+   `Risposta: ${setLabel(ded)}.`],
+  fig:{type:'impl',pair:pi,hl:['ring'],caption:`Zona evidenziata: B senza A («${worldTxt(p,{A:false,B:true})}»). È il controesempio di ${ringNames.join(' e ')}. La zona «A fuori da B» non esiste: per questo frase e contronominale non hanno controesempi.`}};
+}
+
+/* --- Implicazione 2: dato un fatto, cosa si conclude --- */
+function genImpFact(){
+ const pi=rnd(PAIRS.length),p=PAIRS[pi],prem=BASE;
+ const fact=pick([L('A'),L('A',true),L('B'),L('B',true)]);
+ const other=fact.v==='A'?'B':'A',O=other==='A'?p.a:p.b;
+ const ws=WORLDS.filter(w=>ev(prem,w)&&evL(fact,w));
+ const vals=[...new Set(ws.map(w=>w[other]))];
+ const factTxt=clauseOf(p,fact).i;
+ const fk=(fact.n?'n':'')+fact.v;
+ const label=(k)=>{
+  if(fk==='B'&&k==='T')return 'Affermazione del conseguente: B può essere vera anche senza A.';
+  if(fk==='nA'&&k==='F')return 'Negazione dell’antecedente: anche senza A, B può accadere.';
+  if(fk==='nB'&&(k==='U'||k==='T'))return 'Non hai usato la contronominale: se B è falsa, A non può essere vera.';
+  if(fk==='A'&&(k==='U'||k==='F'))return 'Non hai applicato la frase: se A è vera, B segue per forza.';
+  return null;};
+ const valTxt=v=>v?O.i:O.ni;
+ const mk=(k,html,correct)=>{let why;
+  if(k==='X'){why=correct?'I dati sono incompatibili.':`La frase è data per vera e il fatto non la contraddice: la situazione «${worldTxt(p,ws[0])}» rispetta entrambi.`;}
+  else if(k==='U'){why=correct?`Con il fatto dato restano possibili sia «${worldTxt(p,ws[0])}» sia «${worldTxt(p,ws[1])}».`:`Si può stabilire: l’unica situazione compatibile è «${worldTxt(p,ws[0])}».`;}
+  else{const v=k==='T';
+   if(correct)why=`In ogni situazione compatibile (${ws.map(w=>'«'+worldTxt(p,w)+'»').join(', ')}) risulta «${valTxt(v)}».`;
+   else if(vals.length===2)why=`Non è certo: sono possibili sia «${worldFull(p,ws.find(w=>w[other]===v))}» sia «${worldFull(p,ws.find(w=>w[other]!==v))}».`;
+   else why=`È impossibile: se la frase è vera e ${factTxt}, allora per forza ${valTxt(vals[0])}.`;}
+  return{html,correct,why,err:correct?null:label(k)};};
+ const options=shuffle([
+  mk('T',cap(O.i)+'.',vals.length===1&&vals[0]===true),
+  mk('F',cap(O.ni)+'.',vals.length===1&&vals[0]===false),
+  mk('U',`Non si può stabilire se ${O.i}.`,vals.length===2),
+  mk('X',`In questo caso la frase «${fText(p,prem).slice(0,-1)}» è falsa.`,ws.length===0)]);
+ const regs=ws.map(worldRegion);
+ const rule={A:'È la frase applicata direttamente: A vera ⇒ B vera.',nB:'È la contronominale: B falsa ⇒ A falsa.',B:'La frase non dice nulla su A quando B è vera.',nA:'La frase non dice nulla su B quando A è falsa.'}[fk];
+ return{topic:'imp',key:'f'+pi+fk,
+  stem:`È vera la frase:<q class="blockq">${fText(p,prem)}</q>Sappiamo inoltre che ${factTxt}. Che cosa si può concludere con certezza?`,
+  options,
+  steps:[`A = «${p.a.i}», B = «${p.b.i}». La frase è A ⇒ B: esclude solo «A vera e B falsa».`,
+   `Il fatto «${factTxt}» lascia possibili: ${ws.map(worldSym).join('; ')}.`,
+   vals.length===1?`In tutte risulta «${valTxt(vals[0])}». ${rule}`:`Può essere sia «${O.i}» sia «${O.ni}». ${rule}`,
+   `Risposta: ${options.find(o=>o.correct).html}`],
+  fig:{type:'impl',pair:pi,hl:regs,caption:`Zone compatibili con il fatto «${factTxt}» (evidenziate).`}};
+}
+
+/* --- Implicazione 3: negazione --- */
+function genImpNeg(){
+ const pi=rnd(PAIRS.length),p=PAIRS[pi],prem=BASE;
+ const pool=[
+  {f:and(L('A'),L('B',true)),err:null},
+  {f:imp(L('A'),L('B',true)),err:'Hai negato solo la seconda parte tenendo il «se»: la negazione di un «se… allora» non è un altro «se… allora».'},
+  {f:imp(L('A',true),L('B',true)),err:'È la contraria, non la negazione.'},
+  {f:and(L('A',true),L('B',true)),err:'Hai negato entrambe le parti: la frase è falsa solo quando A accade e B no.'},
+  {f:imp(L('B'),L('A')),err:'È l’inversa, non la negazione.'},
+  {f:and(L('A'),L('B')),err:'Questa situazione rende vera la frase, non falsa.'}];
+ const good=pool.filter(o=>isNeg(prem,o.f)),bad=shuffle(pool.filter(o=>!isNeg(prem,o.f))).slice(0,4);
+ const options=shuffle([good[0],...bad]).map(o=>{const ok=isNeg(prem,o.f);let why;
+  if(ok)why='Ha sempre il valore opposto alla frase: è falsa quando la frase è vera e vera quando la frase è falsa.';
+  else{const w=WORLDS.find(w=>ev(prem,w)===ev(o.f,w));why=`Nella situazione «${worldFull(p,w)}» la frase data e questa sono entrambe ${ev(prem,w)?'vere':'false'}: una negazione deve avere sempre il valore opposto.`;}
+  return{html:fText(p,o.f),correct:ok,why,err:ok?null:o.err,sym:sym(o.f)};});
+ return{topic:'imp',key:'n'+pi,
+  stem:`Qual è la negazione di questa frase?<q class="blockq">${fText(p,prem)}</q>`,options,
+  steps:[`A = «${p.a.i}», B = «${p.b.i}». La frase è A ⇒ B.`,
+   `A ⇒ B è falsa in un solo caso: A vera e B falsa.`,
+   `Quindi la negazione è «A e non B»: <q>${fText(p,good[0].f)}</q>`,
+   `Controllo con la tavola di verità: la colonna della negazione è l’opposto di quella di A ⇒ B.`+truthTable(p,[{h:'A ⇒ B',f:prem},{h:'A e ¬B',f:good[0].f}])]};
+}
+
+/* --- Implicazione 4: frase equivalente --- */
+function genImpEq(){
+ const pi=rnd(PAIRS.length),p=PAIRS[pi],prem=BASE;
+ const pool=[
+  {f:imp(L('B',true),L('A',true)),err:null},
+  {f:imp(L('B'),L('A')),err:'È l’inversa: hai girato la freccia.'},
+  {f:imp(L('A',true),L('B',true)),err:'È la contraria: hai negato le parti senza scambiarle.'},
+  {f:imp(L('A'),L('B',true)),err:'Una negazione di troppo: cambia completamente il significato.'},
+  {f:iff(L('A'),L('B')),err:'Aggiunge il verso opposto (B ⇒ A): dice più della frase data.'},
+  {f:and(L('A'),L('B')),err:'Afferma che A e B accadono davvero; la frase dice solo cosa succede «se» A.'}];
+ const good=pool.filter(o=>sameTab(prem,o.f)),bad=shuffle(pool.filter(o=>!sameTab(prem,o.f))).slice(0,4);
+ const options=shuffle([good[0],...bad]).map(o=>{const ok=sameTab(prem,o.f);let why;
+  if(ok)why='È la contronominale: è vera e falsa esattamente nelle stesse situazioni della frase.';
+  else{const w=WORLDS.find(w=>ev(prem,w)!==ev(o.f,w));why=`Nella situazione «${worldFull(p,w)}» la frase data è ${ev(prem,w)?'vera':'falsa'}, questa invece è ${ev(o.f,w)?'vera':'falsa'}.`;}
+  return{html:fText(p,o.f),correct:ok,why,err:ok?null:o.err};});
+ return{topic:'imp',key:'e'+pi,
+  stem:`Quale frase ha lo stesso significato di questa?<q class="blockq">${fText(p,prem)}</q>`,options,
+  steps:[`A = «${p.a.i}», B = «${p.b.i}». La frase è A ⇒ B.`,
+   `L’unica riscrittura con «se… allora» equivalente è la contronominale: ¬B ⇒ ¬A (si scambiano le parti e si negano entrambe).`,
+   `Controllo con la tavola di verità: le due colonne coincidono.`+truthTable(p,[{h:'A ⇒ B',f:prem},{h:'¬B ⇒ ¬A',f:good[0].f},{h:'B ⇒ A',f:imp(L('B'),L('A'))}]),
+   `Risposta: <q>${fText(p,good[0].f)}</q>`]};
+}
+
+/* ================= CONDIZIONE NECESSARIA E SUFFICIENTE ================= */
+const TPL=[
+ {id:'se',k:'imp',lab:'Se A, B',r:(X,Y)=>`Se ${X.i}, ${Y.i}.`,hint:(X,Y)=>`«Se X, Y» significa X ⇒ Y.`},
+ {id:'solose',k:'imp',lab:'A solo se B',r:(X,Y)=>`${cap(X.i)} solo se ${Y.i}.`,hint:()=>`«X solo se Y»: X può accadere soltanto quando c’è Y, quindi X ⇒ Y (Y è necessaria).`},
+ {id:'sedopo',k:'imp',lab:'B se A',r:(X,Y)=>`${cap(Y.i)} se ${X.i}.`,hint:()=>`«Y se X» è un «se» messo in fondo: X ⇒ Y.`},
+ {id:'basta',k:'imp',lab:'Basta che A perché B',r:(X,Y)=>`Basta che ${X.c} perché ${Y.c}.`,hint:()=>`«Basta che X perché Y»: X da sola garantisce Y, quindi X ⇒ Y (X è sufficiente).`},
+ {id:'suff',k:'imp',lab:'È sufficiente che A perché B',r:(X,Y)=>`È sufficiente che ${X.c} perché ${Y.c}.`,hint:()=>`«È sufficiente che X perché Y»: X ⇒ Y (X è sufficiente).`},
+ {id:'nec',k:'imp',lab:'Condizione necessaria perché A è che B',r:(X,Y)=>`Condizione necessaria perché ${X.c} è che ${Y.c}.`,hint:()=>`«Condizione necessaria perché X è che Y»: senza Y niente X, quindi X ⇒ Y.`},
+ {id:'ogni',k:'imp',lab:'Ogni volta che A, B',r:(X,Y)=>`Ogni volta che ${X.i}, ${Y.i}.`,hint:()=>`«Ogni volta che X, Y»: X ⇒ Y.`},
+ {id:'patto',k:'imp',lab:'A, a patto che B',patto:true,r:(X,Y)=>`${cap(X.i)}, a patto che ${Y.c}.`,hint:()=>`«X, a patto che Y» vale come «X solo se Y»: X ⇒ Y (Y è necessaria).`},
+ {id:'sse',k:'iff',lab:'A se e solo se B',r:(X,Y)=>`${cap(X.i)} se e solo se ${Y.i}.`,hint:()=>`«X se e solo se Y» vale nei due versi: X ⇔ Y.`},
+];
+function inst(p,t,x,y){return{t,x,y,f:{t:t.k,x,y},txt:t.r(clauseOf(p,x),clauseOf(p,y))};}
+function hintFor(p,t,x,y){return t.hint()+` Qui X = «${clauseOf(p,x).i}», Y = «${clauseOf(p,y).i}».`;}
+function relLabel(f){
+ if(sameTab(f,BASE))return 'equiv';
+ if(sameTab(f,imp(L('B'),L('A'))))return 'inv';
+ if(sameTab(f,iff(L('A'),L('B'))))return 'iff';
+ if(sameTab(f,imp(L('A'),L('B',true))))return 'sign';
+ return 'other';}
+const REL_ERR={inv:'Significa B ⇒ A: hai girato il verso della condizione (inversa e contraria dicono questo).',iff:'Significa A ⇔ B: aggiunge anche il verso opposto, che la frase non garantisce.',sign:'Significa A ⇒ ¬B: c’è una negazione sbagliata.',other:'Ha un significato diverso.'};
+const usableT=()=>TPL.filter(t=>OPT.patto||!t.patto);
+
+/* --- CNS 1: chi è necessaria / sufficiente --- */
+const STMT_K={suff:'condizione sufficiente per',nec:'condizione necessaria per',ns:'condizione necessaria e sufficiente per'};
+function stmtF(k,X,Y){return k==='suff'?imp(X,Y):k==='nec'?imp(Y,X):iff(X,Y);}
+function genCnsCond(){
+ const pi=rnd(PAIRS.length),p=PAIRS[pi];
+ const t=pick(usableT().filter(t=>t.k==='imp'));
+ const s=inst(p,t,L('A'),L('B')),stem=s.f;
+ const all=[];
+ ['suff','nec','ns'].forEach(k=>[[L('A'),L('B')],[L('B'),L('A')]].forEach(([X,Y])=>{
+  all.push({k,X,Y,f:stmtF(k,X,Y),html:`«${cap(clauseOf(p,X).i)}» è ${STMT_K[k]} «${clauseOf(p,Y).i}».`});}));
+ const good=all.filter(o=>entails(stem,o.f)),badAll=all.filter(o=>!entails(stem,o.f));
+ const nsPick=pick(badAll.filter(o=>o.k==='ns'));
+ const bad=[...badAll.filter(o=>o.k!=='ns'),nsPick];
+ const errOf=o=>o.k==='ns'?'La frase dà un solo verso: «necessaria e sufficiente» richiederebbe anche il viceversa.':(o.k==='nec'&&o.X.v==='A')?'Hai scambiato «necessaria» e «sufficiente».':(o.k==='suff'&&o.X.v==='B')?'Hai invertito i ruoli: la condizione sufficiente è la A, non la B.':(o.k==='nec'&&o.X.v==='B')?null:null;
+ const options=shuffle([pick(good),...bad]).map(o=>{const ok=entails(stem,o.f);let why;
+  if(ok)why=`Segue da A ⇒ B: ${o.k==='suff'?'la A garantisce la B':'senza la B non può esserci la A'}.`;
+  else{const w=WORLDS.find(w=>ev(stem,w)&&!ev(o.f,w));why=`La frase permette la situazione «${worldFull(p,w)}», in cui questa affermazione non regge.`;}
+  return{html:o.html,correct:ok,why,err:ok?null:errOf(o)};});
+ return{topic:'cns',key:'c'+pi+t.id,
+  stem:`Considera la frase:<q class="blockq">${s.txt}</q>Quale delle seguenti affermazioni è corretta?`,options,
+  steps:[`Riconosci la struttura. ${hintFor(p,t,L('A'),L('B'))}`,
+   `Quindi A ⇒ B con A = «${p.a.i}» e B = «${p.b.i}».`,
+   `In A ⇒ B: A è condizione sufficiente per B; B è condizione necessaria per A. Nient’altro è garantito.`,
+   `Risposta: ${options.find(o=>o.correct).html}`],
+  fig:{type:'impl',pair:pi,hl:[],caption:'Il cerchio piccolo (A) è la condizione sufficiente, quello grande (B) la necessaria.'}};
+}
+
+/* --- CNS 2: frase con lo stesso significato --- */
+function genCnsEq(){
+ const pi=rnd(PAIRS.length),p=PAIRS[pi],T=usableT();
+ const st=pick(T.filter(t=>t.k==='imp'));
+ const s=inst(p,st,L('A'),L('B'));
+ const A=L('A'),B=L('B'),nA=L('A',true),nB=L('B',true),se=T.find(t=>t.id==='se'),sse=T.find(t=>t.id==='sse');
+ const eqPool=[...T.filter(t=>t.k==='imp'&&t.id!==st.id).map(t=>inst(p,t,A,B)),inst(p,se,nB,nA)];
+ const invPool=[...T.filter(t=>t.k==='imp').map(t=>inst(p,t,B,A)),inst(p,se,nA,nB)];
+ const extra=shuffle([inst(p,sse,A,B),inst(p,se,A,nB)]);
+ const correct=pick(eqPool);
+ const chosen=[];const used=new Set([s.txt,correct.txt]);
+ const add=o=>{if(!used.has(o.txt)&&!sameTab(o.f,s.f)&&chosen.length<4){chosen.push(o);used.add(o.txt);}};
+ add(extra[0]); if(Math.random()<.5)add(extra[1]);
+ shuffle(invPool).forEach(add);
+ const options=shuffle([correct,...chosen]).map(o=>{const ok=sameTab(o.f,s.f);let why;
+  if(ok)why=`Significa ${sym(o.f)}, che equivale ad A ⇒ B: stesse situazioni vere e false.`;
+  else{const w=WORLDS.find(w=>ev(s.f,w)!==ev(o.f,w));why=`Significa ${sym(o.f)}. Nella situazione «${worldFull(p,w)}» la frase data è ${ev(s.f,w)?'vera':'falsa'}, questa invece è ${ev(o.f,w)?'vera':'falsa'}.`;}
+  return{html:o.txt,correct:ok,why,err:ok?null:REL_ERR[relLabel(o.f)]};});
+ return{topic:'cns',key:'q'+pi+st.id,
+  stem:`Quale frase ha lo stesso significato di questa?<q class="blockq">${s.txt}</q>`,options,
+  steps:[`Traduci la frase data. ${hintFor(p,st,A,B)}`,`Quindi A ⇒ B con A = «${p.a.i}», B = «${p.b.i}».`,
+   `Traduci ogni risposta allo stesso modo e cerca quella che dà ancora A ⇒ B (oppure la sua contronominale ¬B ⇒ ¬A).`,
+   ...options.map((o,i)=>`${'ABCDE'[i]}: ${o.why.split('.')[0]}.`),
+   `Risposta: <q>${correct.txt}</q>`]};
+}
+
+/* ================= QUANTIFICATORI ================= */
+function N(s,p,art,un){return{s,p,art,un,nes:un==='uno'?'nessuno':'nessun'};}
+const QNOUNS=[N('partecipante al corso','partecipanti al corso','i','un'),N('inquilino del palazzo','inquilini del palazzo','gli','un'),N('dipendente dell’ufficio','dipendenti dell’ufficio','i','un'),N('alunno della classe','alunni della classe','gli','un'),N('cliente del bar','clienti del bar','i','un'),N('giocatore della squadra','giocatori della squadra','i','un'),N('passeggero del treno','passeggeri del treno','i','un'),N('iscritto alla palestra','iscritti alla palestra','gli','un'),N('collega di Marco','colleghi di Marco','i','un'),N('amico di Giulia','amici di Giulia','gli','un'),N('socio del circolo','soci del circolo','i','un'),N('turista del gruppo','turisti del gruppo','i','un'),N('ospite dell’albergo','ospiti dell’albergo','gli','un'),N('abitante del paese','abitanti del paese','gli','un'),N('studente del corso','studenti del corso','gli','uno'),N('candidato al concorso','candidati al concorso','i','un'),N('operaio del cantiere','operai del cantiere','gli','un'),N('vicino di casa di Anna','vicini di casa di Anna','i','un'),N('cugino di Paolo','cugini di Paolo','i','un'),N('corridore della gara','corridori della gara','i','un')];
+const VERBS=[['parla inglese','parlano inglese'],['ha pagato la quota','hanno pagato la quota'],['abita in centro','abitano in centro'],['beve il caffè','bevono il caffè'],['usa la bicicletta','usano la bicicletta'],['ha letto il regolamento','hanno letto il regolamento'],['si alza prima delle 7','si alzano prima delle 7'],['ha superato l’esame','hanno superato l’esame'],['porta gli occhiali','portano gli occhiali'],['gioca a calcetto','giocano a calcetto'],['ha un cane','hanno un cane'],['è arrivato in orario','sono arrivati in orario'],['mangia in mensa','mangiano in mensa'],['ha consegnato il compito','hanno consegnato il compito'],['ha il motorino','hanno il motorino'],['va in vacanza al mare','vanno in vacanza al mare'],['sa nuotare','sanno nuotare'],['fa colazione al bar','fanno colazione al bar'],['ha votato','hanno votato'],['suona uno strumento','suonano uno strumento']];
+/* modelli: x = esiste un S che è P, y = esiste un S che non è P */
+const QM=[{x:true,y:false},{x:false,y:true},{x:true,y:true},{x:false,y:false}];
+const QF={A:m=>!m.y,E:m=>!m.x,I:m=>m.x,O:m=>m.y};
+const QNAME={A:'«tutti … sono»',E:'«nessuno … è»',I:'«qualche (almeno uno) … è»',O:'«qualche (almeno uno) … non è»'};
+const qTab=fn=>QM.map(fn);
+const tabEq=(a,b)=>a.every((v,i)=>v===b[i]);
+function qPhr(f,n,v){switch(f){
+ case 'A':return[`Tutti ${n.art} ${n.p} ${v[1]}`,`Ogni ${n.s} ${v[0]}`];
+ case 'E':return[`${cap(n.nes)} ${n.s} ${v[0]}`];
+ case 'I':return[`Qualche ${n.s} ${v[0]}`,`Almeno ${n.un} ${n.s} ${v[0]}`];
+ case 'O':return[`Qualche ${n.s} non ${v[0]}`,`Almeno ${n.un} ${n.s} non ${v[0]}`,`Non tutti ${n.art} ${n.p} ${v[1]}`];}}
+const formOfTab=t=>Object.keys(QF).find(k=>tabEq(qTab(QF[k]),t));
+function qModelTxt(m,n,v){
+ if(m.x&&!m.y)return `tutti ${n.art} ${n.p} ${v[1]}`;
+ if(!m.x&&m.y)return `nessun${n.un==='uno'?'o':''} ${n.s} ${v[0]}`;
+ if(m.x&&m.y)return `alcuni ${n.p} ${v[1]} e altri no`;
+ return `non c’è nessun ${n.s}`;}
+const QREL=(o,f)=>{if(o===f)return 'Ripete la frase data con altre parole: non la nega.';
+ const s=[o,f].sort().join('');
+ if(s==='AE')return 'È il contrario, non la negazione: è troppo forte. Per smentire «tutti» basta un solo controesempio; «nessuno» e «tutti» possono essere false insieme.';
+ if(s==='IO')return 'Hai negato solo il verbo lasciando «qualche»: «qualche è» e «qualche non è» possono essere vere insieme.';
+ return 'Hai cambiato solo la quantità (tutti/qualche) o solo il verbo: per negare servono entrambe le cose.';};
+function genQuant(){
+ const ni=rnd(QNOUNS.length),vi=rnd(VERBS.length),n=QNOUNS[ni],v=VERBS[vi];
+ const of=pick(['A','A','E','I','O']);const ophr=qPhr(of,n,v),oi=rnd(ophr.length),orig=ophr[oi];
+ const oTab=qTab(QF[of]),negTab=oTab.map(b=>!b);
+ const base=[];['A','E','I','O'].forEach(f=>qPhr(f,n,v).forEach(t=>base.push({txt:t,tab:qTab(QF[f]),form:f,pre:false})));
+ const correct=pick(base.filter(o=>tabEq(o.tab,negTab)));
+ const cands=shuffle(base.filter(o=>o.txt!==orig&&!tabEq(o.tab,negTab)));
+ const pre=shuffle(base.filter(o=>o.form!==of&&!o.txt.startsWith('Non')).map(o=>({txt:`Non è vero che ${low(o.txt)}`,tab:o.tab.map(b=>!b),form:formOfTab(o.tab.map(b=>!b)),pre:true,inner:o})));
+ const chosen=[],seenTab=new Set();
+ cands.forEach(o=>{const k=o.tab.join();if(!seenTab.has(k)&&chosen.length<3){chosen.push(o);seenTab.add(k);}});
+ for(const o of pre){if(chosen.length>=4)break;if(!tabEq(o.tab,negTab))chosen.push(o);}
+ for(const o of cands){if(chosen.length>=4)break;if(!chosen.includes(o))chosen.push(o);}
+ const options=shuffle([correct,...chosen]).map(o=>{const ok=tabEq(o.tab,negTab);let why,err=null;
+  if(ok)why=`È vera esattamente quando la frase data è falsa. Regola: la negazione di ${QNAME[of]} è ${QNAME[o.form]}.`;
+  else{const m=QM.filter(m=>m.x||m.y).find(m=>QF[of](m)===QF[o.form](m));
+   why=(o.pre?`«Non è vero che ${low(o.inner.txt)}» equivale a «${qPhr(o.form,n,v)[0]}». `:'')+`Se ${qModelTxt(m,n,v)}, la frase data e questa sono entrambe ${QF[of](m)?'vere':'false'}: una negazione deve avere sempre il valore opposto.`;
+   err=QREL(o.form,of);}
+  return{html:o.txt+'.',correct:ok,why,err};});
+ return{topic:'quant',key:'q'+ni+'-'+vi+of,
+  stem:`Qual è la negazione di questa frase?<q class="blockq">${orig}.</q>`,options,
+  steps:[`La frase è del tipo ${QNAME[of]}.`,
+   `Regola: tutti ⟷ almeno uno non; nessuno ⟷ almeno uno. Negare significa smentire: basta un caso che va contro.`,
+   `La frase data è falsa esattamente quando: ${low(correct.txt)}.`,
+   `Risposta: <q>${correct.txt}.</q>`],
+  fig:{type:'quant',noun:ni,verb:vi,caption:'Prova a cliccare sulle zone per vedere quando ciascuna frase è vera.'}};
+}
+
+/* ================= SILLOGISMI (insiemi S, M, P: bit 1, 2, 4) ================= */
+const SNOUNS=[N('studente','studenti','gli','uno'),N('ciclista','ciclisti','i','un'),N('musicista','musicisti','i','un'),N('vegetariano','vegetariani','i','un'),N('pendolare','pendolari','i','un'),N('nuotatore','nuotatori','i','un'),N('fotografo','fotografi','i','un'),N('cuoco','cuochi','i','un'),N('pianista','pianisti','i','un'),N('scacchista','scacchisti','gli','uno'),N('escursionista','escursionisti','gli','un'),N('sciatore','sciatori','gli','uno'),N('ballerino','ballerini','i','un'),N('programmatore','programmatori','i','un'),N('pittore','pittori','i','un'),N('giardiniere','giardinieri','i','un'),N('volontario','volontari','i','un'),N('collezionista','collezionisti','i','un'),N('alpinista','alpinisti','gli','un'),N('tennista','tennisti','i','un'),N('chitarrista','chitarristi','i','un'),N('automobilista','automobilisti','gli','un'),N('geometra','geometri','i','un'),N('ingegnere','ingegneri','gli','un'),N('violinista','violinisti','i','un'),N('podista','podisti','i','un'),N('velista','velisti','i','un'),N('fumatore','fumatori','i','un'),N('lettore di gialli','lettori di gialli','i','un'),N('giocatore di basket','giocatori di basket','i','un'),N('tifoso di calcio','tifosi di calcio','i','un'),N('architetto','architetti','gli','un')];
+const CTX=['In un condominio','In una palestra','In una classe','In un ufficio','In un circolo sportivo','In un paese di montagna','In un gruppo di amici','In una squadra di lavoro'];
+const SX=1,MX=2,PX=4,REG=[1,2,3,4,5,6,7],LET={1:'S',2:'M',4:'P'};
+const has=(m,r)=>(m>>(r-1))&1;
+function sat(q,X,Y,m){switch(q){
+ case 'A':return REG.every(r=>!(r&X&&!(r&Y))||!has(m,r));
+ case 'E':return REG.every(r=>!(r&X&&r&Y)||!has(m,r));
+ case 'I':return REG.some(r=>r&X&&r&Y&&has(m,r));
+ case 'O':return REG.some(r=>r&X&&!(r&Y)&&has(m,r));}}
+const nonEmpty=(t,m)=>REG.some(r=>(r&t)&&has(m,r));
+function modelsOf(prems,impo){const out=[];for(let m=0;m<128;m++){
+ if(impo&&!(nonEmpty(SX,m)&&nonEmpty(MX,m)&&nonEmpty(PX,m)))continue;
+ if(prems.every(p=>sat(p.q,p.X,p.Y,m)))out.push(m);}return out;}
+const pop=m=>{let c=0;while(m){c+=m&1;m>>=1;}return c;};
+function sTxt(q,X,Y){switch(q){
+ case 'A':return `Tutti ${X.art} ${X.p} sono ${Y.p}`;
+ case 'E':return `${cap(X.nes)} ${X.s} è ${Y.un} ${Y.s}`;
+ case 'I':return `Qualche ${X.s} è ${Y.un} ${Y.s}`;
+ case 'O':return `Qualche ${X.s} non è ${Y.un} ${Y.s}`;}}
+const sSym=(q,X,Y)=>({A:`Tutti ${LET[X]} sono ${LET[Y]}`,E:`Nessun ${LET[X]} è ${LET[Y]}`,I:`Qualche ${LET[X]} è ${LET[Y]}`,O:`Qualche ${LET[X]} non è ${LET[Y]}`})[q];
+const effect=(q,X,Y)=>({A:`la parte di ${LET[X]} fuori da ${LET[Y]} è vuota (tratteggio)`,E:`la parte comune a ${LET[X]} e ${LET[Y]} è vuota (tratteggio)`,I:`nella parte comune a ${LET[X]} e ${LET[Y]} c’è almeno qualcuno (●)`,O:`nella parte di ${LET[X]} fuori da ${LET[Y]} c’è almeno qualcuno (●)`})[q];
+const dist=(p,t)=>p.q==='A'?p.X===t:p.q==='E'?(p.X===t||p.Y===t):p.q==='O'?p.Y===t:false;
+function sillRules(prems){const r=[];
+ if(prems.every(p=>p.q==='I'||p.q==='O'))r.push('Due premesse con «qualche»: non si conclude mai nulla di certo.');
+ if(prems.every(p=>p.q==='E'||p.q==='O'))r.push('Due premesse negative: non si conclude nulla.');
+ if(!prems.some(p=>dist(p,MX)))r.push('Il termine medio M non è mai preso «tutto intero» (come in «tutti gli M…», «nessun M…» o «… non è un M»): le premesse non collegano davvero S e P.');
+ return r;}
+function summaryStates(ms){const st={};REG.forEach(r=>{const a=ms.every(m=>has(m,r)),b=ms.every(m=>!has(m,r));st[r]=a?'full':b?'empty':'unk';});return st;}
+function modelStates(m){const st={};REG.forEach(r=>st[r]=has(m,r)?'full':'empty');return st;}
+function bestModel(ms,pred){const c=ms.filter(pred);if(!c.length)return null;const mn=Math.min(...c.map(pop));return pick(c.filter(m=>pop(m)===mn));}
+function sillAnalyze(prems){
+ const msI=modelsOf(prems,true),ms0=modelsOf(prems,false);
+ const concl=[];
+ ['A','E','I','O'].forEach(q=>[[SX,PX],[PX,SX]].forEach(([X,Y])=>{
+  const s=m=>sat(q,X,Y,m);
+  concl.push({q,X,Y,certI:msI.length>0&&msI.every(s),cert0:ms0.every(s),possI:msI.some(s)});}));
+ return{msI,ms0,concl};}
+function genSill(){
+ for(let tries=0;tries<500;tries++){
+  const wantValid=Math.random()<0.6;
+  const p1=Math.random()<.5?{q:pick('AEIO'),X:SX,Y:MX}:{q:pick('AEIO'),X:MX,Y:SX};
+  const p2=Math.random()<.5?{q:pick('AEIO'),X:MX,Y:PX}:{q:pick('AEIO'),X:PX,Y:MX};
+  const prems=[p1,p2];
+  const {msI,concl}=sillAnalyze(prems);
+  if(!msI.length)continue;
+  const valid=concl.filter(c=>c.cert0);
+  const amb=concl.filter(c=>c.certI&&!c.cert0);
+  const cand=concl.filter(c=>!c.certI);
+  if(wantValid&&!valid.length)continue;
+  if(!wantValid&&(valid.length||amb.length))continue;
+  const need=valid.length?3:4;
+  const poss=shuffle(cand.filter(c=>c.possI)),imposs=shuffle(cand.filter(c=>!c.possI));
+  const dis=[...poss.slice(0,need),...imposs].slice(0,need);
+  if(dis.length<need)continue;
+  const idx=shuffle([...Array(SNOUNS.length).keys()]).slice(0,3);
+  const T={1:SNOUNS[idx[0]],2:SNOUNS[idx[1]],4:SNOUNS[idx[2]]};
+  const ctx=pick(CTX);
+  const premTxt=shuffle(prems).map(p=>sTxt(p.q,T[p.X],T[p.Y])+'.');
+  let corr=null;
+  if(valid.length){const uni=valid.filter(c=>c.q==='A'||c.q==='E');corr=pick(uni.length?uni:valid);}
+  const certainSyms=concl.filter(c=>c.cert0).map(c=>sSym(c.q,c.X,c.Y));
+  const rules=sillRules(prems);
+  const mkC=(c,ok)=>{
+   let why,err=null,cex=null;
+   if(ok)why=`È vera in tutti i diagrammi compatibili con le premesse (${msI.length} combinazioni di zone vuote/abitate): nessun controesempio.`;
+   else if(!c.possI){why='È falsa in ogni diagramma compatibile con le premesse: le contraddice.';err='Hai letto le premesse al contrario (un «sì» al posto di un «no»).';}
+   else{why='È possibile, ma non certa: esiste un diagramma che rispetta le premesse in cui è falsa.';
+    const swapped=concl.find(d=>d.cert0&&d.q===c.q&&d.X===c.Y&&d.Y===c.X);
+    if(c.q==='A'&&swapped)err='Hai girato il «tutti»: «tutti gli S sono P» non dà «tutti i P sono S».';
+    else if((c.q==='A'||c.q==='E')&&concl.some(d=>d.cert0&&(d.q==='I'||d.q==='O')))err='Generalizzazione: da un «qualche» non si arriva a un «tutti» o a un «nessuno».';
+    else if(rules.length)err=rules[0];
+    else err='Hai preso per certa una conclusione solo possibile.';
+    cex={f:bestModel(msI,m=>!sat(c.q,c.X,c.Y,m)),t:bestModel(msI,m=>sat(c.q,c.X,c.Y,m))};}
+   return{html:sTxt(c.q,T[c.X],T[c.Y])+'.',correct:ok,why,err,cex,sym:sSym(c.q,c.X,c.Y)};};
+  const opts=[...(corr?[mkC(corr,true)]:[]),...dis.map(c=>mkC(c,false))];
+  const options=[...shuffle(opts),{html:'Nessuna delle conclusioni precedenti è certa.',correct:!corr,
+   why:corr?`Falso: la conclusione «${sTxt(corr.q,T[corr.X],T[corr.Y])}» è certa.`:'Giusto: per ognuna delle conclusioni proposte esiste un diagramma compatibile con le premesse in cui è falsa.'+(rules.length?' '+rules.join(' '):''),
+   err:corr?'Ti sei fermato prima: la conclusione certa c’era.':null}];
+  const termNames=`S = ${T[1].p}, M = ${T[2].p} (il termine medio: compare in entrambe le premesse), P = ${T[4].p}`;
+  return{topic:'sill',key:'s'+[p1.q,p1.X,p2.q,p2.X].join('')+idx.join('-'),
+   stem:`${ctx} valgono queste due affermazioni:<ul class="prem">${premTxt.map(t=>`<li>${t}</li>`).join('')}</ul>Quale conclusione è certa?`,
+   options,
+   steps:[`Dai un nome ai gruppi: ${termNames}.`,
+    `Premessa «${sSym(p1.q,p1.X,p1.Y)}»: ${effect(p1.q,p1.X,p1.Y)}.`,
+    `Premessa «${sSym(p2.q,p2.X,p2.Y)}»: ${effect(p2.q,p2.X,p2.Y)}.`,
+    `Si assume che ogni gruppo nominato abbia almeno un elemento. Le zone bianche con «?» possono essere vuote o abitate: se il ● può cadere in due zone, non sappiamo in quale.`,
+    `Una conclusione è certa solo se nessun diagramma compatibile la rende falsa. ${certainSyms.length?'Certe (fra S e P): '+certainSyms.join('; ')+'.':'Qui nessuna conclusione fra S e P è certa.'}`,
+    ...(corr?[]:rules),
+    `Risposta: ${corr?sTxt(corr.q,T[corr.X],T[corr.Y])+'.':'nessuna delle conclusioni proposte è certa.'}`],
+   fig:{type:'venn',states:summaryStates(msI),terms:T,caption:'Diagramma riassuntivo delle premesse: tratteggio = zona vuota, ● = zona sicuramente abitata, ? = non si sa.'}};
+ }
+ throw new Error('genSill: nessun esercizio valido');
+}
+
+const GEN={imp:()=>pick([genImpDeduce,genImpFact,genImpNeg,genImpEq])(),cns:()=>pick([genCnsCond,genCnsCond,genCnsEq])(),quant:genQuant,sill:genSill};
+/* ================= INTERFACCIA ================= */
+const $=(s,r=document)=>r.querySelector(s);
+const L5='ABCDE';
+const TOPICS={imp:'Implicazione',cns:'Necessaria e sufficiente',quant:'Negare i quantificatori',sill:'Sillogismi'};
+const S={mode:'learn',topic:'imp',set:{topics:{imp:true,cns:true,quant:true,sill:true},n:10,timer:false,minutes:20,patto:true},quiz:null};
+const fmt=x=>(Math.round(x*100)/100).toString().replace('.',',');
+let UID=0;
+
+/* ---------- diagramma A dentro B ---------- */
+function implSvg(o){
+ const hl=new Set(o.hl||[]),c=r=>hl.has(r)?' zhl':'';
+ let s=`<svg viewBox="0 0 340 220" class="impl" role="img" aria-label="Diagramma: insieme ${o.inner||'A'} dentro insieme ${o.outer||'B'}">`;
+ s+=`<rect x="3" y="3" width="334" height="214" rx="12" class="zU${c('out')}"/>`;
+ if(o.iff){s+=`<ellipse cx="176" cy="112" rx="132" ry="88" class="zA${c('in')}"/><text x="176" y="120" class="zl">${o.inner} e ${o.outer} coincidono</text>`;}
+ else{s+=`<ellipse cx="176" cy="112" rx="132" ry="88" class="zB${c('ring')}"/><circle cx="138" cy="122" r="52" class="zA${c('in')}"/>`;
+  s+=`<text x="138" y="131" class="zl">${o.inner||'A'}</text><text x="262" y="98" class="zl">${o.outer||'B'}</text>`;}
+ s+=`<text x="14" y="208" class="zs">tutte le situazioni</text>`;
+ if(o.mark){const P={in:[138,160],ring:[262,136],out:[314,28]}[o.mark];s+=`<circle cx="${P[0]}" cy="${P[1]}" r="9" class="zmark"/>`;}
+ return s+'</svg>';}
+function implRegion(svg,e){const p=svgPt(svg,e);
+ if((p.x-138)**2+(p.y-122)**2<52*52)return 'in';
+ if(((p.x-176)/132)**2+((p.y-112)/88)**2<1)return 'ring';return 'out';}
+function svgPt(svg,e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());}
+function pairLegend(p){return `<p class="legend"><span><b>A</b> = ${p.a.i}</span><span><b>B</b> = ${p.b.i}</span></p>`;}
+
+/* ---------- diagrammi di Venn (2 o 3 insiemi) ---------- */
+const VCFG={
+ 3:{w:300,h:268,c:[{cx:112,cy:100,r:76},{cx:150,cy:166,r:76},{cx:188,cy:100,r:76}],lab:[[30,30],[150,262],[270,30]]},
+ 2:{w:300,h:200,c:[{cx:118,cy:104,r:82},{cx:182,cy:104,r:82}],lab:[[30,26],[270,26]]}};
+function centroids(cfg){if(cfg.cent)return cfg.cent;const acc={};
+ for(let x=0;x<cfg.w;x+=2)for(let y=0;y<cfg.h;y+=2){let r=0;cfg.c.forEach((c,i)=>{if((x-c.cx)**2+(y-c.cy)**2<(c.r-6)**2)r|=1<<i;});if(!r)continue;(acc[r]=acc[r]||[]).push([x,y]);}
+ cfg.cent={};for(const r in acc){const pts=acc[r],mx=pts.reduce((a,p)=>a+p[0],0)/pts.length,my=pts.reduce((a,p)=>a+p[1],0)/pts.length;
+  let best=pts[0],bd=1e9;pts.forEach(p=>{const d=(p[0]-mx)**2+(p[1]-my)**2;if(d<bd){bd=d;best=p;}});cfg.cent[r]=best;}
+ return cfg.cent;}
+function vennSvg(n,states,letters,opt={}){
+ const cfg=VCFG[n],cent=centroids(cfg),u='v'+(++UID);
+ let defs=`<pattern id="${u}h" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)"><rect width="8" height="8" class="hbg"/><line x1="0" y1="0" x2="0" y2="8" class="hln"/></pattern>`;
+ cfg.c.forEach((c,i)=>defs+=`<clipPath id="${u}c${i}"><circle cx="${c.cx}" cy="${c.cy}" r="${c.r}"/></clipPath>`);
+ let body='';
+ for(let r=1;r<(1<<n);r++){
+  const idx=[...Array(n).keys()],inc=idx.filter(i=>r>>i&1),exc=idx.filter(i=>!(r>>i&1));
+  defs+=`<mask id="${u}m${r}"><rect width="${cfg.w}" height="${cfg.h}" fill="#fff"/>${exc.map(i=>`<circle cx="${cfg.c[i].cx}" cy="${cfg.c[i].cy}" r="${cfg.c[i].r}" fill="#000"/>`).join('')}</mask>`;
+  const st=states[r]||'unk';
+  const paint=st==='empty'?`style="fill:url(#${u}h)"`:`class="${st==='full'?'rfull':'runk'}"`;
+  let shape=`<rect width="${cfg.w}" height="${cfg.h}" ${paint}/>`;
+  inc.forEach(i=>shape=`<g clip-path="url(#${u}c${i})">${shape}</g>`);
+  body+=`<g mask="url(#${u}m${r})">${shape}</g>`;
+  const p=cent[r];
+  if(st==='full')body+=`<circle cx="${p[0]}" cy="${p[1]}" r="7" class="rdot"/>`;
+  else if(st==='unk'&&!opt.noQ)body+=`<text x="${p[0]}" y="${p[1]+6}" class="rq">?</text>`;
+ }
+ const outl=cfg.c.map(c=>`<circle cx="${c.cx}" cy="${c.cy}" r="${c.r}" class="vout"/>`).join('');
+ const labs=cfg.c.map((c,i)=>`<text x="${cfg.lab[i][0]}" y="${cfg.lab[i][1]}" class="vlab">${letters[i]}</text>`).join('');
+ return `<svg viewBox="0 0 ${cfg.w} ${cfg.h}" class="venn${opt.click?' clickable':''}" data-n="${n}" role="img" aria-label="Diagramma di Venn">${'<defs>'+defs+'</defs>'}${body}${outl}${labs}</svg>`;}
+function vennRegion(svg,e,n){const p=svgPt(svg,e),cfg=VCFG[n];let r=0;cfg.c.forEach((c,i)=>{if((p.x-c.cx)**2+(p.y-c.cy)**2<c.r*c.r)r|=1<<i;});return r;}
+const VLEG='<p class="small vleg"><span class="sw sw-full"></span> abitata (●) <span class="sw sw-empty"></span> vuota <span class="sw sw-unk"></span> non si sa (?)</p>';
+function termLegend(T){return `<p class="legend"><span><b>S</b> = ${T[1].p}</span><span><b>M</b> = ${T[2].p}</span><span><b>P</b> = ${T[4].p}</span></p>`;}
+
+/* ---------- figure degli esercizi ---------- */
+function figHtml(fig){
+ if(fig.type==='impl'){const p=PAIRS[fig.pair];return `<figure class="fig">${implSvg({hl:fig.hl})}${pairLegend(p)}<figcaption>${fig.caption}</figcaption></figure>`;}
+ if(fig.type==='venn')return `<figure class="fig">${vennSvg(3,fig.states,['S','M','P'])}${termLegend(fig.terms)}${VLEG}<figcaption>${fig.caption}</figcaption></figure>`;
+ if(fig.type==='quant')return `<figure class="fig"><div class="quantw" data-ni="${fig.noun}" data-vi="${fig.verb}"></div><figcaption>${fig.caption}</figcaption></figure>`;
+ return '';}
+function mountWidgets(root){root.querySelectorAll('.quantw').forEach(el=>{if(!el.dataset.on){el.dataset.on=1;quantWidget(el,+el.dataset.ni,+el.dataset.vi);}});}
+
+function reviewHtml(ex,ch){
+ return `<h3>Svolgimento</h3><ol class="steps">${ex.steps.map(s=>`<li>${s}</li>`).join('')}</ol>${ex.fig?figHtml(ex.fig):''}
+ <h3>Le risposte, una per una</h3><ul class="rev">${ex.options.map((o,i)=>`<li class="${o.correct?'r-ok':'r-ko'}${i===ch?' r-me':''}">
+ <div class="r-h"><span class="lt">${L5[i]}</span><span class="r-t">${o.html}</span></div>
+ <p class="r-tag">${o.correct?'Risposta giusta':'Sbagliata'}${i===ch?' (la tua scelta)':''}</p>
+ <p>${o.why}</p>${o.err?`<p class="err"><b>Errore che porta qui:</b> ${o.err}</p>`:''}
+ ${o.cex?`<button class="btn small" data-cex="${i}">Mostra il controesempio</button><div class="cexbox"></div>`:''}</li>`).join('')}</ul>`;}
+function bindReview(root,ex){
+ root.querySelectorAll('[data-cex]').forEach(b=>b.onclick=()=>{
+  const o=ex.options[+b.dataset.cex],box=b.nextElementSibling,T=ex.fig.terms;
+  box.innerHTML=`<div class="two"><figure class="fig">${vennSvg(3,modelStates(o.cex.f),['S','M','P'],{noQ:true})}<figcaption>Premesse rispettate, conclusione <b>falsa</b>.</figcaption></figure>`+
+   (o.cex.t!==null?`<figure class="fig">${vennSvg(3,modelStates(o.cex.t),['S','M','P'],{noQ:true})}<figcaption>Anche così le premesse valgono, ma qui è vera.</figcaption></figure>`:'')+`</div>${termLegend(T)}<p class="small">Conclusione: ${o.sym}. Se in un diagramma compatibile è falsa, non è certa.</p>`;
+  b.remove();});
+ mountWidgets(root);}
+
+/* ================= STRUTTURA ================= */
+function render(){
+ document.querySelectorAll('.modetab').forEach(b=>b.setAttribute('aria-selected',b.dataset.mode===S.mode));
+ const main=$('#main');
+ if(S.mode==='learn')renderLearn(main);else renderPractice(main);
+ window.scrollTo(0,0);}
+
+/* ================= IMPARA ================= */
+const THEORY={
+ imp:{t:'Implicazione A ⇒ B',pts:[
+  '«Se A, allora B» è falsa in un solo caso: A vera e B falsa.',
+  'Da A ⇒ B si deduce solo la contronominale ¬B ⇒ ¬A: si scambiano le parti e si negano entrambe.',
+  'Non si deducono l’inversa (B ⇒ A) né la contraria (¬A ⇒ ¬B). Tra loro sono equivalenti, ma diverse dalla frase.',
+  'La negazione di «se A allora B» è «A e non B».',
+  'Disegno: A è un cerchio tutto dentro B. Il controesempio di inversa e contraria è la zona «B senza A».']},
+ cns:{t:'Condizione necessaria e sufficiente',pts:[
+  'In A ⇒ B: A è condizione sufficiente per B; B è condizione necessaria per A.',
+  'Introducono la sufficiente (A ⇒ B): «se A, B», «B se A», «basta che A», «è sufficiente che A», «ogni volta che A».',
+  'Introducono la necessaria: «A solo se B», «condizione necessaria perché A è che B», «A, a patto che B». In tutti i casi resta A ⇒ B.',
+  '«A se e solo se B» = A ⇔ B: necessaria e sufficiente insieme.',
+  'Trucco: la sufficiente è il cerchio piccolo, la necessaria quello grande che lo contiene.',
+  'Qui «a patto che» si legge come «solo se». Nel parlato può suonare come «se e solo se»: se vuoi, escludilo dagli esercizi in «Allenati».']},
+ quant:{t:'Negazione dei quantificatori',pts:[
+  'Negare vuol dire smentire: la negazione è vera esattamente quando la frase è falsa.',
+  '«Tutti … sono» si nega con «almeno uno (qualche) … non è», cioè «non tutti … sono».',
+  '«Nessuno … è» si nega con «almeno uno (qualche) … è».',
+  '«Nessuno» non è la negazione di «tutti»: è il contrario. Possono essere false insieme.',
+  'In logica «qualche» = «almeno uno»: anche uno solo, magari tutti.',
+  'Evita «tutti … non …»: in italiano è ambigua, per questo qui non compare.']},
+ sill:{t:'Sillogismi',pts:[
+  'Disegna tre insiemi S, M, P. Tratteggia le zone che le premesse dicono vuote, metti ● dove dicono che c’è qualcuno.',
+  'Una conclusione è certa solo se è vera in tutti i diagrammi compatibili. Basta un diagramma compatibile in cui è falsa per scartarla.',
+  'Si assume che ogni gruppo nominato abbia almeno un elemento.',
+  'Regole veloci: due premesse con «qualche» o due premesse negative non danno mai una conclusione certa.',
+  'Il termine medio M deve essere preso «tutto intero» almeno una volta: «tutti gli M…», «nessun M…» oppure «… non è un M».',
+  'Valido: tutti A sono B + tutti B sono C ⇒ tutti A sono C. Non valido: tutti A sono B + qualche B è C.']}};
+
+function renderLearn(main){
+ main.innerHTML=`<nav class="topics" aria-label="Argomento">${Object.entries(TOPICS).map(([k,v])=>`<button class="chip" data-t="${k}" aria-pressed="${k===S.topic}">${v}</button>`).join('')}</nav>
+ <section class="card"><h2>${THEORY[S.topic].t}</h2><ul class="keys">${THEORY[S.topic].pts.map(p=>`<li>${p}</li>`).join('')}</ul></section>
+ <section class="card"><h2>Prova tu</h2><div id="widget"></div></section>
+ <section class="card"><h2>Esempio guidato</h2><div id="guided"></div></section>`;
+ main.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{S.topic=b.dataset.t;renderLearn(main);});
+ const w=$('#widget');
+ ({imp:impWidget,cns:cnsWidget,quant:el=>quantWidget(el,rnd(QNOUNS.length),rnd(VERBS.length),true),sill:sillWidget})[S.topic](w);
+ guided($('#guided'),S.topic);}
+
+/* --- widget implicazione --- */
+function impWidget(el){
+ const st={pi:0,sel:null,mark:null};
+ const draw=()=>{const p=PAIRS[st.pi];
+  let hl=[],info='Tocca un pulsante per vedere se quella frase si deduce, oppure tocca una zona del disegno.';
+  if(st.sel){const g=IMP_ST[st.sel].f,bad=WORLDS.filter(w=>!ev(g,w)),ok=bad.filter(w=>ev(BASE,w));
+   hl=ok.map(worldRegion);
+   info=`<p class="big">${cap(IMP_ST[st.sel].name)}: <q>${fText(p,g)}</q> <span class="sym">${sym(g)}</span></p>`+
+    (ok.length?`<p><b class="ko">Non si deduce.</b> Controesempio nella zona evidenziata: ${worldFull(p,ok[0])}. La frase data lì è vera, questa no.</p>`
+     :`<p><b class="ok">Si deduce.</b> La sola situazione che la smentirebbe è «${worldTxt(p,bad[0])}», cioè A fuori da B: nel disegno quella zona non esiste.</p>`);}
+  else if(st.mark){const w=WORLDS.find(w=>worldRegion(w)===st.mark);
+   info=`<p class="big">Situazione: ${worldFull(p,w)}.</p><ul class="vf">${Object.keys(IMP_ST).map(k=>`<li><span class="badge ${ev(IMP_ST[k].f,w)?'b-ok':'b-ko'}">${ev(IMP_ST[k].f,w)?'vera':'falsa'}</span> ${cap(IMP_ST[k].name)}: ${fText(p,IMP_ST[k].f)}</li>`).join('')}</ul>`;}
+  el.innerHTML=`<label class="field">Frase di esempio<select id="iwp">${PAIRS.map((q,i)=>`<option value="${i}"${i===st.pi?' selected':''}>Se ${q.a.i}, ${q.b.i}</option>`).join('')}</select></label>
+  <p class="big"><q>${fText(p,BASE)}</q></p>${pairLegend(p)}
+  <div class="figwrap">${implSvg({hl,mark:st.sel?null:st.mark})}</div>
+  <div class="seg" role="group" aria-label="Frase da controllare">${Object.keys(IMP_ST).map(k=>`<button data-k="${k}" aria-pressed="${st.sel===k}">${cap(IMP_ST[k].name.replace(/^(la |l’)/,''))}</button>`).join('')}</div>
+  <div class="panel">${info}</div>`;
+  $('#iwp',el).onchange=e=>{st.pi=+e.target.value;draw();};
+  el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{st.sel=st.sel===b.dataset.k?null:b.dataset.k;st.mark=null;draw();});
+  const svg=$('svg',el);svg.classList.add('clickable');svg.onclick=e=>{st.mark=implRegion(svg,e);st.sel=null;draw();};};
+ draw();}
+
+/* --- widget condizioni --- */
+function cnsWidget(el){
+ const st={ti:1,pi:1,swap:false};
+ const draw=()=>{const p=PAIRS[st.pi],T=usableT(),t=TPL[st.ti];
+  const x=st.swap?L('B'):L('A'),y=st.swap?L('A'):L('B'),s=inst(p,t,x,y);
+  const isIff=t.k==='iff';
+  const out=isIff?`<p>Formula: <span class="sym">${sym(s.f)}</span>. «${clauseOf(p,x).i}» è condizione <b>necessaria e sufficiente</b> per «${clauseOf(p,y).i}» (e viceversa).</p>`
+   :`<p>Formula: <span class="sym">${sym(s.f)}</span></p><p>Condizione <b>sufficiente</b>: «${clauseOf(p,s.f.x).i}» (cerchio piccolo)</p><p>Condizione <b>necessaria</b>: «${clauseOf(p,s.f.y).i}» (cerchio grande)</p>`;
+  el.innerHTML=`<div class="row2"><label class="field">Costruzione<select id="cwt">${TPL.map((q,i)=>`<option value="${i}"${i===st.ti?' selected':''}>${q.lab}</option>`).join('')}</select></label>
+  <label class="field">Esempio<select id="cwp">${PAIRS.map((q,i)=>`<option value="${i}"${i===st.pi?' selected':''}>${q.a.i} / ${q.b.i}</option>`).join('')}</select></label></div>
+  <button class="btn small" id="cws">Scambia A e B nella frase</button>
+  <p class="big"><q>${s.txt}</q></p>${pairLegend(p)}
+  <div class="panel"><p>${hintFor(p,t,x,y)}</p>${out}</div>
+  <div class="figwrap">${implSvg({inner:symL(s.f.x),outer:symL(s.f.y),iff:isIff})}</div>`;
+  $('#cwt',el).onchange=e=>{st.ti=+e.target.value;draw();};
+  $('#cwp',el).onchange=e=>{st.pi=+e.target.value;draw();};
+  $('#cws',el).onclick=()=>{st.swap=!st.swap;draw();};};
+ draw();}
+
+/* --- widget quantificatori --- */
+function quantWidget(el,ni,vi,changeable){
+ const st={ni,vi,r:{1:'full',3:'full',2:'unk'}};
+ const draw=()=>{const n=QNOUNS[st.ni],v=VERBS[st.vi],m={x:st.r[3]==='full',y:st.r[1]==='full'};
+  const row=(f,txt)=>`<li><span class="badge ${QF[f](m)?'b-ok':'b-ko'}">${QF[f](m)?'vera':'falsa'}</span> ${txt}</li>`;
+  el.innerHTML=`${changeable?'<button class="btn small" data-new>Altre parole</button>':''}
+  <p class="legend"><span><b>S</b> = ${n.p}</span><span><b>P</b> = chi ${v[0]}</span></p>
+  <div class="figwrap narrow">${vennSvg(2,st.r,['S','P'],{click:true})}</div>${VLEG}
+  <p class="small">Tocca le zone dentro S per renderle abitate o vuote. La zona di P fuori da S non conta.</p>
+  <div class="pairs"><div class="pair"><p class="pt">Coppia 1: una è la negazione dell’altra</p><ul class="vf">${row('A',qPhr('A',n,v)[0]+'.')}${row('O',qPhr('O',n,v)[1]+'.')}</ul></div>
+  <div class="pair"><p class="pt">Coppia 2: una è la negazione dell’altra</p><ul class="vf">${row('E',qPhr('E',n,v)[0]+'.')}${row('I',qPhr('I',n,v)[1]+'.')}</ul></div></div>
+  ${!m.x&&!m.y?`<p class="note">S è vuoto: «tutti» e «nessuno» risultano entrambe vere (si dice «verità a vuoto»). Al test si assume che il gruppo non sia vuoto.</p>`:''}
+  ${m.x&&m.y?`<p class="note">Qui «tutti» e «nessuno» sono entrambe false: per questo non sono una la negazione dell’altra.</p>`:''}`;
+  const svg=$('svg',el);svg.onclick=e=>{const r=vennRegion(svg,e,2);if(!r)return;st.r[r]=st.r[r]==='full'?'empty':'full';draw();};
+  const nb=el.querySelector('[data-new]');if(nb)nb.onclick=()=>{st.ni=rnd(QNOUNS.length);st.vi=rnd(VERBS.length);draw();};};
+ draw();}
+
+/* --- widget sillogismi --- */
+function sillWidget(el){
+ const st={q1:'A',o1:'SM',q2:'A',o2:'MP',idx:shuffle([...Array(SNOUNS.length).keys()]).slice(0,3),view:'sum',model:0,mi:0};
+ const QL={A:'Tutti … sono …',E:'Nessun … è …',I:'Qualche … è …',O:'Qualche … non è …'};
+ const draw=()=>{
+  const T={1:SNOUNS[st.idx[0]],2:SNOUNS[st.idx[1]],4:SNOUNS[st.idx[2]]};
+  const p1=st.o1==='SM'?{q:st.q1,X:SX,Y:MX}:{q:st.q1,X:MX,Y:SX},p2=st.o2==='MP'?{q:st.q2,X:MX,Y:PX}:{q:st.q2,X:PX,Y:MX},prems=[p1,p2];
+  const {msI,concl}=sillAnalyze(prems);
+  const mins=msI.filter(m=>!msI.some(k=>k!==m&&(k&m)===k)).sort((a,b)=>pop(a)-pop(b));
+  const list=concl.filter(c=>!((c.q==='E'||c.q==='I')&&c.X===PX));
+  let diag,status='';
+  if(st.view==='sum'){diag=vennSvg(3,summaryStates(msI),['S','M','P'],{click:true});status='Riassunto: quello che le premesse dicono di sicuro. Tocca una zona per passare a un diagramma concreto.';}
+  else{const m=st.model;diag=vennSvg(3,modelStates(m),['S','M','P'],{click:true,noQ:true});
+   const okP=prems.map(p=>sat(p.q,p.X,p.Y,m)),ne=[SX,MX,PX].every(t=>nonEmpty(t,m));
+   status=`Diagramma concreto. Premessa 1 ${okP[0]?'rispettata':'<b class="ko">non rispettata</b>'}; premessa 2 ${okP[1]?'rispettata':'<b class="ko">non rispettata</b>'}; gruppi non vuoti: ${ne?'sì':'<b class="ko">no</b>'}. Tocca le zone per cambiarle.`;}
+  const lab=c=>c.certI?'<span class="badge b-ok">certa</span>':c.possI?'<span class="badge b-mid">possibile</span>':'<span class="badge b-ko">impossibile</span>';
+  el.innerHTML=`<div class="row2"><div><p class="pt">Premessa 1</p><select id="sq1">${'AEIO'.split('').map(q=>`<option value="${q}"${q===st.q1?' selected':''}>${QL[q]}</option>`).join('')}</select>
+   <select id="so1"><option value="SM"${st.o1==='SM'?' selected':''}>soggetto S, poi M</option><option value="MS"${st.o1==='MS'?' selected':''}>soggetto M, poi S</option></select></div>
+   <div><p class="pt">Premessa 2</p><select id="sq2">${'AEIO'.split('').map(q=>`<option value="${q}"${q===st.q2?' selected':''}>${QL[q]}</option>`).join('')}</select>
+   <select id="so2"><option value="MP"${st.o2==='MP'?' selected':''}>soggetto M, poi P</option><option value="PM"${st.o2==='PM'?' selected':''}>soggetto P, poi M</option></select></div></div>
+  <ol class="prem2"><li>${sTxt(p1.q,T[p1.X],T[p1.Y])}. <span class="sym">${sSym(p1.q,p1.X,p1.Y)}</span></li><li>${sTxt(p2.q,T[p2.X],T[p2.Y])}. <span class="sym">${sSym(p2.q,p2.X,p2.Y)}</span></li></ol>
+  ${termLegend(T)}<button class="btn small" id="snew">Altre parole</button>
+  <div class="figwrap narrow">${diag}</div>${VLEG}<p class="small">${status}</p>
+  <div class="btnrow"><button class="btn small" id="ssum"${st.view==='sum'?' disabled':''}>Riassunto delle premesse</button><button class="btn small" id="smod">Un diagramma possibile (${mins.length?((st.mi%mins.length)+1)+' di '+mins.length:'0'})</button></div>
+  <h3>Conclusioni fra S e P</h3><ul class="vf concl">${list.map((c,i)=>`<li>${lab(c)} ${sTxt(c.q,T[c.X],T[c.Y])}.${st.view==='model'?` <span class="small">(qui: ${sat(c.q,c.X,c.Y,st.model)?'vera':'falsa'})</span>`:''}${c.possI&&!c.certI?` <button class="link" data-c="${i}">controesempio</button>`:''}</li>`).join('')}</ul>
+  ${(()=>{const r=sillRules(prems);return r.length?`<p class="note">${r.join(' ')}</p>`:'';})()}`;
+  const set=(k,v)=>{st[k]=v;st.view='sum';st.mi=0;draw();};
+  $('#sq1',el).onchange=e=>set('q1',e.target.value);$('#so1',el).onchange=e=>set('o1',e.target.value);
+  $('#sq2',el).onchange=e=>set('q2',e.target.value);$('#so2',el).onchange=e=>set('o2',e.target.value);
+  $('#snew',el).onclick=()=>{st.idx=shuffle([...Array(SNOUNS.length).keys()]).slice(0,3);draw();};
+  $('#ssum',el).onclick=()=>{st.view='sum';draw();};
+  $('#smod',el).onclick=()=>{if(!mins.length)return;if(st.view==='model')st.mi++;st.view='model';st.model=mins[st.mi%mins.length];draw();};
+  el.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const c=list[+b.dataset.c];st.view='model';st.model=bestModel(msI,m=>!sat(c.q,c.X,c.Y,m));draw();});
+  const svg=$('svg.venn',el);svg.onclick=e=>{const r=vennRegion(svg,e,3);if(!r)return;
+   if(st.view==='sum'){st.model=mins.length?mins[0]:127;st.view='model';}
+   st.model^=1<<(r-1);draw();};};
+ draw();}
+
+/* --- esempio guidato --- */
+function guided(el,topic){
+ const ex=GEN[topic]();let k=0;
+ const draw=()=>{const done=k>=ex.steps.length;
+  el.innerHTML=`<div class="stem">${ex.stem}</div><ol class="opts static">${ex.options.map((o,i)=>`<li class="${done&&o.correct?'is-ok':''}"><span class="lt">${L5[i]}</span><span>${o.html}</span></li>`).join('')}</ol>
+  <ol class="steps">${ex.steps.slice(0,k).map(s=>`<li>${s}</li>`).join('')}</ol>
+  ${done?`<div class="revbox">${reviewHtml(ex,-1).replace(/<h3>Svolgimento<\/h3><ol class="steps">[\s\S]*?<\/ol>/,'')}</div>`:''}
+  <div class="btnrow">${done?'':`<button class="btn primary" id="gnext">Passo successivo (${k+1} di ${ex.steps.length})</button>`}<button class="btn" id="gnew">Nuovo esempio</button></div>`;
+  const n=$('#gnext',el);if(n)n.onclick=()=>{k++;draw();};
+  $('#gnew',el).onclick=()=>guided(el,topic);
+  if(done)bindReview(el,ex);};
+ draw();}
+
+/* ================= ALLENATI ================= */
+function renderPractice(main){if(S.quiz&&!S.quiz.over)return renderQuestion(main);if(S.quiz&&S.quiz.over)return renderSummary(main);renderSetup(main);}
+function renderSetup(main){const s=S.set;
+ main.innerHTML=`<section class="card"><h2>Imposta l’allenamento</h2>
+ <fieldset><legend>Argomenti</legend>${Object.entries(TOPICS).map(([k,v])=>`<label class="check"><input type="checkbox" data-top="${k}"${s.topics[k]?' checked':''}> ${v}</label>`).join('')}</fieldset>
+ <fieldset><legend>Numero di domande</legend><div class="seg">${[10,20,30].map(n=>`<button data-n="${n}" aria-pressed="${s.n===n}">${n}</button>`).join('')}</div></fieldset>
+ <fieldset><legend>Timer</legend><label class="check"><input type="checkbox" id="tmr"${s.timer?' checked':''}> Attiva il timer</label>
+ <label class="field inline">Minuti <input type="number" id="mins" min="1" max="120" value="${s.minutes}"${s.timer?'':' disabled'}></label>
+ <p class="small">Al TOLC-I la logica ha 10 domande in 20 minuti: 2 minuti a domanda.</p></fieldset>
+ <fieldset><legend>Opzioni</legend><label class="check"><input type="checkbox" id="patto"${s.patto?' checked':''}> Includi frasi con «a patto che» (lette come «solo se»)</label></fieldset>
+ <p class="small">Punteggio come al TOLC: giusta +1, non data 0, sbagliata −0,25.</p>
+ <p class="ko" id="serr" hidden>Scegli almeno un argomento.</p>
+ <button class="btn primary big" id="go">Inizia</button></section>`;
+ main.querySelectorAll('[data-top]').forEach(c=>c.onchange=()=>s.topics[c.dataset.top]=c.checked);
+ main.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{s.n=+b.dataset.n;main.querySelectorAll('[data-n]').forEach(x=>x.setAttribute('aria-pressed',x===b));});
+ $('#tmr').onchange=e=>{s.timer=e.target.checked;$('#mins').disabled=!s.timer;};
+ $('#mins').onchange=e=>{s.minutes=Math.max(1,Math.min(120,+e.target.value||20));e.target.value=s.minutes;};
+ $('#patto').onchange=e=>s.patto=e.target.checked;
+ $('#go').onclick=()=>{const tops=Object.keys(s.topics).filter(k=>s.topics[k]);if(!tops.length){$('#serr').hidden=false;return;}startQuiz(tops);};}
+
+let TICK=null;
+function startQuiz(tops){
+ OPT.patto=S.set.patto;
+ const order=[];while(order.length<S.set.n)order.push(...shuffle(tops));
+ S.quiz={order:order.slice(0,S.set.n),i:0,items:[],seen:new Set(),left:S.set.timer?S.set.minutes*60:null,over:false};
+ nextQuestion();
+ clearInterval(TICK);
+ if(S.quiz.left!==null)TICK=setInterval(()=>{const q=S.quiz;if(!q||q.over){clearInterval(TICK);return;}q.left--;const t=$('#clock');if(t){t.textContent=clock(q.left);t.classList.toggle('low',q.left<=60);}if(q.left<=0){clearInterval(TICK);endQuiz(true);}},1000);
+ render();}
+const clock=s=>`${Math.floor(Math.max(0,s)/60)}:${String(Math.max(0,s)%60).padStart(2,'0')}`;
+function nextQuestion(){const q=S.quiz,t=q.order[q.i];let ex;
+ for(let k=0;k<40;k++){ex=GEN[t]();if(!q.seen.has(ex.key))break;}
+ q.seen.add(ex.key);q.items.push({ex,ch:null,done:false});}
+function score(q){let ok=0,ko=0,bl=0;q.items.forEach(it=>{if(!it.done)return;if(it.ch===-1)bl++;else if(it.ex.options[it.ch].correct)ok++;else ko++;});return{ok,ko,bl,pts:ok-0.25*ko};}
+function renderQuestion(main){const q=S.quiz,it=q.items[q.i],ex=it.ex,sc=score(q);
+ main.innerHTML=`<div class="bar"><span>Domanda <b>${q.i+1}</b> di ${q.order.length}</span><span>Punti <b>${fmt(sc.pts)}</b></span>${q.left!==null?`<span>Tempo <b id="clock" class="${q.left<=60?'low':''}">${clock(q.left)}</b></span>`:''}<button class="link" id="quit">Termina</button></div>
+ <section class="card"><p class="topic-tag">${TOPICS[ex.topic]}</p><div class="stem">${ex.stem}</div>
+ <ol class="opts">${ex.options.map((o,i)=>{let c='';if(it.done){if(o.correct)c='is-ok';else if(i===it.ch)c='is-ko';}
+  return `<li><button class="opt ${c}" data-i="${i}"${it.done?' disabled':''}><span class="lt">${L5[i]}</span><span>${o.html}</span></button></li>`;}).join('')}</ol>
+ ${it.done?'':'<button class="btn" id="skip">Non rispondo (0 punti)</button>'}
+ <div id="fb"></div></section>`;
+ main.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(+b.dataset.i));
+ const sk=$('#skip');if(sk)sk.onclick=()=>answer(-1);
+ $('#quit').onclick=()=>endQuiz(false);
+ if(it.done)showFeedback();}
+function answer(i){const q=S.quiz,it=q.items[q.i];if(it.done)return;it.ch=i;it.done=true;renderQuestion($('#main'));
+ const fb=$('#fb');if(fb)fb.scrollIntoView({behavior:'auto',block:'start'});}
+function showFeedback(){const q=S.quiz,it=q.items[q.i],ex=it.ex,fb=$('#fb');
+ const ok=it.ch>=0&&ex.options[it.ch].correct,ci=ex.options.findIndex(o=>o.correct);
+ const v=it.ch===-1?`<div class="verdict blank">Non hai risposto: 0 punti. La giusta era la ${L5[ci]}.</div>`:ok?`<div class="verdict good">Giusto: +1</div>`:`<div class="verdict bad">Sbagliato: −0,25. La giusta era la ${L5[ci]}.</div>`;
+ const last=q.i===q.order.length-1;
+ fb.innerHTML=v+reviewHtml(ex,it.ch)+`<button class="btn primary big" id="next">${last?'Vedi il riepilogo':'Domanda successiva'}</button>`;
+ bindReview(fb,ex);
+ $('#next').onclick=()=>{if(last)endQuiz(false);else{q.i++;nextQuestion();renderQuestion($('#main'));window.scrollTo(0,0);}};}
+function endQuiz(timeUp){const q=S.quiz;if(!q||q.over)return;q.over=true;q.timeUp=timeUp;clearInterval(TICK);
+ const it=q.items[q.i];if(it&&!it.done){q.items.pop();}
+ salvaTolc(q);
+ render();}
+/* App TOLC-I: a fine quiz salva esercizi, errori e data (moduli/modulo.js). */
+function salvaTolc(q){if(!window.TOLC)return;const sc=score(q),arg={};
+ q.items.forEach(it=>{const t=TOPICS[it.ex.topic];arg[t]=arg[t]||{esercizi:0,errori:0};arg[t].esercizi++;if(it.ch>=0&&!it.ex.options[it.ch].correct)arg[t].errori++;});
+ TOLC.salvaSessione({modulo:'logica',esercizi:q.items.length,errori:sc.ko,giuste:sc.ok,nonDate:sc.bl,punti:sc.pts,argomenti:arg});}
+function renderSummary(main){const q=S.quiz,sc=score(q),tot=q.order.length,unseen=tot-q.items.length;
+ const bl=sc.bl+unseen;
+ const per={};q.items.forEach(it=>{const t=it.ex.topic;per[t]=per[t]||{ok:0,ko:0,bl:0};if(it.ch===-1)per[t].bl++;else if(it.ex.options[it.ch].correct)per[t].ok++;else per[t].ko++;});
+ main.innerHTML=`<section class="card"><h2>${q.timeUp?'Tempo scaduto':'Riepilogo'}</h2>
+ <p class="score"><b>${fmt(sc.pts)}</b> punti su ${tot}</p>
+ <p>Giuste ${sc.ok} · sbagliate ${sc.ko} · non date ${bl}${unseen?` (di cui ${unseen} non viste)`:''}</p>
+ <div class="tt-wrap"><table class="tt"><thead><tr><th>Argomento</th><th>Giuste</th><th>Sbagliate</th><th>Vuote</th><th>Punti</th></tr></thead><tbody>
+ ${Object.entries(per).map(([t,v])=>`<tr><td>${TOPICS[t]}</td><td>${v.ok}</td><td>${v.ko}</td><td>${v.bl}</td><td>${fmt(v.ok-0.25*v.ko)}</td></tr>`).join('')}</tbody></table></div>
+ <h3>Le tue risposte</h3><ol class="hist">${q.items.map((it,i)=>{const ci=it.ex.options.findIndex(o=>o.correct);const r=it.ch===-1?'non data':it.ex.options[it.ch].correct?'giusta':'sbagliata';
+  return `<li><details><summary><span class="badge ${r==='giusta'?'b-ok':r==='sbagliata'?'b-ko':'b-mid'}">${r}</span> ${TOPICS[it.ex.topic]}: tua ${it.ch===-1?'—':L5[it.ch]}, giusta ${L5[ci]}</summary><div class="stem">${it.ex.stem}</div><div class="hrev" data-h="${i}"></div></details></li>`;}).join('')}</ol>
+ <div class="btnrow"><button class="btn primary big" id="again">Nuovo allenamento</button></div></section>`;
+ main.querySelectorAll('details').forEach(d=>d.ontoggle=()=>{const box=$('.hrev',d);if(d.open&&!box.dataset.on){const it=q.items[+box.dataset.h];box.dataset.on=1;box.innerHTML=reviewHtml(it.ex,it.ch);bindReview(box,it.ex);}});
+ $('#again').onclick=()=>{S.quiz=null;render();};}
+
+document.addEventListener('keydown',e=>{
+ if(S.mode!=='practice'||!S.quiz||S.quiz.over)return;
+ if(e.target.matches('input,select,textarea'))return;
+ const it=S.quiz.items[S.quiz.i];
+ if(!it.done){const k=e.key.toUpperCase();let i=L5.indexOf(k);if(i<0&&/^[1-5]$/.test(e.key))i=+e.key-1;if(i>=0&&i<it.ex.options.length){e.preventDefault();answer(i);}}
+ else if(e.key==='Enter'){const n=$('#next');if(n&&document.activeElement.tagName!=='BUTTON'){e.preventDefault();n.click();}}});
+document.querySelectorAll('.modetab').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;render();});
+render();
+</script></body></html>

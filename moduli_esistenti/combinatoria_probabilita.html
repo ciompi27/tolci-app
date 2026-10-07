@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combinatoria e probabilità · TOLC-I</title>
+<style>
+:root{--bg:#f6f6f3;--card:#ffffff;--ink:#1b1b1b;--mut:#5f5f5f;--line:#d8d8d2;--acc:#1f5fbf;--acc-bg:#e8effa;--ok:#1e7b34;--ok-bg:#e5f3e8;--bad:#b3261e;--bad-bg:#fbe9e7;--red:#c62828;--blk:#222222;--blk-st:#222222}
+@media (prefers-color-scheme:dark){:root{--bg:#151515;--card:#1f1f1f;--ink:#ececec;--mut:#a9a9a9;--line:#3a3a3a;--acc:#86adf0;--acc-bg:#1d2a3e;--ok:#72cf8a;--ok-bg:#1a2e21;--bad:#f28b82;--bad-bg:#3b1f1d;--red:#ef6b6b;--blk:#0b0b0b;--blk-st:#bdbdbd}}
+*{box-sizing:border-box}
+html{font-size:18px;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55}
+.wrap{max-width:800px;margin:0 auto;padding:10px 16px 80px}
+h1{font-size:1.4rem;margin:10px 0 0}
+h2{font-size:1.2rem;margin:0 0 10px}
+h3{font-size:1.05rem;margin:18px 0 6px}
+p{margin:8px 0}
+.mut{color:var(--mut)}
+.small{font-size:.86rem}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.tabs{display:flex;gap:8px;margin:14px 0 4px}
+.tabs button{flex:1;padding:12px;border:2px solid var(--acc);background:transparent;color:var(--acc);border-radius:10px;font-weight:700;font-size:1.05rem}
+.tabs button.on{background:var(--acc);color:#fff}
+@media (prefers-color-scheme:dark){.tabs button.on{color:#111}}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.pills button{padding:8px 12px;border:1px solid var(--line);background:var(--card);border-radius:999px;font-size:.92rem}
+.pills button.on{border-color:var(--acc);background:var(--acc-bg);color:var(--acc);font-weight:700}
+.btn{padding:11px 16px;border-radius:10px;border:2px solid var(--acc);background:var(--acc);color:#fff;font-weight:700}
+@media (prefers-color-scheme:dark){.btn{color:#111}}
+.btn.ghost{background:transparent;color:var(--acc)}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ctrl{display:flex;flex-direction:column;gap:4px;font-size:.88rem;color:var(--mut)}
+.ctrl select{padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);font-size:1rem;color:var(--ink);min-width:70px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{padding:8px 13px;border:0;background:var(--card);font-size:.95rem;color:var(--ink)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--acc);color:#fff;font-weight:700}
+@media (prefers-color-scheme:dark){.seg button.on{color:#111}}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.9em;line-height:1.18;margin:0 .12em}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .2em}
+.fr>span:last-child{padding:0 .2em}
+.formula{font-size:1.08rem}
+.note{background:var(--acc-bg);border-radius:8px;padding:8px 12px;font-size:.92rem}
+.warn{border-left:4px solid var(--bad);padding:4px 10px;background:var(--bad-bg);border-radius:6px}
+.scroll{overflow-x:auto}
+table.dec{border-collapse:collapse;width:100%;font-size:.9rem;min-width:520px}
+table.dec th,table.dec td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:middle}
+table.dec th{background:var(--acc-bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips span{font-family:ui-monospace,Consolas,monospace;border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-size:.92rem}
+input[type=text]{padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--card);font-size:1.05rem;text-transform:uppercase;width:12em;max-width:100%}
+input[type=range]{width:220px;max-width:100%}
+ol.gsteps li{margin:6px 0}
+/* albero */
+.tree{width:100%;max-width:560px;height:auto;display:block;margin:8px 0}
+.tree line{stroke:var(--mut);stroke-width:1.6}
+.tree line.z{stroke-dasharray:3 4;opacity:.45}
+.tree line.sel{stroke:var(--acc);stroke-width:4}
+.tree line.hi{stroke:var(--ok);stroke-width:4}
+.tree text{font-family:system-ui,sans-serif}
+.tree text.bl{font-size:13px;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+.tree text.bl.z{opacity:.5}
+.tree circle.nR{fill:var(--red)}
+.tree circle.nN{fill:var(--blk);stroke:var(--blk-st);stroke-width:1}
+.tree circle.root{fill:var(--card);stroke:var(--mut);stroke-width:1.5}
+.tree text.nl{font-size:10px;fill:#fff;font-weight:700}
+.tree text.lf{font-size:15px;fill:var(--ink);font-weight:600;letter-spacing:1px}
+.tree g.leaf{cursor:pointer}
+.tree g.leaf.z{cursor:default;opacity:.45}
+.tree rect.lb{fill:transparent;stroke:transparent;rx:6}
+.tree g.leaf.sel rect.lb{fill:var(--acc-bg);stroke:var(--acc);stroke-width:2}
+.tree g.leaf.hi rect.lb{fill:var(--ok-bg);stroke:var(--ok);stroke-width:2}
+.leaves{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.leaves button{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;text-align:left;padding:8px 10px;border:1.5px solid var(--line);background:var(--card);border-radius:9px;font-size:.95rem}
+.leaves button.sel{border-color:var(--acc);background:var(--acc-bg)}
+.leaves button:disabled{opacity:.45;cursor:default}
+.leaves .seq{font-weight:700;min-width:5.5em}
+.ball{display:inline-block;width:.8em;height:.8em;border-radius:50%;vertical-align:-.05em}
+.ball.R{background:var(--red)}.ball.N{background:var(--blk);border:1px solid var(--blk-st)}
+.result{font-size:1.08rem;padding:10px 12px;border-radius:9px;background:var(--acc-bg);margin-top:8px}
+/* dadi */
+table.dg{border-collapse:collapse;margin:8px 0;font-size:.85rem}
+table.dg th,table.dg td{border:1px solid var(--line);width:2.3em;height:2.1em;text-align:center;padding:0}
+table.dg th{background:var(--acc-bg);font-weight:700}
+table.dg th.c{font-size:.6rem;font-weight:400;line-height:1.1;width:3.2em}
+table.dg td{color:var(--mut)}
+table.dg td.b{background:var(--acc-bg);color:var(--ink)}
+table.dg td.ab{background:var(--ok);color:#fff;font-weight:700}
+@media (prefers-color-scheme:dark){table.dg td.ab{color:#111}}
+table.dg td.ax{outline:2px dashed var(--ok);outline-offset:-4px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.82rem;color:var(--mut)}
+.legend i{display:inline-block;width:1em;height:1em;border:1px solid var(--line);vertical-align:-.15em;margin-right:4px}
+table.tb{border-collapse:collapse;margin:8px 0;font-size:.92rem}
+table.tb th,table.tb td{border:1px solid var(--line);padding:5px 10px;text-align:center}
+table.tb th{background:var(--acc-bg)}
+.bars{margin-top:10px}
+.bar{height:22px;border-radius:5px;background:var(--line);position:relative;margin:4px 0 10px;overflow:hidden}
+.bar>div{height:100%;background:var(--ok)}
+.bar.badb>div{background:var(--bad)}
+/* allenamento */
+.sticky{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-weight:600}
+.sticky .sp{flex:1}
+#tm.low{color:var(--bad)}
+.qhead{font-size:.88rem;color:var(--mut);margin-bottom:6px}
+.tag{display:inline-block;background:var(--acc-bg);color:var(--acc);border-radius:6px;padding:1px 8px;font-weight:600}
+.qtext{font-size:1.12rem}
+.stage{border-top:1px dashed var(--line);margin-top:12px;padding-top:10px}
+.slabel{font-weight:600;margin:4px 0 8px}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choices button{padding:9px 14px;border:1.5px solid var(--line);border-radius:9px;background:var(--card);text-align:left;font-size:.98rem}
+.choices.forms button{width:100%;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.choices button.good,.opts button.good{border-color:var(--ok);background:var(--ok-bg)}
+.choices button.badc,.opts button.badc{border-color:var(--bad);background:var(--bad-bg)}
+.choices button:disabled,.opts button:disabled{cursor:default;color:var(--ink)}
+.sfb{margin-top:8px;font-size:.95rem}
+.okt{color:var(--ok)}.badt{color:var(--bad)}
+ol.opts{list-style:none;padding:0;margin:14px 0 8px;display:flex;flex-direction:column;gap:8px}
+.opts button{width:100%;display:flex;align-items:center;gap:14px;padding:10px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);font-size:1.12rem;text-align:left;min-height:52px}
+.let{display:inline-flex;align-items:center;justify-content:center;width:1.8em;height:1.8em;border-radius:50%;border:1.5px solid var(--mut);font-weight:700;font-size:.85rem;flex:none}
+.fb{margin-top:14px;border-top:2px solid var(--line);padding-top:10px}
+.verdict{font-size:1.15rem;font-weight:700;padding:8px 12px;border-radius:9px}
+.verdict.r{background:var(--ok-bg);color:var(--ok)}.verdict.w{background:var(--bad-bg);color:var(--bad)}.verdict.s{background:var(--acc-bg);color:var(--acc)}
+ol.steps li{margin:6px 0}
+ul.why{list-style:none;padding:0}
+ul.why li{display:flex;gap:10px;align-items:flex-start;margin:8px 0;padding:6px 0;border-bottom:1px solid var(--line)}
+ul.why .val{min-width:4.5em;font-weight:700}
+.fig{margin:10px 0;overflow-x:auto}
+.sumgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.sumgrid div{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.sumgrid b{display:block;font-size:1.5rem}
+label.chk{display:flex;gap:8px;align-items:center}
+label.chk input{width:1.2em;height:1.2em}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Combinatoria e probabilità</h1>
+  <p class="mut small">Allenamento TOLC-I: numeri piccoli, calcoli a mano, risultati calcolati dal programma con frazioni esatte.</p>
+  <nav class="tabs"><button data-mode="impara" class="on">Impara</button><button data-mode="allenati">Allenati</button></nav>
+</header>
+
+<!-- ======================= IMPARA ======================= -->
+<section id="impara">
+  <nav class="pills" id="topicnav">
+    <button data-topic="comb" class="on">1 · Quale formula uso?</button>
+    <button data-topic="albero">2 · Albero di probabilità</button>
+    <button data-topic="cond">3 · Almeno uno e condizionata</button>
+  </nav>
+
+  <!-- ---------- 1. COMBINATORIA ---------- -->
+  <div id="L-comb" class="topic">
+    <div class="card">
+      <h2>Le due domande da farsi (prima di ogni formula)</h2>
+      <ol>
+        <li><b>Conta l'ordine?</b> Scambia di posto due elementi: se il risultato cambia, l'ordine conta.<br><span class="mut small">Sì: podio, password, ruoli diversi, file di persone. No: commissione, mano di carte, strette di mano, ingredienti di una pizza.</span></li>
+        <li><b>Ci sono ripetizioni?</b> Uno stesso elemento può comparire più volte nel risultato?<br><span class="mut small">Succede se un elemento si può riusare (le cifre di un PIN) oppure se ci sono oggetti uguali (le tre M di MAMMA).</span></li>
+      </ol>
+      <div class="scroll"><table class="dec">
+        <tr><th>Ordine</th><th>Ripetizioni</th><th>Formula</th><th>Esempio</th></tr>
+        <tr><td>Sì</td><td>No, uso <b>tutti</b> gli n elementi</td><td>Permutazioni<br>P<sub>n</sub> = n!</td><td>5 persone in fila: 5! = 120</td></tr>
+        <tr><td>Sì</td><td>No, ne scelgo <b>k</b> su n</td><td>Disposizioni semplici<br>D<sub>n,k</sub> = n·(n−1)·… (k fattori)</td><td>Podio con 8 atleti: 8·7·6 = 336</td></tr>
+        <tr><td>Sì</td><td>Sì, ogni elemento si può <b>riusare</b></td><td>Disposizioni con ripetizione<br>n<sup>k</sup></td><td>PIN di 4 cifre: 10<sup>4</sup> = 10 000</td></tr>
+        <tr><td>Sì</td><td>Sì, ci sono oggetti <b>uguali</b></td><td>Anagrammi<br><span class="fr"><span>n!</span><span>a!·b!·…</span></span></td><td>MAMMA: <span class="fr"><span>5!</span><span>3!·2!</span></span> = 10</td></tr>
+        <tr><td>No</td><td>No</td><td>Combinazioni<br>C<sub>n,k</sub> = <span class="fr"><span>D<sub>n,k</sub></span><span>k!</span></span></td><td>3 rappresentanti su 8: <span class="fr"><span>336</span><span>6</span></span> = 56</td></tr>
+      </table></div>
+      <p class="note">Perché C = D / k!? Le disposizioni contano ogni gruppo di k elementi in tutti i k! ordini possibili. Se l'ordine non conta, ogni gruppo va contato una volta sola, quindi si divide per k!.</p>
+      <p class="mut small">Il caso «ordine no, ripetizioni sì» (combinazioni con ripetizione) qui non è trattato.</p>
+    </div>
+
+    <div class="card guided">
+      <h2>Esempio guidato</h2>
+      <p>In una classe di 8 studenti:<br><b>(a)</b> si scelgono 3 rappresentanti, tutti con lo stesso ruolo;<br><b>(b)</b> si scelgono un capoclasse, un vice e un segretario.<br>Quante sono le scelte possibili in ciascun caso?</p>
+      <ol class="gsteps">
+        <li hidden><b>Conta l'ordine?</b> (a) No: il gruppo {Anna, Bruno, Carla} è lo stesso di {Carla, Anna, Bruno}. (b) Sì: se Anna è capoclasse e Bruno vice, è diverso da Bruno capoclasse e Anna vice.</li>
+        <li hidden><b>Ripetizioni?</b> No in entrambi i casi: uno studente non può essere scelto due volte.</li>
+        <li hidden><b>(b) ordine sì, ripetizioni no, 3 posti su 8:</b> disposizioni semplici. D<sub>8,3</sub> = 8·7·6 = 336 (8 scelte per il capoclasse, 7 per il vice, 6 per il segretario).</li>
+        <li hidden><b>(a) ordine no:</b> nelle 336 disposizioni ogni gruppo di 3 compare 3! = 6 volte (una per ogni ordine). Quindi C<sub>8,3</sub> = <span class="fr"><span>336</span><span>6</span></span> = 56.</li>
+        <li hidden><b>Trappola tipica al test:</b> tra le risposte di (a) ci sarà quasi sempre 336 (hai contato l'ordine) e 8<sup>3</sup> = 512 (hai ammesso ripetizioni).</li>
+      </ol>
+      <div class="row"><button class="btn g-next">Mostra il passo successivo</button><button class="btn ghost g-all">Mostra tutto</button></div>
+    </div>
+
+    <div class="card">
+      <h2>Visualizzazione: elenca tutti i casi</h2>
+      <p class="mut small">Scegli quante lettere hai (n), quante ne prendi (k), e rispondi alle due domande. La pagina scrive tutti i risultati possibili e li conta con la formula.</p>
+      <div class="row">
+        <label class="ctrl">Lettere (n)<select id="en-n"><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
+        <label class="ctrl">Ne prendo (k)<select id="en-k"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+        <div class="ctrl">Conta l'ordine?<div class="seg" id="en-ord"><button data-v="1" class="on">Sì</button><button data-v="0">No</button></div></div>
+        <div class="ctrl">Ripetizioni?<div class="seg" id="en-rep"><button data-v="1">Sì</button><button data-v="0" class="on">No</button></div></div>
+      </div>
+      <div id="en-out"></div>
+    </div>
+
+    <div class="card">
+      <h2>Visualizzazione: anagrammi</h2>
+      <p class="mut small">Scrivi una parola (massimo 8 lettere). Vedi come le lettere ripetute riducono il numero di anagrammi.</p>
+      <input type="text" id="an-in" value="ANANAS" maxlength="8" autocomplete="off">
+      <div id="an-out"></div>
+    </div>
+  </div>
+
+  <!-- ---------- 2. ALBERO ---------- -->
+  <div id="L-albero" class="topic" hidden>
+    <div class="card">
+      <h2>Come si usa l'albero</h2>
+      <ol>
+        <li>Ogni ramo porta la probabilità di quella estrazione, <b>tenendo conto di ciò che è già uscito</b>.</li>
+        <li>Lungo un percorso (prima… <i>e poi</i>…) le probabilità si <b>moltiplicano</b>.</li>
+        <li>Se l'evento si realizza con più percorsi (<i>oppure</i>), le probabilità dei percorsi si <b>sommano</b>.</li>
+        <li><b>Senza reimmissione</b>: dopo ogni estrazione il totale cala di 1 e cala anche il colore uscito. <b>Con reimmissione</b>: le probabilità restano sempre uguali.</li>
+        <li>Controllo veloce: la somma di <b>tutte</b> le foglie deve fare 1.</li>
+      </ol>
+    </div>
+    <div class="card guided">
+      <h2>Esempio guidato</h2>
+      <p>Urna con 3 rosse e 2 nere. Si estraggono 2 palline senza reimmissione. Probabilità che siano di colore diverso?</p>
+      <ol class="gsteps">
+        <li hidden>Percorsi favorevoli: <b>R→N</b> (prima rossa, poi nera) e <b>N→R</b> (prima nera, poi rossa). Sono due percorsi diversi.</li>
+        <li hidden>R→N: <span class="fr"><span>3</span><span>5</span></span>·<span class="fr"><span>2</span><span>4</span></span> = <span class="fr"><span>6</span><span>20</span></span> (dopo la prima rossa restano 4 palline, di cui 2 nere).</li>
+        <li hidden>N→R: <span class="fr"><span>2</span><span>5</span></span>·<span class="fr"><span>3</span><span>4</span></span> = <span class="fr"><span>6</span><span>20</span></span>.</li>
+        <li hidden>Somma: <span class="fr"><span>6</span><span>20</span></span> + <span class="fr"><span>6</span><span>20</span></span> = <span class="fr"><span>12</span><span>20</span></span> = <span class="fr"><span>3</span><span>5</span></span>.</li>
+        <li hidden><b>Errori tipici:</b> fermarsi a 6/20 = 3/10 (un solo ordine), oppure usare 3/5·2/5 + 2/5·3/5 = 12/25 (come se ci fosse reimmissione).</li>
+      </ol>
+      <div class="row"><button class="btn g-next">Mostra il passo successivo</button><button class="btn ghost g-all">Mostra tutto</button></div>
+    </div>
+    <div class="card">
+      <h2>Albero interattivo</h2>
+      <div class="row">
+        <label class="ctrl">Rosse<select id="t-r"></select></label>
+        <label class="ctrl">Nere<select id="t-n"></select></label>
+        <div class="ctrl">Estrazioni<div class="seg" id="t-k"><button data-v="2" class="on">2</button><button data-v="3">3</button></div></div>
+        <div class="ctrl">Reimmissione<div class="seg" id="t-rep"><button data-v="0" class="on">Senza</button><button data-v="1">Con</button></div></div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <label class="ctrl" style="flex:1;min-width:230px">Sfida: seleziona i percorsi dell'evento<select id="t-ev"></select></label>
+      </div>
+      <div id="t-svg"></div>
+      <p class="mut small">Tocca le foglie (nell'albero o nella lista) per selezionare i percorsi. <span class="ball R"></span> R = rossa, <span class="ball N"></span> N = nera.</p>
+      <div class="leaves" id="t-list"></div>
+      <div class="result" id="t-sum"></div>
+      <div class="row" style="margin-top:10px"><button class="btn" id="t-check">Verifica</button><button class="btn ghost" id="t-sol">Mostra soluzione</button><button class="btn ghost" id="t-clear">Azzera</button></div>
+      <div id="t-msg" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <!-- ---------- 3. ALMENO UNO / CONDIZIONATA ---------- -->
+  <div id="L-cond" class="topic" hidden>
+    <div class="card">
+      <h2>«Almeno uno» = 1 − P(nessuno)</h2>
+      <p>Il contrario di «almeno uno» è «<b>nessuno</b>» (non «tutti»). Quasi sempre è molto più veloce calcolare il contrario:</p>
+      <p class="formula" style="text-align:center"><b>P(almeno uno) = 1 − P(nessuno)</b></p>
+      <p><b>Esempio.</b> Due dadi, probabilità di almeno un 6. P(nessun 6) = <span class="fr"><span>5</span><span>6</span></span>·<span class="fr"><span>5</span><span>6</span></span> = <span class="fr"><span>25</span><span>36</span></span>, quindi P(almeno un 6) = 1 − <span class="fr"><span>25</span><span>36</span></span> = <span class="fr"><span>11</span><span>36</span></span>.</p>
+      <p><b>Errore tipico:</b> <span class="fr"><span>1</span><span>6</span></span> + <span class="fr"><span>1</span><span>6</span></span> = <span class="fr"><span>12</span><span>36</span></span>. È sbagliato perché il caso (6, 6) viene contato due volte: nella griglia le caselle verdi sono 11, non 12.</p>
+      <div class="fig" id="ex-grid"></div>
+    </div>
+    <div class="card">
+      <h2>Visualizzazione: almeno un successo in n prove</h2>
+      <div class="row">
+        <label class="ctrl">Prova<select id="a-p"></select></label>
+        <label class="ctrl">Numero di prove: <b id="a-nv">2</b><input type="range" id="a-n" min="1" max="8" value="2"></label>
+      </div>
+      <div id="a-out"></div>
+    </div>
+    <div class="card">
+      <h2>Probabilità condizionata</h2>
+      <p class="formula" style="text-align:center"><b>P(A | B) = <span class="fr"><span>P(A ∩ B)</span><span>P(B)</span></span></b> &nbsp; si legge «probabilità di A sapendo che B è avvenuto».</p>
+      <p>Con casi tutti ugualmente probabili: <b>restringi i casi possibili a quelli di B</b>, poi conta quanti di questi soddisfano anche A.</p>
+      <p class="formula" style="text-align:center">P(A | B) = <span class="fr"><span>casi in cui valgono A e B</span><span>casi in cui vale B</span></span></p>
+      <p><b>Esempio con le carte.</b> Mazzo da 40 (4 semi da 10 carte: asso, 2–7, fante, cavallo, re). Sapendo che è uscita una figura, probabilità che sia un re? Le figure sono 12, i re sono 4: P = <span class="fr"><span>4</span><span>12</span></span> = <span class="fr"><span>1</span><span>3</span></span> (non <span class="fr"><span>4</span><span>40</span></span>: quello è P(re) senza informazione).</p>
+      <p><b>Errori tipici:</b> dividere per tutti i casi invece che per quelli di B; ignorare l'informazione; invertire A e B (P(B|A) ≠ P(A|B)).</p>
+    </div>
+    <div class="card">
+      <h2>Visualizzazione: due dadi</h2>
+      <p class="mut small">Dado rosso sulle righe, dado blu sulle colonne. Nelle caselle c'è la somma.</p>
+      <div class="row">
+        <label class="ctrl" style="flex:1;min-width:220px">Sapendo che (B)<select id="d-b"></select></label>
+        <label class="ctrl" style="flex:1;min-width:220px">Probabilità che (A)<select id="d-a"></select></label>
+      </div>
+      <div class="fig" id="d-grid"></div>
+      <div class="legend"><span><i style="background:var(--acc-bg)"></i>casi di B</span><span><i style="background:var(--ok)"></i>casi di A e B</span><span><i style="outline:2px dashed var(--ok);outline-offset:-3px"></i>A fuori da B (non contano)</span></div>
+      <div id="d-out" class="result"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ALLENATI ======================= -->
+<section id="allenati" hidden>
+  <div id="setup" class="card">
+    <h2>Nuova sessione</h2>
+    <div class="ctrl" style="margin-bottom:12px">Argomento
+      <div class="pills" id="s-topic" style="margin:4px 0">
+        <button data-v="mix" class="on">Tutti misti</button>
+        <button data-v="comb">Quale formula uso?</button>
+        <button data-v="albero">Albero</button>
+        <button data-v="cond">Almeno uno e condizionata</button>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <label class="ctrl">Domande<select id="s-n"><option>5</option><option selected>10</option><option>20</option></select></label>
+      <label class="chk"><input type="checkbox" id="s-timer"> Timer (2,5 minuti a domanda, come al TOLC-I)</label>
+    </div>
+    <p class="mut small">Punteggio come al TOLC: +1 risposta giusta, 0 non data, −0,25 sbagliata. In «Quale formula uso?» prima rispondi alle domande di ragionamento (senza punti), poi scegli il numero (con punti).</p>
+    <button class="btn" id="s-go">Inizia</button>
+  </div>
+  <div id="session" hidden>
+    <div class="sticky"><span id="qn"></span><span id="sc"></span><span id="tm"></span><span class="sp"></span><button class="btn ghost" id="quit" style="padding:6px 12px">Termina</button></div>
+    <div id="qbox" class="card"></div>
+  </div>
+  <div id="summary" class="card" hidden></div>
+</section>
+</div>
+
+<!-- ============ MOTORE (nessun accesso alla pagina: generatori e calcoli) ============ -->
+<script id="core">
+"use strict";
+let RNG = Math.random;
+let STRICT = false; // nei test: gli errori nei generatori non vengono nascosti
+
+/* ---------- Frazioni esatte ---------- */
+function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { const t = a % b; a = b; b = t; } return a; }
+class Fr {
+  constructor(n, d) {
+    if (d === undefined) d = 1;
+    if (!Number.isInteger(n) || !Number.isInteger(d)) throw new Error("Frazione non intera: " + n + "/" + d);
+    if (d === 0) throw new Error("Denominatore zero");
+    if (d < 0) { n = -n; d = -d; }
+    const g = gcd(n, d) || 1;
+    this.n = n / g; this.d = d / g;
+    if (!Number.isSafeInteger(this.n) || !Number.isSafeInteger(this.d)) throw new Error("Overflow");
+  }
+  add(o) { o = F(o); return new Fr(this.n * o.d + o.n * this.d, this.d * o.d); }
+  sub(o) { o = F(o); return new Fr(this.n * o.d - o.n * this.d, this.d * o.d); }
+  mul(o) { o = F(o); return new Fr(this.n * o.n, this.d * o.d); }
+  div(o) { o = F(o); return new Fr(this.n * o.d, this.d * o.n); }
+  pow(k) { let r = new Fr(1); for (let i = 0; i < k; i++) r = r.mul(this); return r; }
+  eq(o) { o = F(o); return this.n === o.n && this.d === o.d; }
+  get key() { return this.n + "/" + this.d; }
+  get v() { return this.n / this.d; }
+}
+function F(n, d) { return n instanceof Fr ? n : new Fr(n, d === undefined ? 1 : d); }
+const ONE = new Fr(1);
+
+/* ---------- Utilità ---------- */
+const rnd = (a, b) => a + Math.floor(RNG() * (b - a + 1));
+const pick = a => a[Math.floor(RNG() * a.length)];
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(RNG() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function range(a, b) { const r = []; if (a >= b) for (let i = a; i >= b; i--) r.push(i); else for (let i = a; i <= b; i++) r.push(i); return r; }
+const fact = n => { let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; };
+const disp = (n, k) => { if (k > n || k < 0) return 0; let r = 1; for (let i = 0; i < k; i++) r *= n - i; return r; };
+const comb = (n, k) => (k > n || k < 0) ? 0 : disp(n, k) / fact(k);
+const ipow = (a, b) => { let r = 1; for (let i = 0; i < b; i++) r *= a; return r; };
+const nf = n => { const s = String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " "); return (n < 0 ? "−" : "") + s; };
+function fh(f) { f = F(f); if (f.d === 1) return nf(f.n); return `<span class="fr"><span>${nf(f.n)}</span><span>${nf(f.d)}</span></span>`; }
+function rf(n, d) { return `<span class="fr"><span>${typeof n === "number" ? nf(n) : n}</span><span>${typeof d === "number" ? nf(d) : d}</span></span>`; }
+function ft(f) { f = F(f); return f.d === 1 ? nf(f.n) : nf(f.n) + "/" + nf(f.d); }
+function pct(f) { return (Math.round(F(f).v * 1000) / 10).toString().replace(".", ",") + "%"; }
+function sumFr(list) { return list.reduce((a, b) => a.add(b), new Fr(0)); }
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+/* Candidato (risposta sbagliata) con la spiegazione dell'errore che la produce */
+function cand(fn, why) { try { const v = fn(); if (v === null || v === undefined) return null; return { v: F(v), why }; } catch (e) { return null; } }
+
+/* Costruisce le 5 opzioni: 1 giusta + 4 errori tipici diversi. Se non ce ne sono 4 distinti, l'esercizio viene scartato. */
+function buildOptions(correct, cands, prob) {
+  const ok = v => v instanceof Fr && (prob ? (v.n > 0 && v.n <= v.d) : (v.d === 1 && v.n >= 1));
+  if (!ok(correct)) return null;
+  const seen = new Set([correct.key]); const pool = [];
+  for (const c of cands) {
+    if (!c || !ok(c.v) || seen.has(c.v.key)) continue;
+    seen.add(c.v.key); pool.push(c);
+  }
+  if (pool.length < 4) return null;
+  const chosen = shuffle(pool).slice(0, 4).map(c => ({ v: c.v, correct: false, why: c.why }));
+  return shuffle([{ v: correct, correct: true, why: "" }, ...chosen]);
+}
+
+/* =================================================================
+   1. COMBINATORIA — «Quale formula uso?»
+   ================================================================= */
+const FORMS = {
+  P: { name: "Permutazioni", html: "P<sub>n</sub> = n!" },
+  D: { name: "Disposizioni semplici", html: "D<sub>n,k</sub> = " + rf("n!", "(n−k)!") },
+  DR: { name: "Disposizioni con ripetizione", html: "n<sup>k</sup>" },
+  C: { name: "Combinazioni", html: "C<sub>n,k</sub> = " + rf("n!", "k!·(n−k)!") },
+  PR: { name: "Anagrammi (oggetti uguali)", html: rf("n!", "a!·b!·…") }
+};
+const FORM_ORDER = ["P", "D", "DR", "C", "PR"];
+const FMODEL = { P: [true, false], D: [true, false], DR: [true, true], C: [false, false], PR: [true, true] };
+
+const prodS = a => a.join("·");
+function calcP(n) { return `P<sub>${n}</sub> = ${n}! = ${prodS(range(n, 1))} = ${nf(fact(n))}`; }
+function calcD(n, k) { return `D<sub>${n},${k}</sub> = ${prodS(range(n, n - k + 1))} = ${nf(disp(n, k))}`; }
+function calcDR(n, k) { return `${n}<sup>${k}</sup> = ${prodS(Array(k).fill(n))} = ${nf(ipow(n, k))}`; }
+function calcC(n, k) { return `C<sub>${n},${k}</sub> = ${rf(prodS(range(n, n - k + 1)), k + "!")} = ${rf(disp(n, k), fact(k))} = ${nf(comb(n, k))}`; }
+function calcPR(n, reps) { const den = reps.reduce((a, c) => a * fact(c), 1); return `${rf(n + "!", reps.map(c => c + "!").join("·"))} = ${rf(fact(n), den)} = ${nf(fact(n) / den)}`; }
+
+function countsOf(arr) { const m = new Map(); for (const x of arr) m.set(x, (m.get(x) || 0) + 1); return m; }
+const WORDS = ["CANE", "MARE", "SOLE", "PANE", "LIBRO", "TRENO", "FIUME", "PORTA", "CIELO", "LAMPO", "MONTE", "CAMPO", "VOLARE", "PIANTE",
+  "ANANAS", "PAPPA", "MAMMA", "CASSA", "NONNA", "TETTO", "ROSSO", "PALLA", "STESSO", "BANANA", "COCCO", "ATTESA", "SASSO", "OTTO",
+  "TORTA", "PIZZA", "GATTO", "CARTA", "TAVOLA", "CAMERA", "PATATA"];
+const WORDS_DIST = WORDS.filter(w => countsOf(w).size === w.length);
+const WORDS_REP = WORDS.filter(w => countsOf(w).size < w.length);
+const LET = ["A", "B", "C", "D", "E", "F", "G"];
+const listIt = a => a.length <= 1 ? a.join("") : a.slice(0, -1).join(", ") + " e " + a[a.length - 1];
+
+/* Scenari: ognuno restituisce F (formula), n, k, testo e i motivi per ordine/ripetizioni */
+const SCEN = {
+  DR: [
+    () => { const k = rnd(3, 4); return { sub: "Lucchetto", n: 10, k, text: `Un lucchetto ha ${k} rotelle, ognuna con le cifre da 0 a 9. Quante «combinazioni» diverse si possono impostare?`, wo: `Sì: ${range(1, k).join("‑")} e ${range(k, 1).join("‑")} sono impostazioni diverse. Anche se nel linguaggio comune si chiama «combinazione», qui l'ordine conta.`, wr: `Sì: rotelle diverse possono mostrare la stessa cifra (es. ${"7".repeat(k)}).` }; },
+    () => { const n = rnd(3, 5), k = rnd(2, 4); const L = LET.slice(0, n); return { sub: "Codice", n, k, text: `Un codice è formato da ${k} simboli scelti tra i ${n} simboli ${listIt(L)}; lo stesso simbolo può essere usato più volte. Quanti codici diversi esistono?`, wo: `Sì: un codice che inizia con AB è diverso da uno che inizia con BA.`, wr: `Sì: il testo dice che un simbolo si può riusare (es. ${"A".repeat(k)}).` }; },
+    () => { const n = rnd(3, 6), k = n <= 4 ? rnd(3, 4) : 3; return { sub: "Numeri", n, k, text: `Quanti numeri di ${k} cifre si possono scrivere usando solo le cifre ${listIt(range(1, n))}, anche ripetute?`, wo: `Sì: ${range(1, k).join("")} e ${range(k, 1).join("")} sono numeri diversi.`, wr: `Sì: le cifre si possono ripetere (es. ${"1".repeat(k)}).` }; },
+    () => { const k = rnd(2, 3); return { sub: "Dado", n: 6, k, text: `Si lancia un dado a sei facce ${k} volte e si annota la sequenza dei risultati. Quante sequenze diverse sono possibili?`, wo: `Sì: uscire prima 2 e poi 5 è diverso da uscire prima 5 e poi 2.`, wr: `Sì: lo stesso numero può uscire più volte.` }; },
+    () => { const k = rnd(3, 6); return { sub: "Moneta", n: 2, k, text: `Si lancia una moneta ${k} volte e si annota la sequenza di teste (T) e croci (C). Quante sequenze diverse sono possibili?`, wo: `Sì: TC… e CT… sono sequenze diverse.`, wr: `Sì: con 2 soli simboli e ${k} lanci, T e C si ripetono per forza.`, extra: [cand(() => k + 1, `Hai contato quante teste possono uscire (da 0 a ${k}), non quante sequenze.`)] }; },
+    () => { const m = rnd(4, 5), k = rnd(3, 4); return { sub: "Questionario", n: m, k, text: `Un questionario ha ${k} domande, ognuna con ${m} risposte possibili. In quanti modi diversi si può compilare, rispondendo a tutte le domande?`, wo: `Sì: rispondere A alla prima domanda e B alla seconda è diverso dal contrario.`, wr: `Sì: la stessa risposta (es. A) si può dare a più domande.` }; },
+    () => { const n = rnd(5, 9), k = rnd(2, 3); return { sub: "Estrazioni con reimmissione", n, k, text: `Un'urna contiene ${n} palline numerate da 1 a ${n}. Se ne estraggono ${k}, una alla volta, rimettendo ogni volta la pallina nell'urna, e si annotano i numeri nell'ordine di uscita. Quante sequenze diverse sono possibili?`, wo: `Sì: si annota l'ordine di uscita, quindi 1‑2 e 2‑1 sono sequenze diverse.`, wr: `Sì: la pallina viene rimessa nell'urna, quindi lo stesso numero può uscire di nuovo.` }; }
+  ],
+  D: [
+    () => { const k = rnd(3, 4); return { sub: "Codice", n: 10, k, text: `Un codice è formato da ${k} cifre (da 0 a 9) tutte diverse tra loro; il codice può iniziare con 0. Quanti codici diversi esistono?`, wo: `Sì: ${range(1, k).join("")} e ${range(k, 1).join("")} sono codici diversi.`, wr: `No: il testo chiede cifre tutte diverse.` }; },
+    () => { const n = rnd(4, 7); return { sub: "Numeri", n, k: 3, text: `Quanti numeri di 3 cifre, tutte diverse tra loro, si possono formare usando solo le cifre ${listIt(range(1, n))}?`, wo: `Sì: 123 e 321 sono numeri diversi.`, wr: `No: le cifre devono essere tutte diverse.` }; },
+    () => { const n = rnd(5, 10); return { sub: "Podio", n, k: 3, text: `Alla finale di una gara partecipano ${n} atleti. Quanti podi diversi (1°, 2° e 3° classificato) sono possibili? Non ci sono pari merito.`, wo: `Sì: Rossi primo e Bianchi secondo è diverso da Bianchi primo e Rossi secondo.`, wr: `No: un atleta non può occupare due posti del podio.` }; },
+    () => { const n = rnd(6, 12), k = rnd(2, 3); const roles = ["un presidente", "un vicepresidente", "un segretario"].slice(0, k); return { sub: "Incarichi", n, k, text: `Un club di ${n} soci deve eleggere ${listIt(roles)}; ogni incarico va a una persona diversa. In quanti modi si possono assegnare gli incarichi?`, wo: `Sì: i ruoli sono diversi, quindi scambiare due persone cambia l'assegnazione.`, wr: `No: ogni incarico va a una persona diversa.` }; },
+    () => { const n = rnd(5, 8), k = rnd(2, 4); return { sub: "Posti a sedere", n, k, text: `In una fila ci sono ${n} sedie libere e arrivano ${k} persone. In quanti modi diversi possono sedersi (una persona per sedia)?`, wo: `Sì: le persone sono distinte, quindi scambiare due persone di sedia dà una sistemazione diversa.`, wr: `No: su una sedia può sedersi una sola persona.` }; },
+    () => { const n = rnd(4, 8); return { sub: "Torneo", n, k: 2, text: `In un torneo con ${n} squadre ogni squadra gioca contro ogni altra due volte: una in casa e una in trasferta. Quante partite si giocano in totale?`, wo: `Sì: «A in casa contro B» è una partita diversa da «B in casa contro A».`, wr: `No: una squadra non gioca contro sé stessa.`, extra: [cand(() => comb(n, 2), `Hai contato una sola partita per ogni coppia di squadre (sola andata).`)] }; },
+    () => { const n = rnd(6, 10), k = rnd(2, 3); return { sub: "Estrazioni senza reimmissione", n, k, text: `Un'urna contiene ${n} palline numerate da 1 a ${n}. Se ne estraggono ${k}, una alla volta e senza reimmissione, annotando i numeri nell'ordine di uscita. Quante sequenze diverse sono possibili?`, wo: `Sì: si annota l'ordine di uscita.`, wr: `No: una pallina estratta non torna nell'urna, quindi non può riuscire.` }; },
+    () => { const n = rnd(4, 7); return { sub: "Bandiere", n, k: 3, text: `Si hanno ${n} colori diversi. Quante bandiere a tre strisce verticali (sinistra, centro, destra) si possono fare usando tre colori tutti diversi?`, wo: `Sì: rosso‑bianco‑verde e verde‑bianco‑rosso sono bandiere diverse.`, wr: `No: i tre colori devono essere diversi.` }; }
+  ],
+  C: [
+    () => { const n = rnd(6, 12), k = rnd(2, 4); return { sub: "Commissione", n, k, text: `Da un gruppo di ${n} studenti si deve formare una commissione di ${k} rappresentanti, tutti con lo stesso ruolo. Quante commissioni diverse si possono formare?`, wo: `No: i membri hanno lo stesso ruolo, quindi {Anna, Bruno} è la stessa commissione di {Bruno, Anna}.`, wr: `No: una persona non può essere scelta due volte.` }; },
+    () => { const n = rnd(5, 12); return { sub: "Strette di mano", n, k: 2, text: `${n} persone si salutano: ognuna stringe la mano a ciascuna delle altre, una sola volta. Quante strette di mano ci sono in totale?`, wo: `No: la stretta tra Anna e Bruno è la stessa di quella tra Bruno e Anna.`, wr: `No: nessuno stringe la mano a sé stesso.`, extra: [cand(() => n * (n + 1) / 2, `Hai sommato 1 + 2 + … + ${n}: la somma giusta si ferma a ${n - 1} (stessa idea di C<sub>${n},2</sub>).`), cand(() => n - 1, `Hai contato solo le strette di mano di una persona.`)] }; },
+    () => { const n = rnd(4, 10); return { sub: "Torneo", n, k: 2, text: `In un torneo con ${n} squadre ogni squadra affronta ogni altra esattamente una volta. Quante partite si giocano?`, wo: `No: la partita A–B è la stessa partita di B–A (si gioca una volta sola).`, wr: `No: una squadra non gioca contro sé stessa.` }; },
+    () => { const n = rnd(5, 9), k = pick([2, 3]); const what = k === 3 ? "triangoli con i vertici" : "segmenti con gli estremi"; return { sub: "Geometria", n, k, text: `Su una circonferenza sono segnati ${n} punti distinti. Quanti ${what} scelti tra questi punti si possono disegnare?`, wo: `No: ${k === 3 ? "il triangolo ABC è lo stesso di CBA" : "il segmento AB è lo stesso di BA"}.`, wr: `No: servono punti distinti.` }; },
+    () => { const n = rnd(5, 10), k = rnd(2, 3); return { sub: "Gelato", n, k, text: `Una gelateria offre ${n} gusti. Quante coppette diverse con ${k} gusti diversi si possono comporre?`, wo: `No: una coppetta fragola‑limone è uguale a una limone‑fragola.`, wr: `No: i gusti devono essere diversi.` }; },
+    () => { const n = rnd(6, 10), k = rnd(2, 4); return { sub: "Pizza", n, k, text: `Per una pizza si possono scegliere ${k} ingredienti diversi tra ${n} disponibili. Quante pizze diverse si possono ottenere?`, wo: `No: conta solo quali ingredienti ci sono, non l'ordine in cui li elenchi.`, wr: `No: gli ingredienti devono essere diversi.` }; },
+    () => { const n = rnd(8, 12), k = rnd(2, 3); return { sub: "Carte", n, k, text: `Da un mazzo di ${n} carte tutte diverse si ricevono ${k} carte. Quante mani diverse sono possibili? (Una mano è l'insieme delle carte che si hanno in mano.)`, wo: `No: una mano è un insieme di carte, non conta l'ordine in cui arrivano.`, wr: `No: le carte sono tutte diverse e una carta non può arrivare due volte.` }; },
+    () => { const n = rnd(6, 10), k = rnd(2, 4); return { sub: "Estrazione in blocco", n, k, text: `Da un'urna con ${n} palline numerate da 1 a ${n} si estraggono contemporaneamente ${k} palline. Quanti gruppi diversi di palline si possono ottenere?`, wo: `No: estrazione contemporanea, conta solo quali palline escono.`, wr: `No: ogni pallina può uscire una volta sola.` }; }
+  ],
+  P: [
+    () => { const n = rnd(4, 7); return { sub: "Fila", n, k: n, text: `In quanti modi diversi ${n} persone possono mettersi in fila indiana?`, wo: `Sì: scambiare due persone dà una fila diversa.`, wr: `No: ogni persona compare una volta sola.` }; },
+    () => { const n = rnd(4, 7); return { sub: "Scaffale", n, k: n, text: `In quanti modi si possono sistemare ${n} libri diversi, uno accanto all'altro, su uno scaffale?`, wo: `Sì: cambiare la posizione di due libri cambia la sistemazione.`, wr: `No: ogni libro c'è una sola volta.` }; },
+    () => { const n = rnd(4, 6); return { sub: "Interrogazioni", n, k: n, text: `Oggi devono essere interrogati ${n} studenti, uno dopo l'altro. In quanti ordini diversi può avvenire l'interrogazione?`, wo: `Sì: interrogare prima Anna e poi Bruno è diverso dal contrario.`, wr: `No: ogni studente viene interrogato una volta sola.` }; },
+    () => { const w = pick(WORDS_DIST), n = w.length; return { sub: "Anagrammi", n, k: n, text: `Quanti sono gli anagrammi della parola ${w}? (Si contano tutte le sequenze delle sue lettere, anche senza significato, compresa la parola stessa.)`, wo: `Sì: scambiando due lettere si ottiene un'altra sequenza.`, wr: `No: le lettere di ${w} sono tutte diverse.`, extra: [cand(() => fact(n) - 1, `Hai escluso la parola ${w}, ma il testo dice di contarla.`)] }; }
+  ],
+  PR: [
+    () => { const w = pick(WORDS_REP); const m = countsOf(w); const reps = [...m.values()].filter(c => c > 1);
+      const desc = [...m.entries()].filter(e => e[1] > 1).map(e => `la ${e[0]} compare ${e[1]} volte`);
+      return { sub: "Anagrammi", n: w.length, k: w.length, reps, distinct: m.size, text: `Quanti sono gli anagrammi della parola ${w}? (Si contano tutte le sequenze delle sue lettere, anche senza significato, compresa la parola stessa.)`, wo: `Sì: scambiando due lettere diverse si ottiene un'altra sequenza.`, wr: `Sì: ${listIt(desc)}. Scambiare tra loro due lettere uguali non crea un anagramma nuovo.` }; },
+    () => { const r = rnd(2, 4), b = rnd(2, 3), g = rnd(0, 2); const n = r + b + g; if (n > 7) return null; const reps = [r, b, g].filter(c => c > 1);
+      const parts = [`${r} rosse`, `${b} blu`]; if (g) parts.push(g === 1 ? `1 verde` : `${g} verdi`);
+      return { sub: "Bandierine", n, k: n, reps, distinct: g ? 3 : 2, text: `Si mettono in fila ${n} bandierine: ${listIt(parts)}. Le bandierine dello stesso colore sono identiche. Quante file diverse si possono ottenere?`, wo: `Sì: rossa‑blu‑… è diversa da blu‑rossa‑…`, wr: `Sì: ci sono bandierine uguali; scambiare due bandierine dello stesso colore non cambia la fila.` }; },
+    () => { const nd = pick([2, 2, 3]); const digs = shuffle(range(1, 9)).slice(0, nd); const cnt = digs.map(() => rnd(1, 3)); const n = cnt.reduce((a, c) => a + c, 0);
+      if (n < 4 || n > 6 || cnt.every(c => c === 1)) return null;
+      const all = []; digs.forEach((d, i) => { for (let j = 0; j < cnt[i]; j++) all.push(d); });
+      const s = shuffle(all).join(""); const reps = cnt.filter(c => c > 1);
+      const desc = digs.map((d, i) => [d, cnt[i]]).filter(e => e[1] > 1).map(e => `il ${e[0]} compare ${e[1]} volte`);
+      return { sub: "Cifre", n, k: n, reps, distinct: nd, text: `Quanti numeri diversi di ${n} cifre si ottengono riordinando le cifre del numero ${s}? (Il numero ${s} stesso è compreso.)`, wo: `Sì: cambiare l'ordine delle cifre cambia il numero.`, wr: `Sì: ${listIt(desc)}.` }; }
+  ]
+};
+
+function combCands(F_, sc) {
+  const n = sc.n, k = sc.k;
+  if (F_ === "DR") return [
+    cand(() => disp(n, k) || null, `Hai escluso le ripetizioni (disposizioni semplici), ma qui uno stesso elemento si può riusare.`),
+    cand(() => comb(n, k) || null, `Hai usato le combinazioni: così ignori sia l'ordine sia le ripetizioni.`),
+    cand(() => ipow(k, n), `Hai invertito base ed esponente: ${k}<sup>${n}</sup> invece di ${n}<sup>${k}</sup>. La base è il numero di scelte per ogni posto (${n}), l'esponente il numero di posti (${k}).`),
+    cand(() => n * k, `Hai fatto ${n}·${k}: le scelte vanno moltiplicate posto per posto (${prodS(Array(k).fill(n))}), cioè elevate a potenza.`),
+    cand(() => fact(n), `Hai calcolato ${n}! (permutazioni): ma qui non si mettono in fila tutti gli elementi una volta sola.`)
+  ];
+  if (F_ === "D") return [
+    cand(() => ipow(n, k), `Hai ammesso le ripetizioni (${n}<sup>${k}</sup>), ma gli elementi devono essere diversi: le scelte calano di 1 a ogni posto.`),
+    cand(() => comb(n, k), `Hai usato le combinazioni (C<sub>${n},${k}</sub>): così non conti l'ordine, ma qui scambiare due elementi cambia il risultato.`),
+    cand(() => fact(n) / fact(k), `Formula sbagliata: hai fatto ${n}!/${k}! invece di ${n}!/(${n}−${k})!.`),
+    cand(() => fact(n), `Hai calcolato ${n}!: è come mettere in ordine tutti gli ${n} elementi, ma i posti sono solo ${k}.`),
+    cand(() => n * k, `Hai fatto ${n}·${k}: le scelte vanno moltiplicate posto per posto (${prodS(range(n, n - k + 1))}).`)
+  ];
+  if (F_ === "C") return [
+    cand(() => disp(n, k), `Hai contato l'ordine (disposizioni D<sub>${n},${k}</sub>): così ogni gruppo viene contato ${k}! = ${fact(k)} volte. Bisogna dividere per ${k}!.`),
+    cand(() => ipow(n, k), `Hai fatto ${n}<sup>${k}</sup>: conti l'ordine e ammetti ripetizioni, due errori insieme.`),
+    cand(() => fact(n) / fact(k), `Hai dimenticato (${n}−${k})! al denominatore: ${n}!/${k}! non è la formula delle combinazioni.`),
+    cand(() => n * k, `Hai fatto ${n}·${k}: non è una formula di conteggio valida qui.`),
+    cand(() => fact(n) / fact(n - k), `Hai usato ${n}!/(${n}−${k})!: è la formula delle disposizioni (conta l'ordine).`)
+  ];
+  if (F_ === "P") return [
+    cand(() => ipow(n, n), `Hai fatto ${n}<sup>${n}</sup>: è come se ogni posto potesse avere qualunque elemento, anche ripetuto.`),
+    cand(() => fact(n - 1), `Hai calcolato (${n}−1)! = ${n - 1}!: hai perso un fattore (o hai usato il conteggio per un tavolo rotondo, che qui non c'entra).`),
+    cand(() => fact(n) / 2, `Hai diviso per 2 come se ci fossero due elementi uguali, ma sono tutti diversi.`),
+    cand(() => n * (n - 1), `Hai contato solo i primi due posti (${n}·${n - 1}) e ti sei fermato.`),
+    cand(() => n * n, `Hai fatto ${n}·${n}: non è la formula delle permutazioni.`)
+  ];
+  if (F_ === "PR") {
+    const reps = sc.reps, out = [];
+    out.push(cand(() => fact(n), `Hai ignorato gli oggetti uguali (${n}!): così conti più volte sequenze identiche.`));
+    if (reps.length >= 2) {
+      const mx = Math.max(...reps);
+      out.push(cand(() => fact(n) / fact(mx), `Hai diviso solo per ${mx}!: anche gli altri gruppi di oggetti uguali vanno divisi.`));
+      const s = reps.reduce((a, c) => a + c, 0);
+      out.push(cand(() => { const v = fact(n) / fact(s); return Number.isInteger(v) ? v : null; }, `Hai diviso per (${reps.join("+")})! invece che per ${reps.map(c => c + "!").join("·")}.`));
+      out.push(cand(() => { const v = fact(n) / reps.reduce((a, c) => a + fact(c), 0); return Number.isInteger(v) ? v : null; }, `Hai sommato i fattoriali al denominatore (${reps.map(c => c + "!").join("+")}) invece di moltiplicarli.`));
+    }
+    out.push(cand(() => { const v = fact(n) / reps.reduce((a, c) => a * c, 1); return Number.isInteger(v) ? v : null; }, `Hai diviso per ${reps.join("·")} invece che per i fattoriali ${reps.map(c => c + "!").join("·")}.`));
+    out.push(cand(() => fact(sc.distinct), `Hai messo in ordine solo i ${sc.distinct} simboli diversi (${sc.distinct}!), dimenticando quante volte compaiono.`));
+    out.push(cand(() => ipow(n, sc.distinct), `Hai fatto ${n}<sup>${sc.distinct}</sup>: non è un conteggio di anagrammi.`));
+    return out;
+  }
+  return [];
+}
+
+function genComb() {
+  const F_ = pick(FORM_ORDER);
+  const sc = pick(SCEN[F_])();
+  if (!sc) return null;
+  const n = sc.n, k = sc.k;
+  let value, calc;
+  if (F_ === "P") { value = fact(n); calc = calcP(n); }
+  else if (F_ === "D") { if (k >= n) return null; value = disp(n, k); calc = calcD(n, k); }
+  else if (F_ === "DR") { value = ipow(n, k); calc = calcDR(n, k); }
+  else if (F_ === "C") { if (k >= n) return null; value = comb(n, k); calc = calcC(n, k); }
+  else { value = fact(n) / sc.reps.reduce((a, c) => a * fact(c), 1); calc = calcPR(n, sc.reps); }
+  const cands = [...(sc.extra || []), ...combCands(F_, sc)];
+  const options = buildOptions(F(value), cands, false);
+  if (!options) return null;
+  const [order, rep] = FMODEL[F_];
+  const alt = [];
+  if (F_ === "P") alt.push("D");
+  if (F_ === "PR" && sc.distinct === 2) alt.push("C");
+  let nk;
+  if (F_ === "P") nk = `n = ${n}`;
+  else if (F_ === "PR") nk = `n = ${n}, ripetizioni ${sc.reps.join(", ")}`;
+  else nk = `n = ${n}, k = ${k}`;
+  let formExpl = `${FORMS[F_].name}: ${FORMS[F_].html}, con ${nk}.`;
+  if (F_ === "P") formExpl += ` (Vanno bene anche le disposizioni D<sub>${n},${n}</sub>: è la stessa cosa.)`;
+  if (F_ === "PR" && sc.distinct === 2) formExpl += ` (Con due soli tipi di oggetti va bene anche C<sub>${n},${sc.reps.length === 2 ? sc.reps[0] : Math.max(...sc.reps)}</sub>: scegli le posizioni di un tipo, il resto è fissato.)`;
+  const steps = [
+    `<b>Conta l'ordine?</b> ${sc.wo}`,
+    `<b>Ci sono ripetizioni?</b> ${sc.wr}`,
+    `<b>Formula:</b> ${formExpl}`,
+    `<b>Calcolo:</b> ${calc}`
+  ];
+  return {
+    topic: "comb", sub: "Quale formula · " + sc.sub, text: sc.text, options, steps,
+    stages: { order, rep, F: F_, alt, wo: sc.wo, wr: sc.wr, formExpl },
+    meta: { kind: "comb", F: F_, n, k, reps: sc.reps || [], value }
+  };
+}
+
+/* =================================================================
+   2. ALBERO DI PROBABILITÀ (urna con rosse R e nere N)
+   ================================================================= */
+/* Tutti i percorsi dell'albero. mode: 'ok' (giusto), 'numOnly' (cala il colore ma non il totale), 'denOnly' (cala il totale ma non il colore) */
+function urnPaths(N, M, k, repl, mode) {
+  mode = mode || "ok";
+  const T = N + M, out = [];
+  (function rec(seq, r, b, raw) {
+    if (seq.length === k) { let p = ONE; for (const q of raw) p = p.mul(new Fr(q[0], q[1])); out.push({ seq, raw, p }); return; }
+    const tot = repl ? T : (mode === "numOnly" ? T : r + b);
+    for (const c of ["R", "N"]) {
+      let num;
+      if (repl) num = c === "R" ? N : M;
+      else if (mode === "denOnly") num = c === "R" ? N : M;
+      else num = c === "R" ? r : b;
+      num = Math.max(0, num);
+      const r2 = (!repl && c === "R") ? Math.max(0, r - 1) : r;
+      const b2 = (!repl && c === "N") ? Math.max(0, b - 1) : b;
+      rec(seq + c, r2, b2, raw.concat([[num, tot]]));
+    }
+  })("", N, M, []);
+  return out;
+}
+const cntR = s => s.split("").filter(c => c === "R").length;
+const ALB_EV = {
+  2: [
+    { id: "RR", t: "entrambe le palline siano rosse", f: s => s === "RR" },
+    { id: "NN", t: "entrambe le palline siano nere", f: s => s === "NN" },
+    { id: "diff", t: "le due palline siano di colore diverso", f: s => s[0] !== s[1] },
+    { id: "same", t: "le due palline siano dello stesso colore", f: s => s[0] === s[1] },
+    { id: "RN", t: "la prima sia rossa e la seconda nera", f: s => s === "RN" },
+    { id: "sec", t: "la seconda pallina estratta sia rossa", f: s => s[1] === "R" },
+    { id: "1R", t: "esattamente una delle due palline sia rossa", f: s => cntR(s) === 1 }
+  ],
+  3: [
+    { id: "RRR", t: "tutte e tre le palline siano rosse", f: s => s === "RRR" },
+    { id: "2R", t: "esattamente due palline siano rosse", f: s => cntR(s) === 2 },
+    { id: "1R", t: "esattamente una pallina sia rossa", f: s => cntR(s) === 1 },
+    { id: "2N", t: "esattamente due palline siano nere", f: s => cntR(s) === 1 },
+    { id: "same", t: "le tre palline siano tutte dello stesso colore", f: s => s === "RRR" || s === "NNN" },
+    { id: "RNR", t: "escano, nell'ordine, rossa, nera, rossa", f: s => s === "RNR" },
+    { id: "third", t: "la terza pallina estratta sia nera", f: s => s[2] === "N" }
+  ]
+};
+function pathLine(p) {
+  const arrow = p.seq.split("").join(" → ");
+  const fr = p.raw.map(q => rf(q[0], q[1])).join(" · ");
+  const nn = p.raw.reduce((a, q) => a * q[0], 1), dd = p.raw.reduce((a, q) => a * q[1], 1);
+  let s = `<b>${arrow}</b>: ${fr} = ${rf(nn, dd)}`;
+  if (!(p.p.n === nn && p.p.d === dd)) s += ` = ${fh(p.p)}`;
+  return s;
+}
+function urnText(N, M, k, repl) {
+  return `Un'urna contiene ${N} palline rosse e ${M} nere. Se ne estraggono ${k}, una alla volta, ${repl ? "rimettendo ogni volta nell'urna la pallina estratta" : "senza rimetterle nell'urna"}.`;
+}
+function genAlbero() {
+  const k = pick([2, 2, 3]); const repl = RNG() < 0.35;
+  const N = rnd(2, 6), M = rnd(2, 6), T = N + M;
+  if (T > 10) return null;
+  const ev = pick(ALB_EV[k]);
+  const paths = urnPaths(N, M, k, repl, "ok");
+  const fav = paths.filter(p => ev.f(p.seq)), favNZ = fav.filter(p => p.p.n > 0);
+  const P = sumFr(fav.map(p => p.p));
+  if (P.n === 0 || P.n >= P.d) return null;
+  const probOf = (pp, f) => sumFr(pp.filter(p => f(p.seq)).map(p => p.p));
+  const cands = [];
+  cands.push(cand(() => probOf(urnPaths(N, M, k, !repl, "ok"), ev.f), repl
+    ? `Hai calcolato come se fosse <b>senza</b> reimmissione, ma la pallina viene rimessa nell'urna: le probabilità restano ${ft(F(N, T))} e ${ft(F(M, T))} a ogni estrazione.`
+    : `Hai calcolato come se ci fosse reimmissione (probabilità sempre ${ft(F(N, T))} e ${ft(F(M, T))}): senza reimmissione numeratori e denominatori cambiano.`));
+  if (!repl) {
+    cands.push(cand(() => probOf(urnPaths(N, M, k, false, "numOnly"), ev.f), `Hai tolto la pallina estratta dal suo colore ma non dal totale: il denominatore deve calare di 1 a ogni estrazione.`));
+    cands.push(cand(() => probOf(urnPaths(N, M, k, false, "denOnly"), ev.f), `Hai fatto calare il totale ma non le palline del colore già uscito.`));
+  }
+  if (favNZ.length >= 2) cands.push(cand(() => favNZ[0].p, `Hai considerato solo il percorso ${favNZ[0].seq.split("").join("→")} e dimenticato gli altri ${favNZ.length - 1} percorsi favorevoli (ordini diversi).`));
+  if (favNZ.length === 1) cands.push(cand(() => favNZ[0].raw.reduce((a, q) => a.add(new Fr(q[0], q[1])), new Fr(0)), `Hai <b>sommato</b> le probabilità lungo il percorso: lungo un percorso si <b>moltiplica</b>.`));
+  cands.push(cand(() => F(fav.length, paths.length), `Hai contato i percorsi (${fav.length} su ${paths.length}) come se fossero tutti ugualmente probabili: non lo sono.`));
+  cands.push(cand(() => ONE.sub(P), `È la probabilità dell'evento contrario.`));
+  if (ev.id === "sec" && !repl) {
+    cands.push(cand(() => F(N - 1, T - 1), `Hai dato per scontato che la prima fosse rossa (${N - 1}/${T - 1}).`));
+    cands.push(cand(() => paths.find(p => p.seq === "RR").p, `È P(prima rossa <b>e</b> seconda rossa): manca il percorso N→R.`));
+  }
+  if (ev.id === "third" && !repl) cands.push(cand(() => F(M - 1, T - 1), `Hai supposto che fosse già uscita una nera prima.`));
+  const options = buildOptions(P, cands, true);
+  if (!options) return null;
+  const steps = [];
+  steps.push(repl ? `Con reimmissione la composizione non cambia: a ogni estrazione P(R) = ${rf(N, T)}, P(N) = ${rf(M, T)}.`
+    : `Senza reimmissione: a ogni estrazione il totale cala di 1 e cala di 1 anche il colore appena uscito.`);
+  steps.push(`Percorsi favorevoli: ${fav.map(p => p.seq.split("").join("→")).join(", ")}.${fav.length > favNZ.length ? " (Quelli con probabilità 0 non contano.)" : ""}`);
+  for (const p of favNZ) steps.push(pathLine(p));
+  if (favNZ.length > 1) steps.push(`Somma dei percorsi: ${favNZ.map(p => fh(p.p)).join(" + ")} = <b>${fh(P)}</b>`);
+  else steps.push(`Risultato: <b>${fh(P)}</b>`);
+  return {
+    topic: "albero", sub: "Albero di probabilità", text: `${urnText(N, M, k, repl)} Qual è la probabilità che ${ev.t}?`,
+    options, steps, fig: treeSVG(N, M, k, repl, { hi: new Set(favNZ.map(p => p.seq)) }),
+    meta: { kind: "urn", N, M, k, repl, ev: ev.id, value: P }
+  };
+}
+
+/* Disegno dell'albero (stringa SVG) */
+function treeSVG(N, M, k, repl, opt) {
+  opt = opt || {};
+  const sel = opt.sel || new Set(), hi = opt.hi || new Set(), inter = !!opt.inter;
+  const paths = urnPaths(N, M, k, repl, "ok"); const L = paths.length;
+  const rowH = k === 3 ? 40 : 58, top = 22, colW = k === 3 ? 98 : 130, x0 = 16;
+  const W = x0 + colW * k + 70, H = top * 2 + rowH * (L - 1);
+  const X = l => x0 + colW * l;
+  const Y = (l, i) => { const span = 2 ** (k - l); return top + rowH * (i * span + (span - 1) / 2); };
+  let edges = "", labels = "", nodes = "", leaves = "";
+  for (let l = 0; l < k; l++) for (let i = 0; i < 2 ** l; i++) for (let c = 0; c < 2; c++) {
+    const j = 2 * i + c, span = 2 ** (k - l - 1);
+    const under = range(j * span, (j + 1) * span - 1).map(x => paths[x]);
+    const pr = under[0].raw[l]; const zero = pr[0] === 0;
+    const isSel = under.some(p => sel.has(p.seq)), isHi = under.some(p => hi.has(p.seq));
+    const x1 = X(l), y1 = Y(l, i), x2 = X(l + 1), y2 = Y(l + 1, j);
+    edges += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${zero ? "z " : ""}${isHi ? "hi " : ""}${isSel ? "sel" : ""}"/>`;
+    labels += `<text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 5}" text-anchor="middle" class="bl${zero ? " z" : ""}">${zero ? "0" : pr[0] + "/" + pr[1]}</text>`;
+    nodes += `<circle cx="${x2}" cy="${y2}" r="9" class="${c === 0 ? "nR" : "nN"}"/><text x="${x2}" y="${y2 + 3.5}" text-anchor="middle" class="nl">${c === 0 ? "R" : "N"}</text>`;
+  }
+  nodes += `<circle cx="${X(0)}" cy="${Y(0, 0)}" r="7" class="root"/>`;
+  paths.forEach((p, x) => {
+    const zero = p.p.n === 0; const y = Y(k, x);
+    const cls = ["leaf", zero ? "z" : "", sel.has(p.seq) ? "sel" : "", hi.has(p.seq) ? "hi" : ""].join(" ");
+    leaves += `<g class="${cls}"${inter && !zero ? ` data-seq="${p.seq}"` : ""}><rect class="lb" x="${X(k) + 13}" y="${y - 14}" width="${k * 13 + 16}" height="26"/><text x="${X(k) + 21}" y="${y + 5}" class="lf">${p.seq}</text></g>`;
+  });
+  return `<svg class="tree" viewBox="0 0 ${W} ${H}" role="img" aria-label="Albero delle estrazioni">${edges}${labels}${nodes}${leaves}</svg>`;
+}
+
+/* =================================================================
+   3. «ALMENO UNO» E PROBABILITÀ CONDIZIONATA
+   ================================================================= */
+function powHTML(q, n) { return `(${rf(q.n, q.d)})<sup>${n}</sup>`; }
+
+const INDEP = [
+  () => { const ev = pick([{ t: "il 6", p: F(1, 6), none: "nessun 6" }, { t: "un numero maggiore di 4", p: F(1, 3), none: "mai un numero maggiore di 4" }, { t: "un numero minore di 3", p: F(1, 3), none: "mai un numero minore di 3" }, { t: "un numero pari", p: F(1, 2), none: "mai un numero pari" }]);
+    const n = ev.p.d === 2 ? rnd(2, 4) : rnd(2, 3);
+    return { sub: "Almeno uno · dado", n, p: ev.p, none: ev.none, text: `Si lancia un dado equo a sei facce ${n} volte. Qual è la probabilità di ottenere almeno una volta ${ev.t}?` }; },
+  () => { const n = rnd(2, 4); return { sub: "Almeno uno · moneta", n, p: F(1, 2), none: "nessuna testa", text: `Si lancia una moneta equa ${n} volte. Qual è la probabilità di ottenere almeno una testa?` }; },
+  () => { const p = pick([F(1, 2), F(1, 3), F(1, 4), F(1, 5), F(1, 10)]); const n = rnd(2, 3);
+    return { sub: "Almeno uno · guasti", n, p, none: "nessun guasto", text: `Un impianto ha ${n} componenti che si guastano in modo indipendente l'uno dall'altro; ciascuno si guasta con probabilità ${fh(p)}. Qual è la probabilità che si guasti almeno un componente?` }; },
+  () => { const p = pick([F(1, 2), F(2, 3), F(3, 4), F(2, 5), F(3, 5)]); const n = rnd(2, 3);
+    return { sub: "Almeno uno · tiri", n, p, none: "nessun centro", text: `Un arciere colpisce il bersaglio con probabilità ${fh(p)} a ogni tiro, indipendentemente dagli altri tiri. Tira ${n} volte. Qual è la probabilità che colpisca il bersaglio almeno una volta?` }; },
+  () => { const p = pick([F(1, 2), F(1, 3), F(2, 3), F(1, 4)]); const n = rnd(2, 3);
+    return { sub: "Almeno uno · semafori", n, p, none: "nessun semaforo rosso", text: `Lungo un percorso ci sono ${n} semafori che funzionano in modo indipendente; ognuno è rosso con probabilità ${fh(p)}. Qual è la probabilità di trovare almeno un semaforo rosso?` }; }
+];
+function genIndep() {
+  const sc = pick(INDEP)(); const n = sc.n, p = sc.p, q = ONE.sub(p);
+  const none = q.pow(n), ans = ONE.sub(none);
+  const cands = [
+    cand(() => none, `È P(${sc.none}) = ${powHTML(q, n)}: hai dimenticato di fare 1 − ….`),
+    cand(() => p.mul(n), `Hai sommato ${n} volte ${ft(p)}: così i casi con più successi vengono contati più volte (e con abbastanza prove supereresti 1).`),
+    cand(() => p.pow(n), `È la probabilità di successo in <b>tutte</b> le ${n} prove, non in almeno una.`),
+    cand(() => ONE.sub(p.pow(n)), `È 1 − P(tutti successi): il contrario di «almeno uno» è «nessuno», non «tutti».`),
+    cand(() => p.mul(q.pow(n - 1)).mul(n), `È la probabilità di <b>esattamente</b> un successo: mancano i casi con 2 o più successi.`)
+  ];
+  const options = buildOptions(ans, cands, true); if (!options) return null;
+  const steps = [
+    `Il contrario di «almeno uno» è «nessuno»: P(almeno uno) = 1 − P(${sc.none}).`,
+    `In una singola prova l'insuccesso ha probabilità 1 − ${fh(p)} = ${fh(q)}.`,
+    `Le prove sono indipendenti, quindi si moltiplica: P(${sc.none}) = ${powHTML(q, n)} = ${fh(none)}.`,
+    `P(almeno uno) = 1 − ${fh(none)} = <b>${fh(ans)}</b>.`
+  ];
+  return { topic: "cond", sub: sc.sub, text: sc.text, options, steps, meta: { kind: "indep", n, p, value: ans } };
+}
+
+const UA = [
+  () => { const g = rnd(2, 5), b = rnd(3, 7), k = rnd(2, 3); if (g + b > 10) return null;
+    return { sub: "Almeno uno · urna", g, b, k, none: "nessuna rossa", gname: "rosse", bname: "nere", text: `Un'urna contiene ${g} palline rosse e ${b} nere. Se ne estraggono ${k} senza reimmissione. Qual è la probabilità che almeno una sia rossa?` }; },
+  () => { const g = rnd(3, 7), b = rnd(4, 8), k = 2;
+    return { sub: "Almeno uno · gruppo", g, b, k, none: "nessuna ragazza", gname: "ragazze", bname: "ragazzi", text: `In un gruppo ci sono ${g} ragazze e ${b} ragazzi. Si scelgono a caso ${k} persone diverse. Qual è la probabilità che sia scelta almeno una ragazza?` }; },
+  () => { const T = rnd(8, 12), d = rnd(2, 3), k = rnd(2, 3);
+    return { sub: "Almeno uno · lampadine", g: d, b: T - d, k, none: "nessuna difettosa", gname: "difettose", bname: "funzionanti", text: `In una scatola ci sono ${T} lampadine, di cui ${d} difettose. Se ne prendono ${k} a caso, senza rimetterle nella scatola. Qual è la probabilità che almeno una sia difettosa?` }; },
+  () => { const c = pick([{ al: "un asso", g: 4, none: "nessun asso", gn: "assi" }, { al: "un re", g: 4, none: "nessun re", gn: "re" }, { al: "una carta di denari", g: 10, none: "nessuna carta di denari", gn: "carte di denari" }, { al: "una figura", g: 12, none: "nessuna figura", gn: "figure" }]);
+    return { sub: "Almeno uno · carte", g: c.g, b: 40 - c.g, k: 2, none: c.none, gname: c.gn, bname: "altre carte", text: `Da un mazzo di 40 carte (4 semi: coppe, denari, spade, bastoni; per ogni seme asso, 2, 3, 4, 5, 6, 7, fante, cavallo, re) si estraggono 2 carte senza reimmissione. Qual è la probabilità di ottenere almeno ${c.al}?` }; }
+];
+function genUrnAlmeno() {
+  const sc = pick(UA)(); if (!sc) return null;
+  const g = sc.g, b = sc.b, k = sc.k, T = g + b;
+  const fs = range(0, k - 1).map(i => [b - i, T - i]);
+  const none = fs.reduce((a, q) => a.mul(new Fr(q[0], q[1])), ONE);
+  const ans = ONE.sub(none);
+  const cands = [
+    cand(() => none, `È P(${sc.none}): hai dimenticato di fare 1 − ….`),
+    cand(() => ONE.sub(F(b, T).pow(k)), `Hai usato ${powHTML(F(b, T), k)} come se ci fosse reimmissione: senza reimmissione il secondo fattore è ${rf(b - 1, T - 1)}.`),
+    cand(() => F(k * g, T), `Hai sommato ${k} volte ${rf(g, T)}: così conti più volte i casi con più «successi».`),
+    cand(() => F(comb(g, 1) * comb(b, k - 1), comb(T, k)), `È la probabilità di <b>esattamente</b> uno: mancano i casi con più di uno.`),
+    cand(() => ONE.sub(F(comb(g, k), comb(T, k))), `È 1 − P(tutti ${sc.gname}): il contrario di «almeno uno» è «nessuno».`)
+  ];
+  const options = buildOptions(ans, cands, true); if (!options) return null;
+  const nn = fs.reduce((a, q) => a * q[0], 1), dd = fs.reduce((a, q) => a * q[1], 1);
+  const steps = [
+    `Il contrario di «almeno uno» è «${sc.none}», cioè tutte le scelte cadono sulle ${b} ${sc.bname}.`,
+    `Senza reimmissione: P(${sc.none}) = ${fs.map(q => rf(q[0], q[1])).join(" · ")} = ${rf(nn, dd)} = ${fh(none)}.`,
+    `P(almeno uno) = 1 − ${fh(none)} = <b>${fh(ans)}</b>.`
+  ];
+  return { topic: "cond", sub: sc.sub, text: sc.text, options, steps, meta: { kind: "urnAlmeno", g, b, k, value: ans } };
+}
+
+/* Eventi su due dadi (rosso r, blu b). ind = «sapendo che …», sub = «probabilità che …» */
+const DEV = [
+  ...[4, 5, 6, 7, 8, 9, 10].map(s => ({ id: "s" + s, ind: `la somma è ${s}`, sub: `la somma sia ${s}`, f: (r, b) => r + b === s })),
+  ...[8, 9, 10].map(s => ({ id: "ge" + s, ind: `la somma è almeno ${s}`, sub: `la somma sia almeno ${s}`, f: (r, b) => r + b >= s })),
+  { id: "sp", ind: "la somma è pari", sub: "la somma sia pari", f: (r, b) => (r + b) % 2 === 0 },
+  { id: "sd", ind: "la somma è dispari", sub: "la somma sia dispari", f: (r, b) => (r + b) % 2 === 1 },
+  ...[1, 6].map(x => ({ id: "al" + x, ind: `almeno uno dei due dadi mostra ${x}`, sub: `almeno uno dei due dadi mostri ${x}`, f: (r, b) => r === x || b === x })),
+  ...[1, 3, 6].map(x => ({ id: "r" + x, ind: `il dado rosso mostra ${x}`, sub: `il dado rosso mostri ${x}`, f: r => r === x })),
+  { id: "rp", ind: "il dado rosso mostra un numero pari", sub: "il dado rosso mostri un numero pari", f: r => r % 2 === 0 },
+  { id: "dop", ind: "i due dadi mostrano lo stesso numero", sub: "i due dadi mostrino lo stesso numero", f: (r, b) => r === b },
+  { id: "dif", ind: "i due dadi mostrano numeri diversi", sub: "i due dadi mostrino numeri diversi", f: (r, b) => r !== b },
+  { id: "rgb", ind: "il dado rosso mostra un numero maggiore del blu", sub: "il dado rosso mostri un numero maggiore del blu", f: (r, b) => r > b },
+  { id: "ep", ind: "entrambi i dadi mostrano un numero pari", sub: "entrambi i dadi mostrino un numero pari", f: (r, b) => r % 2 === 0 && b % 2 === 0 }
+];
+function diceGridHTML(fA, fB) {
+  let h = `<table class="dg"><tr><th class="c">rosso ↓<br>blu →</th>${range(1, 6).map(b => `<th>${b}</th>`).join("")}</tr>`;
+  for (let r = 1; r <= 6; r++) {
+    h += `<tr><th>${r}</th>`;
+    for (let b = 1; b <= 6; b++) {
+      const a = fA ? fA(r, b) : false, bb = fB ? fB(r, b) : true;
+      const cls = fB ? (a && bb ? "ab" : bb ? "b" : a ? "ax" : "") : (a ? "ab" : "");
+      h += `<td class="${cls}">${r + b}</td>`;
+    }
+    h += "</tr>";
+  }
+  return h + "</table>";
+}
+function condCands(U, nA, nB, nAB) {
+  return [
+    cand(() => F(nAB, U), `È P(A e B) = ${nAB}/${U}: hai diviso per tutti i casi (${U}) invece che solo per quelli di B (${nB}).`),
+    cand(() => F(nA, U), `È P(A) = ${nA}/${U}: hai ignorato l'informazione data.`),
+    cand(() => F(nAB, nA), `È ${nAB}/${nA} = P(B | A): hai invertito la condizionata.`),
+    cand(() => F(nB - nAB, nB), `È la probabilità del contrario: hai contato i casi di B in cui A <b>non</b> succede.`),
+    cand(() => F(nB, U), `È P(B) = ${nB}/${U}: la probabilità dell'informazione, non dell'evento richiesto.`),
+    cand(() => F(nA, nB), `È ${nA}/${nB}: al numeratore hai messo tutti i casi di A (${nA}), anche quelli fuori da B; vanno contati solo i casi di A e B (${nAB}).`),
+    cand(() => F(nA, U).mul(F(nB, U)), `Hai moltiplicato P(A)·P(B) = ${rf(nA, U)}·${rf(nB, U)}: il prodotto non è la formula della condizionata.`),
+    cand(() => F(nAB, nA + nB - nAB), `Hai diviso per i casi di «A oppure B» (${nA + nB - nAB}) invece che solo per quelli di B (${nB}).`)
+  ];
+}
+function genDiceCond() {
+  const A = pick(DEV), B = pick(DEV); if (A.id === B.id) return null;
+  const all = []; for (let r = 1; r <= 6; r++) for (let b = 1; b <= 6; b++) all.push([r, b]);
+  const SB = all.filter(x => B.f(x[0], x[1])), SA = all.filter(x => A.f(x[0], x[1])), SAB = SB.filter(x => A.f(x[0], x[1]));
+  const nB = SB.length, nA = SA.length, nAB = SAB.length;
+  if (nB === 0 || nAB === 0 || nAB === nB) return null;
+  const ans = F(nAB, nB);
+  const options = buildOptions(ans, condCands(36, nA, nB, nAB), true); if (!options) return null;
+  const lst = S => S.length <= 12 ? ": " + S.map(x => `(${x[0]}, ${x[1]})`).join(", ") : "";
+  const steps = [
+    `Chiamo B = «${B.ind}» (l'informazione) e A = «${A.ind}» (l'evento richiesto). Le coppie sono scritte come (rosso, blu).`,
+    `I casi possibili si riducono a quelli di B: <b>${nB}</b> casi${lst(SB)}.`,
+    `Tra questi, quelli in cui vale anche A: <b>${nAB}</b>${lst(SAB)}.`,
+    `P(A | B) = ${rf(nAB, nB)} = <b>${fh(ans)}</b>.`
+  ];
+  return { topic: "cond", sub: "Condizionata · dadi", text: `Si lanciano due dadi equi a sei facce, uno rosso e uno blu. Sapendo che ${B.ind}, qual è la probabilità che ${A.sub}?`,
+    options, steps, fig: diceGridHTML(A.f, B.f) + `<div class="legend"><span><i style="background:var(--acc-bg)"></i>casi di B</span><span><i style="background:var(--ok)"></i>casi di A e B</span></div>`,
+    meta: { kind: "dice", A: A.id, B: B.id, value: ans } };
+}
+
+/* Mazzi di carte */
+const DECKS = {
+  40: { n: 40, desc: "un mazzo di 40 carte (4 semi: coppe, denari, spade, bastoni; per ogni seme asso, 2, 3, 4, 5, 6, 7, fante, cavallo, re)",
+    cards: (() => { const c = []; for (const s of ["coppe", "denari", "spade", "bastoni"]) for (const v of [1, 2, 3, 4, 5, 6, 7, "fante", "cavallo", "re"]) c.push({ s, v }); return c; })(),
+    ev: [
+      { id: "den", ind: "è di denari", sub: "sia di denari", f: c => c.s === "denari" },
+      { id: "cop", ind: "è di coppe", sub: "sia di coppe", f: c => c.s === "coppe" },
+      { id: "fig", ind: "è una figura", sub: "sia una figura", f: c => ["fante", "cavallo", "re"].includes(c.v) },
+      { id: "re", ind: "è un re", sub: "sia un re", f: c => c.v === "re" },
+      { id: "asso", ind: "è un asso", sub: "sia un asso", f: c => c.v === 1 },
+      { id: "sette", ind: "è un 7", sub: "sia un 7", f: c => c.v === 7 },
+      { id: "dc", ind: "è di denari o di coppe", sub: "sia di denari o di coppe", f: c => c.s === "denari" || c.s === "coppe" },
+      { id: "af", ind: "è un asso o una figura", sub: "sia un asso o una figura", f: c => c.v === 1 || ["fante", "cavallo", "re"].includes(c.v) },
+      { id: "nf", ind: "non è una figura", sub: "non sia una figura", f: c => !["fante", "cavallo", "re"].includes(c.v) }
+    ] },
+  52: { n: 52, desc: "un mazzo di 52 carte francesi (cuori e quadri sono rossi, fiori e picche neri; per ogni seme A, 2, 3, …, 10, J, Q, K; le figure sono J, Q, K)",
+    cards: (() => { const c = []; for (const s of ["cuori", "quadri", "fiori", "picche"]) for (const v of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K"]) c.push({ s, v }); return c; })(),
+    ev: [
+      { id: "rossa", ind: "è rossa", sub: "sia rossa", f: c => c.s === "cuori" || c.s === "quadri" },
+      { id: "cuori", ind: "è di cuori", sub: "sia di cuori", f: c => c.s === "cuori" },
+      { id: "picche", ind: "è di picche", sub: "sia di picche", f: c => c.s === "picche" },
+      { id: "fig", ind: "è una figura", sub: "sia una figura", f: c => ["J", "Q", "K"].includes(c.v) },
+      { id: "asso", ind: "è un asso", sub: "sia un asso", f: c => c.v === 1 },
+      { id: "re", ind: "è un re", sub: "sia un re", f: c => c.v === "K" },
+      { id: "pari", ind: "è un numero pari (2, 4, 6, 8 o 10)", sub: "sia un numero pari (2, 4, 6, 8 o 10)", f: c => typeof c.v === "number" && c.v % 2 === 0 }
+    ] }
+};
+function genCardCond() {
+  const D = DECKS[pick([40, 52])]; const A = pick(D.ev), B = pick(D.ev); if (A.id === B.id) return null;
+  const nB = D.cards.filter(B.f).length, nA = D.cards.filter(A.f).length, nAB = D.cards.filter(c => A.f(c) && B.f(c)).length;
+  if (nB === 0 || nAB === 0 || nAB === nB) return null;
+  const ans = F(nAB, nB);
+  const options = buildOptions(ans, condCands(D.n, nA, nB, nAB), true); if (!options) return null;
+  const steps = [
+    `Chiamo B = «la carta ${B.ind}» (l'informazione) e A = «la carta ${A.sub.replace(/^sia /, "è ").replace(/^non sia /, "non è ")}» (l'evento richiesto).`,
+    `Sapendo B, le carte possibili sono solo quelle di B: <b>${nB}</b>.`,
+    `Tra queste, quelle per cui vale anche A: <b>${nAB}</b>.`,
+    `P(A | B) = ${rf(nAB, nB)} = <b>${fh(ans)}</b>.`
+  ];
+  return { topic: "cond", sub: "Condizionata · carte", text: `Si estrae una carta a caso da ${D.desc}. Sapendo che la carta ${B.ind}, qual è la probabilità che ${A.sub}?`,
+    options, steps, meta: { kind: "card", deck: D.n, A: A.id, B: B.id, value: ans } };
+}
+const CAT2 = {
+  40: [{ id: "asso", nm: "assi", ind: "è un asso", nind: "non è un asso", sub: "sia un asso", f: c => c.v === 1 }, { id: "re", nm: "re", ind: "è un re", nind: "non è un re", sub: "sia un re", f: c => c.v === "re" },
+    { id: "den", nm: "carte di denari", ind: "è di denari", nind: "non è di denari", sub: "sia di denari", f: c => c.s === "denari" }, { id: "fig", nm: "figure", ind: "è una figura", nind: "non è una figura", sub: "sia una figura", f: c => ["fante", "cavallo", "re"].includes(c.v) }],
+  52: [{ id: "asso", nm: "assi", ind: "è un asso", nind: "non è un asso", sub: "sia un asso", f: c => c.v === 1 }, { id: "cuori", nm: "carte di cuori", ind: "è di cuori", nind: "non è di cuori", sub: "sia di cuori", f: c => c.s === "cuori" },
+    { id: "fig", nm: "figure", ind: "è una figura", nind: "non è una figura", sub: "sia una figura", f: c => ["J", "Q", "K"].includes(c.v) }, { id: "rossa", nm: "carte rosse", ind: "è rossa", nind: "non è rossa", sub: "sia rossa", f: c => c.s === "cuori" || c.s === "quadri" }]
+};
+function genCard2() {
+  const dn = pick([40, 52]), D = DECKS[dn], c = pick(CAT2[dn]); const n = D.n, g = D.cards.filter(c.f).length;
+  const same = RNG() < 0.6; let ans, cands, steps, text;
+  if (same) {
+    ans = F(g - 1, n - 1);
+    text = `Da ${D.desc} si estraggono due carte, una dopo l'altra, senza reimmissione. Sapendo che la prima carta ${c.ind}, qual è la probabilità che anche la seconda ${c.sub}?`;
+    cands = [
+      cand(() => F(g, n), `È ${g}/${n}: hai ignorato che la prima carta non c'è più (andrebbe bene solo con reimmissione).`),
+      cand(() => F(g, n - 1), `Hai tolto la carta dal totale ma non dalle ${c.nm}: le ${c.nm} rimaste sono ${g - 1}.`),
+      cand(() => F(g - 1, n), `Hai tolto la carta dalle ${c.nm} ma non dal totale: restano ${n - 1} carte.`),
+      cand(() => F(g * (g - 1), n * (n - 1)), `È P(prima e seconda) = ${rf(g, n)}·${rf(g - 1, n - 1)}: ma la prima è già nota, non va moltiplicata.`)
+    ];
+    steps = [`Dopo la prima estrazione restano ${n - 1} carte; le ${c.nm} rimaste sono ${g} − 1 = ${g - 1}.`, `P = ${rf(g - 1, n - 1)} = <b>${fh(ans)}</b>.`];
+  } else {
+    ans = F(g, n - 1);
+    text = `Da ${D.desc} si estraggono due carte, una dopo l'altra, senza reimmissione. Sapendo che la prima carta ${c.nind}, qual è la probabilità che la seconda ${c.sub}?`;
+    cands = [
+      cand(() => F(g, n), `È ${g}/${n}: hai ignorato che la prima carta non c'è più.`),
+      cand(() => F(g - 1, n - 1), `Hai tolto una carta dalle ${c.nm}, ma la prima <b>non</b> era tra queste: restano tutte e ${g}.`),
+      cand(() => F((n - g) * g, n * (n - 1)), `È P(prima no e seconda sì) = ${rf(n - g, n)}·${rf(g, n - 1)}: la prima è già nota, non va moltiplicata.`),
+      cand(() => F(g - 1, n), `Hai sbagliato sia il numeratore sia il totale: restano ${g} ${c.nm} su ${n - 1} carte.`)
+    ];
+    steps = [`Dopo la prima estrazione restano ${n - 1} carte; la prima non era tra le ${c.nm}, quindi queste sono ancora ${g}.`, `P = ${rf(g, n - 1)} = <b>${fh(ans)}</b>.`];
+  }
+  const options = buildOptions(ans, cands, true); if (!options) return null;
+  return { topic: "cond", sub: "Condizionata · due carte", text, options, steps, meta: { kind: "card2", deck: dn, cat: c.id, same, value: ans } };
+}
+function genUrnCond() {
+  const N = rnd(2, 5), M = rnd(2, 5), T = N + M;
+  const paths = urnPaths(N, M, 2, false, "ok");
+  const v = pick(["almeno", "seconda", "stesso"]);
+  let fA, fB, Bt, At, extra = [];
+  if (v === "almeno") { fB = s => s.includes("R"); fA = s => s === "RR"; Bt = "almeno una delle due è rossa"; At = "siano entrambe rosse";
+    extra = [cand(() => F(N - 1, T - 1), `È ${N - 1}/${T - 1}: hai letto «la prima è rossa» invece di «almeno una è rossa».`)]; }
+  else if (v === "seconda") { fB = s => s[1] === "R"; fA = s => s[0] === "R"; Bt = "la seconda pallina estratta è rossa"; At = "anche la prima sia rossa";
+    extra = [cand(() => F(N, T - 1), `Hai tolto una pallina dal totale ma non dalle rosse.`)]; }
+  else { fB = s => s[0] === s[1]; fA = s => s === "RR"; Bt = "le due palline sono dello stesso colore"; At = "siano entrambe rosse";
+    extra = [cand(() => sumFr(paths.filter(p => fB(p.seq)).map(p => p.p)), `È P(stesso colore): la probabilità dell'informazione, non dell'evento richiesto.`)]; }
+  const PB = sumFr(paths.filter(p => fB(p.seq)).map(p => p.p)), PAB = sumFr(paths.filter(p => fA(p.seq) && fB(p.seq)).map(p => p.p));
+  if (PB.n === 0 || PAB.n === 0 || PAB.eq(PB)) return null;
+  const ans = PAB.div(PB);
+  const cands = [...extra,
+    cand(() => PAB, `È P(A e B): non hai diviso per P(B).`),
+    cand(() => F(N, T), `È ${N}/${T}: hai ignorato l'informazione e le estrazioni precedenti.`),
+    cand(() => ONE.sub(ans), `È la probabilità del contrario, sapendo B.`),
+    cand(() => { const PA = sumFr(paths.filter(p => fA(p.seq)).map(p => p.p)); return PAB.div(PA); }, `È P(B | A): hai invertito la condizionata.`)
+  ];
+  const options = buildOptions(ans, cands, true); if (!options) return null;
+  const pB = paths.filter(p => fB(p.seq) && p.p.n > 0), pAB = pB.filter(p => fA(p.seq));
+  const steps = [
+    `B = «${Bt}», A = «${v === "seconda" ? "la prima pallina è rossa" : "entrambe le palline sono rosse"}». Formula: P(A | B) = P(A e B) / P(B).`,
+    `P(B): percorsi ${pB.map(p => p.seq.split("").join("→")).join(", ")}: ${pB.map(p => fh(p.p)).join(" + ")} = ${fh(PB)}.`,
+    `P(A e B): percorsi ${pAB.map(p => p.seq.split("").join("→")).join(", ")}: ${fh(PAB)}.`,
+    `P(A | B) = ${fh(PAB)} : ${fh(PB)} = <b>${fh(ans)}</b>.`
+  ];
+  return { topic: "cond", sub: "Condizionata · urna", text: `${urnText(N, M, 2, false)} Sapendo che ${Bt}, qual è la probabilità che ${At}?`,
+    options, steps, fig: treeSVG(N, M, 2, false, { hi: new Set(pAB.map(p => p.seq)), sel: new Set(pB.map(p => p.seq)) }) + `<p class="small mut">In blu i percorsi di B, in verde quelli di A e B.</p>`,
+    meta: { kind: "urnCond", N, M, v, value: ans } };
+}
+const TCTX = [
+  { pop: T => `In una classe di ${T} studenti`, g1: { pl: "ragazze", ind: "è una ragazza", sub: "sia una ragazza" }, g2: { pl: "ragazzi", ind: "è un ragazzo", sub: "sia un ragazzo" },
+    ft: { pl: "portano gli occhiali", ind: "porta gli occhiali", sub: "porti gli occhiali", nind: "non porta gli occhiali", nsub: "non porti gli occhiali", col: "occhiali", ncol: "senza occhiali" }, who: "uno studente" },
+  { pop: T => `In un'azienda lavorano ${T} persone`, g1: { pl: "donne", ind: "è una donna", sub: "sia una donna" }, g2: { pl: "uomini", ind: "è un uomo", sub: "sia un uomo" },
+    ft: { pl: "vanno al lavoro in bicicletta", ind: "va al lavoro in bicicletta", sub: "vada al lavoro in bicicletta", nind: "non va al lavoro in bicicletta", nsub: "non vada al lavoro in bicicletta", col: "bici", ncol: "no bici" }, who: "una persona" },
+  { pop: T => `In un gruppo di ${T} turisti`, g1: { pl: "italiani", ind: "è italiano", sub: "sia italiano" }, g2: { pl: "stranieri", ind: "è straniero", sub: "sia straniero" },
+    ft: { pl: "parlano inglese", ind: "parla inglese", sub: "parli inglese", nind: "non parla inglese", nsub: "non parli inglese", col: "inglese", ncol: "no inglese" }, who: "un turista" }
+];
+function genTable() {
+  const cx = pick(TCTX); const T = rnd(20, 30), G1 = rnd(8, T - 8), G2 = T - G1, a = rnd(1, G1 - 1), c = rnd(1, G2 - 1);
+  const ppl = []; for (let i = 0; i < T; i++) { const g = i < G1 ? 1 : 2; const ftv = g === 1 ? i < a : (i - G1) < c; ppl.push({ g, ft: ftv }); }
+  const EV = { g1: { ind: cx.g1.ind, sub: cx.g1.sub, f: p => p.g === 1 }, g2: { ind: cx.g2.ind, sub: cx.g2.sub, f: p => p.g === 2 },
+    ft: { ind: cx.ft.ind, sub: cx.ft.sub, f: p => p.ft }, nft: { ind: cx.ft.nind, sub: cx.ft.nsub, f: p => !p.ft } };
+  const pairs = [["g1", "ft"], ["ft", "g1"], ["g2", "nft"], ["nft", "g2"], ["ft", "g2"], ["g1", "nft"]];
+  const [bk, ak] = pick(pairs); const B = EV[bk], A = EV[ak];
+  const nB = ppl.filter(B.f).length, nA = ppl.filter(A.f).length, nAB = ppl.filter(p => A.f(p) && B.f(p)).length;
+  if (nB === 0 || nAB === 0 || nAB === nB) return null;
+  const ans = F(nAB, nB);
+  const options = buildOptions(ans, condCands(T, nA, nB, nAB), true); if (!options) return null;
+  const text = `${cx.pop(T)}: ${G1} sono ${cx.g1.pl} e ${G2} sono ${cx.g2.pl}. ${a} ${cx.g1.pl} e ${c} ${cx.g2.pl} ${cx.ft.pl}. Si sceglie a caso ${cx.who}. Sapendo che ${B.ind}, qual è la probabilità che ${A.sub}?`;
+  const tbl = `<table class="tb"><tr><th></th><th>${cx.ft.col}</th><th>${cx.ft.ncol}</th><th>totale</th></tr>
+    <tr><th>${cx.g1.pl}</th><td>${a}</td><td>${G1 - a}</td><td>${G1}</td></tr>
+    <tr><th>${cx.g2.pl}</th><td>${c}</td><td>${G2 - c}</td><td>${G2}</td></tr>
+    <tr><th>totale</th><td>${a + c}</td><td>${T - a - c}</td><td>${T}</td></tr></table>`;
+  const steps = [
+    `Conviene costruire la tabella (figura sotto): completa le caselle mancanti per differenza.`,
+    `B = «${B.ind}»: i casi possibili si riducono a <b>${nB}</b>.`,
+    `Tra questi, quelli per cui vale anche A = «${A.ind}»: <b>${nAB}</b>.`,
+    `P(A | B) = ${rf(nAB, nB)} = <b>${fh(ans)}</b>.`
+  ];
+  return { topic: "cond", sub: "Condizionata · tabella", text, options, steps, fig: tbl, meta: { kind: "table", T, G1, a, c, A: ak, B: bk, value: ans } };
+}
+function genCond() {
+  const g = pick([genIndep, genIndep, genUrnAlmeno, genUrnAlmeno, genDiceCond, genDiceCond, genCardCond, genCardCond, genCard2, genUrnCond, genTable]);
+  return g();
+}
+
+const GEN = { comb: genComb, albero: genAlbero, cond: genCond };
+function generate(topic) {
+  for (let t = 0; t < 400; t++) {
+    let q = null;
+    try { q = GEN[topic](); } catch (e) { if (STRICT) throw e; q = null; }
+    if (q) return q;
+  }
+  throw new Error("Generazione fallita: " + topic);
+}
+</script>
+
+<!-- ======================= INTERFACCIA ======================= -->
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const TOPIC_NAME = { comb: "Quale formula uso?", albero: "Albero di probabilità", cond: "Almeno uno e condizionata" };
+const LETTERS = ["A", "B", "C", "D", "E"];
+const fmtPts = x => x.toFixed(2).replace(".", ",").replace("-", "−");
+
+/* ---------- navigazione ---------- */
+$$("[data-mode]").forEach(b => b.onclick = () => {
+  $$("[data-mode]").forEach(x => x.classList.toggle("on", x === b));
+  $("#impara").hidden = b.dataset.mode !== "impara";
+  $("#allenati").hidden = b.dataset.mode !== "allenati";
+});
+$$("#topicnav button").forEach(b => b.onclick = () => {
+  $$("#topicnav button").forEach(x => x.classList.toggle("on", x === b));
+  $$(".topic").forEach(t => t.hidden = t.id !== "L-" + b.dataset.topic);
+});
+function segVal(id) { return $(id + " button.on").dataset.v; }
+function segInit(id, cb) { $$(id + " button").forEach(b => b.onclick = () => { $$(id + " button").forEach(x => x.classList.toggle("on", x === b)); cb(); }); }
+
+/* ---------- esempi guidati ---------- */
+$$(".guided").forEach(g => {
+  const items = [...g.querySelectorAll(".gsteps li")];
+  const next = g.querySelector(".g-next"), all = g.querySelector(".g-all");
+  const upd = () => { const done = items.every(i => !i.hidden); next.disabled = done; all.disabled = done; };
+  next.onclick = () => { const h = items.find(i => i.hidden); if (h) h.hidden = false; upd(); };
+  all.onclick = () => { items.forEach(i => i.hidden = false); upd(); };
+});
+
+/* ---------- 1. elenco dei casi ---------- */
+function enumRender() {
+  const n = +$("#en-n").value, k = +$("#en-k").value, ord = segVal("#en-ord") === "1", rep = segVal("#en-rep") === "1";
+  const L = LET.slice(0, n), out = $("#en-out");
+  if (!ord && rep) { out.innerHTML = `<p class="warn">Ordine no + ripetizioni sì: sono le combinazioni con ripetizione, un caso che qui non trattiamo.</p>`; return; }
+  if (!rep && k > n) { out.innerHTML = `<p class="warn">Senza ripetizioni non puoi prendere più elementi di quanti ne hai: serve k ≤ n.</p>`; return; }
+  const items = [];
+  (function rec(pre, start) {
+    if (pre.length === k) { items.push(pre.join("")); return; }
+    for (let i = ord ? 0 : start; i < n; i++) {
+      if (!rep && pre.includes(L[i])) continue;
+      rec(pre.concat(L[i]), i + 1);
+    }
+  })([], 0);
+  let name, calc, extra = "";
+  if (ord && rep) { name = "Disposizioni con ripetizione"; calc = calcDR(n, k); }
+  else if (ord && k === n) { name = "Permutazioni"; calc = calcP(n); }
+  else if (ord) { name = "Disposizioni semplici"; calc = calcD(n, k); }
+  else { name = "Combinazioni"; calc = calcC(n, k); extra = `<p class="note">Prova a mettere «Conta l'ordine? Sì»: i casi diventano ${nf(disp(n, k))}, cioè ${k}! = ${fact(k)} volte di più. Ogni gruppo qui sotto corrisponde a ${fact(k)} sequenze ordinate.</p>`; }
+  const shown = items.slice(0, 150);
+  out.innerHTML = `<p class="result"><b>${nf(items.length)} casi</b> · ${name}: ${calc}</p>${extra}<div class="chips">${shown.map(s => `<span>${s}</span>`).join("")}${items.length > shown.length ? `<span>… e altri ${items.length - shown.length}</span>` : ""}</div>`;
+}
+$("#en-n").onchange = enumRender; $("#en-k").onchange = enumRender;
+segInit("#en-ord", enumRender); segInit("#en-rep", enumRender);
+enumRender();
+
+/* ---------- 1. anagrammi ---------- */
+function anRender() {
+  const w = $("#an-in").value.toUpperCase().replace(/[^A-Z]/g, "").slice(0, 8), out = $("#an-out");
+  if (!w) { out.innerHTML = `<p class="mut">Scrivi una parola (solo lettere senza accento).</p>`; return; }
+  const m = countsOf(w), n = w.length, reps = [...m.values()].filter(c => c > 1);
+  const val = fact(n) / reps.reduce((a, c) => a * fact(c), 1);
+  const letters = [...m.entries()].map(e => `${e[0]}×${e[1]}`).join(", ");
+  let calc = reps.length ? calcPR(n, reps) : `${n}! = ${nf(fact(n))} (lettere tutte diverse)`;
+  let list = "";
+  if (val <= 120) {
+    const keys = [...m.keys()].sort(), cnt = new Map(m), res = [];
+    (function rec(pre) { if (pre.length === n) { res.push(pre); return; } for (const ch of keys) if (cnt.get(ch) > 0) { cnt.set(ch, cnt.get(ch) - 1); rec(pre + ch); cnt.set(ch, cnt.get(ch) + 1); } })("");
+    list = `<div class="chips">${res.map(s => `<span>${s}</span>`).join("")}</div>`;
+  } else list = `<p class="mut small">Sono più di 120: elenco non mostrato.</p>`;
+  out.innerHTML = `<p>Lettere: ${letters} (n = ${n}).</p><p class="result"><b>${nf(val)} anagrammi</b>: ${calc}</p>${reps.length ? `<p class="small mut">Senza dividere avresti ${n}! = ${nf(fact(n))}: ogni anagramma sarebbe contato ${reps.map(c => c + "!").join("·")} = ${nf(fact(n) / val)} volte.</p>` : ""}${list}`;
+}
+$("#an-in").oninput = anRender; anRender();
+
+/* ---------- 2. albero interattivo ---------- */
+const TS = { sel: new Set() };
+for (const id of ["#t-r", "#t-n"]) $(id).innerHTML = range(1, 6).map(i => `<option>${i}</option>`).join("");
+$("#t-r").value = 3; $("#t-n").value = 2;
+function tParams() { return { N: +$("#t-r").value, M: +$("#t-n").value, k: +segVal("#t-k"), repl: segVal("#t-rep") === "1" }; }
+function tEvents() {
+  const { k } = tParams();
+  $("#t-ev").innerHTML = `<option value="">— scelta libera —</option>` + ALB_EV[k].map(e => `<option value="${e.id}">P(${e.t})</option>`).join("");
+}
+function tRender() {
+  const { N, M, k, repl } = tParams();
+  if (!repl && N + M < k) { $("#t-svg").innerHTML = `<p class="warn">Senza reimmissione servono almeno ${k} palline.</p>`; $("#t-list").innerHTML = ""; $("#t-sum").innerHTML = ""; return; }
+  const paths = urnPaths(N, M, k, repl, "ok");
+  for (const s of [...TS.sel]) if (!paths.find(p => p.seq === s && p.p.n > 0)) TS.sel.delete(s);
+  $("#t-svg").innerHTML = treeSVG(N, M, k, repl, { sel: TS.sel, inter: true });
+  $("#t-list").innerHTML = paths.map(p => `<button data-seq="${p.seq}" class="${TS.sel.has(p.seq) ? "sel" : ""}" ${p.p.n === 0 ? "disabled" : ""}><span class="seq">${p.seq.split("").map(c => `<span class="ball ${c}"></span>`).join(" ")} ${p.seq}</span><span>${p.p.n === 0 ? "impossibile (probabilità 0)" : pathLine(p).replace(/^<b>.*?<\/b>: /, "")}</span></button>`).join("");
+  const chosen = paths.filter(p => TS.sel.has(p.seq));
+  const tot = sumFr(paths.map(p => p.p));
+  if (!chosen.length) $("#t-sum").innerHTML = `Nessun percorso selezionato. <span class="small mut">(Controllo: la somma di tutte le foglie è ${fh(tot)}.)</span>`;
+  else { const s = sumFr(chosen.map(p => p.p)); $("#t-sum").innerHTML = `P = ${chosen.map(p => fh(p.p)).join(" + ")} = <b>${fh(s)}</b> ≈ ${pct(s)}`; }
+  $$("#t-svg [data-seq], #t-list [data-seq]").forEach(el => el.onclick = () => { const s = el.dataset.seq; TS.sel.has(s) ? TS.sel.delete(s) : TS.sel.add(s); $("#t-msg").innerHTML = ""; tRender(); });
+}
+function tFav() { const { N, M, k, repl } = tParams(); const ev = ALB_EV[k].find(e => e.id === $("#t-ev").value); if (!ev) return null; return urnPaths(N, M, k, repl, "ok").filter(p => ev.f(p.seq) && p.p.n > 0).map(p => p.seq); }
+$("#t-check").onclick = () => {
+  const fav = tFav(); const msg = $("#t-msg");
+  if (!fav) { msg.innerHTML = `<p class="mut">Scegli prima un evento nella sfida.</p>`; return; }
+  const miss = fav.filter(s => !TS.sel.has(s)), extra = [...TS.sel].filter(s => !fav.includes(s));
+  if (!miss.length && !extra.length) msg.innerHTML = `<p class="verdict r">Esatto! Hai selezionato tutti e soli i percorsi favorevoli.</p>`;
+  else msg.innerHTML = `<p class="verdict w">Non ancora.</p><p>${miss.length ? `Mancano ${miss.length} percorsi favorevoli. ` : ""}${extra.length ? `Hai selezionato ${extra.length} percorsi che non realizzano l'evento: ${extra.join(", ")}.` : ""}</p>`;
+};
+$("#t-sol").onclick = () => { const fav = tFav(); if (!fav) { $("#t-msg").innerHTML = `<p class="mut">Scegli prima un evento nella sfida.</p>`; return; } TS.sel = new Set(fav); $("#t-msg").innerHTML = `<p class="mut">Percorsi favorevoli: ${fav.join(", ")}.</p>`; tRender(); };
+$("#t-clear").onclick = () => { TS.sel.clear(); $("#t-msg").innerHTML = ""; tRender(); };
+$("#t-r").onchange = $("#t-n").onchange = () => { $("#t-msg").innerHTML = ""; tRender(); };
+segInit("#t-k", () => { TS.sel.clear(); tEvents(); $("#t-msg").innerHTML = ""; tRender(); });
+segInit("#t-rep", () => { $("#t-msg").innerHTML = ""; tRender(); });
+$("#t-ev").onchange = () => { TS.sel.clear(); $("#t-msg").innerHTML = ""; tRender(); };
+tEvents(); tRender();
+
+/* ---------- 3. almeno uno ---------- */
+$("#ex-grid").innerHTML = diceGridHTML((r, b) => r === 6 || b === 6, null) + `<div class="legend"><span><i style="background:var(--ok)"></i>almeno un 6: 11 caselle su 36</span></div>`;
+const APS = [{ l: "Dado: esce il 6", p: F(1, 6) }, { l: "Moneta: esce testa", p: F(1, 2) }, { l: "Dado: esce 5 o 6", p: F(1, 3) }, { l: "Evento con p = 1/4", p: F(1, 4) }, { l: "Evento con p = 1/5", p: F(1, 5) }, { l: "Evento con p = 1/10", p: F(1, 10) }];
+$("#a-p").innerHTML = APS.map((x, i) => `<option value="${i}">${x.l}</option>`).join("");
+function aRender() {
+  const p = APS[+$("#a-p").value].p, n = +$("#a-n").value; $("#a-nv").textContent = n;
+  const q = ONE.sub(p), none = q.pow(n), ans = ONE.sub(none), wrong = p.mul(n);
+  $("#a-out").innerHTML = `<p>P(nessun successo) = ${powHTML(q, n)} = ${fh(none)}</p>
+    <p class="result">P(almeno un successo) = 1 − ${fh(none)} = <b>${fh(ans)}</b> ≈ ${pct(ans)}</p>
+    <div class="bars"><div class="small">Corretto: ${pct(ans)}</div><div class="bar"><div style="width:${ans.v * 100}%"></div></div>
+    <div class="small">Errore tipico n·p = ${n}·${fh(p)} = ${fh(wrong)} ${wrong.v > 1 ? "→ più di 1: impossibile per una probabilità!" : wrong.eq(ans) ? "(con una sola prova coincide)" : "→ troppo alto: conta più volte i casi con più successi"}</div><div class="bar badb"><div style="width:${Math.min(1, wrong.v) * 100}%"></div></div></div>`;
+}
+$("#a-p").onchange = aRender; $("#a-n").oninput = aRender; aRender();
+
+/* ---------- 3. condizionata con i dadi ---------- */
+$("#d-b").innerHTML = `<option value="">— nessuna informazione —</option>` + DEV.map(e => `<option value="${e.id}">${e.ind}</option>`).join("");
+$("#d-a").innerHTML = DEV.map(e => `<option value="${e.id}">${e.sub}</option>`).join("");
+$("#d-b").value = "s8"; $("#d-a").value = "al6";
+function dRender() {
+  const A = DEV.find(e => e.id === $("#d-a").value), B = DEV.find(e => e.id === $("#d-b").value);
+  $("#d-grid").innerHTML = diceGridHTML(A.f, B ? B.f : (() => true));
+  let nA = 0, nB = 0, nAB = 0;
+  for (let r = 1; r <= 6; r++) for (let b = 1; b <= 6; b++) { const a = A.f(r, b), bb = B ? B.f(r, b) : true; if (a) nA++; if (bb) nB++; if (a && bb) nAB++; }
+  if (!B) { $("#d-out").innerHTML = `Senza informazioni: P(A) = ${rf(nA, 36)} = <b>${fh(F(nA, 36))}</b>`; return; }
+  $("#d-out").innerHTML = `Casi di B: <b>${nB}</b> · casi di A e B: <b>${nAB}</b><br>P(A | B) = ${rf(nAB, nB)} = <b>${fh(F(nAB, nB))}</b>
+    <br><span class="small">Confronta: P(A) = ${rf(nA, 36)} = ${fh(F(nA, 36))} · P(A e B) = ${rf(nAB, 36)} = ${fh(F(nAB, 36))}</span>`;
+}
+$("#d-a").onchange = dRender; $("#d-b").onchange = dRender; dRender();
+
+/* =================== ALLENAMENTO =================== */
+let S = null;
+$$("#s-topic button").forEach(b => b.onclick = () => $$("#s-topic button").forEach(x => x.classList.toggle("on", x === b)));
+$("#s-go").onclick = startSession;
+$("#quit").onclick = () => endSession(false);
+
+function startSession() {
+  const topic = $("#s-topic button.on").dataset.v, n = +$("#s-n").value, timer = $("#s-timer").checked;
+  let seq;
+  if (topic === "mix") { seq = []; while (seq.length < n) seq.push(...shuffle(["comb", "albero", "cond"])); seq = seq.slice(0, n); }
+  else seq = Array(n).fill(topic);
+  S = { n, i: 0, seq, res: [], right: 0, wrong: 0, blank: 0, texts: new Set(), st: { order: [0, 0], rep: [0, 0], form: [0, 0] }, end: timer ? Date.now() + n * 150000 : null, tick: null, over: false };
+  $("#setup").hidden = true; $("#summary").hidden = true; $("#session").hidden = false;
+  if (S.end) { S.tick = setInterval(tick, 500); tick(); } else $("#tm").textContent = "";
+  nextQuestion();
+}
+function tick() {
+  if (!S || !S.end) return;
+  const ms = S.end - Date.now();
+  if (ms <= 0) { $("#tm").textContent = "⏱ 0:00"; endSession(true); return; }
+  const s = Math.ceil(ms / 1000);
+  $("#tm").textContent = `⏱ ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  $("#tm").classList.toggle("low", s <= 60);
+}
+function score() { return S.right - 0.25 * S.wrong; }
+function updBar() { $("#qn").textContent = `Domanda ${Math.min(S.i + 1, S.n)} di ${S.n}`; $("#sc").textContent = `Punteggio: ${fmtPts(score())}`; }
+function nextQuestion() {
+  if (S.i >= S.n) { endSession(false); return; }
+  let q; for (let t = 0; t < 40; t++) { q = generate(S.seq[S.i]); if (!S.texts.has(q.text)) break; }
+  S.texts.add(q.text); S.q = q; S.answered = false; renderQ(); updBar(); window.scrollTo({ top: 0 });
+}
+function renderQ() {
+  const q = S.q;
+  $("#qbox").innerHTML = `<div class="qhead"><span class="tag">${q.sub}</span></div><div class="qtext">${q.text}</div>
+    ${q.stages ? `<div id="stages"></div><p style="margin-top:8px"><button class="btn ghost" id="skipst" style="padding:5px 10px;font-size:.85rem">Salta il ragionamento e vai alle risposte</button></p>` : ""}
+    <div id="opts" ${q.stages ? "hidden" : ""}><ol class="opts">${q.options.map((o, i) => `<li><button data-i="${i}"><span class="let">${LETTERS[i]}</span><span>${fh(o.v)}</span></button></li>`).join("")}</ol>
+    <button class="btn ghost" id="skip">Non rispondo (0 punti)</button></div><div id="fb"></div>`;
+  $$("#opts .opts button").forEach(b => b.onclick = () => answer(+b.dataset.i));
+  $("#skip").onclick = () => answer(-1);
+  if (q.stages) { askStage(0); $("#skipst").onclick = showOpts; }
+}
+function showOpts() { $("#opts").hidden = false; const s = $("#skipst"); if (s) s.parentElement.remove(); }
+function askStage(idx) {
+  const q = S.q, st = q.stages;
+  const defs = [
+    { key: "order", label: "1 · Se scambi di posto due elementi, ottieni un risultato diverso? (Conta l'ordine?)", ch: [["Sì", true], ["No", false]], ok: v => v === st.order, expl: st.wo },
+    { key: "rep", label: "2 · Uno stesso elemento può comparire più volte nel risultato? (Ci sono ripetizioni?)", ch: [["Sì", true], ["No", false]], ok: v => v === st.rep, expl: st.wr },
+    { key: "form", label: "3 · Quale formula usi?", ch: FORM_ORDER.map(f => [`<span>${FORMS[f].name}</span><span>${FORMS[f].html}</span>`, f]), ok: v => v === st.F || st.alt.includes(v), expl: st.formExpl, forms: true }
+  ];
+  const d = defs[idx]; const box = $("#stages"); if (!box) return;
+  const div = document.createElement("div"); div.className = "stage";
+  div.innerHTML = `<p class="slabel">${d.label}</p><div class="choices${d.forms ? " forms" : ""}">${d.ch.map((c, i) => `<button data-i="${i}">${c[0]}</button>`).join("")}</div><div class="sfb"></div>`;
+  box.appendChild(div);
+  div.querySelectorAll("button").forEach(b => b.onclick = () => {
+    if (div.dataset.done) return; div.dataset.done = "1";
+    const v = d.ch[+b.dataset.i][1], ok = d.ok(v);
+    S.st[d.key][ok ? 0 : 1]++;
+    div.querySelectorAll("button").forEach((x, i) => { x.disabled = true; if (d.ok(d.ch[i][1])) x.classList.add("good"); });
+    if (!ok) b.classList.add("badc");
+    div.querySelector(".sfb").innerHTML = (ok ? `<b class="okt">Giusto.</b> ` : `<b class="badt">No.</b> `) + d.expl;
+    if (idx < 2) askStage(idx + 1); else showOpts();
+  });
+}
+function answer(idx) {
+  if (S.answered || S.over) return; S.answered = true;
+  const q = S.q, ci = q.options.findIndex(o => o.correct);
+  let status;
+  if (idx < 0) { status = "s"; S.blank++; } else if (idx === ci) { status = "r"; S.right++; } else { status = "w"; S.wrong++; }
+  S.res.push({ topic: q.topic, status }); S.i++;
+  const st = $("#stages"); if (st) st.querySelectorAll("button").forEach(b => b.disabled = true);
+  const sk = $("#skipst"); if (sk) sk.parentElement.remove();
+  $$("#opts .opts button").forEach((b, i) => { b.disabled = true; if (i === ci) b.classList.add("good"); if (i === idx && idx !== ci) b.classList.add("badc"); });
+  $("#skip").remove();
+  const verdict = status === "r" ? `<div class="verdict r">✓ Giusto: +1</div>` : status === "w" ? `<div class="verdict w">✗ Sbagliato: −0,25. La risposta giusta è ${LETTERS[ci]}.</div>` : `<div class="verdict s">Non data: 0 punti. La risposta giusta è ${LETTERS[ci]}.</div>`;
+  $("#fb").innerHTML = `<div class="fb">${verdict}<h3>Svolgimento</h3><ol class="steps">${q.steps.map(s => `<li>${s}</li>`).join("")}</ol>${q.fig ? `<div class="fig">${q.fig}</div>` : ""}
+    <h3>Da dove viene ogni risposta</h3><ul class="why">${q.options.map((o, i) => `<li><span class="let">${LETTERS[i]}</span><span class="val">${fh(o.v)}</span><span>${o.correct ? "<b class=\"okt\">Corretta.</b>" : o.why}</span></li>`).join("")}</ul>
+    <button class="btn" id="next">${S.i < S.n ? "Domanda successiva" : "Vedi il risultato"}</button></div>`;
+  $("#next").onclick = nextQuestion;
+  updBar();
+}
+function endSession(timeUp) {
+  if (!S || S.over) return; S.over = true;
+  if (S.tick) clearInterval(S.tick);
+  const unanswered = S.n - S.res.length;
+  S.blank += unanswered;
+  $("#session").hidden = true; $("#setup").hidden = false;
+  const by = {}; for (const r of S.res) { by[r.topic] = by[r.topic] || { r: 0, w: 0, s: 0 }; by[r.topic][r.status]++; }
+  const st = S.st, stTot = st.order[0] + st.order[1];
+  $("#summary").hidden = false;
+  $("#summary").innerHTML = `<h2>${timeUp ? "Tempo scaduto!" : "Risultato"}</h2>
+    <div class="sumgrid"><div><b>${fmtPts(score())}</b>punti su ${S.n}</div><div><b>${S.right}</b>giuste (+1)</div><div><b>${S.wrong}</b>sbagliate (−0,25)</div><div><b>${S.blank}</b>non date (0)</div></div>
+    ${unanswered ? `<p class="mut small">${unanswered} domande non affrontate contano come non date.</p>` : ""}
+    ${Object.keys(by).length ? `<h3>Per argomento</h3><ul>${Object.entries(by).map(([t, v]) => `<li>${TOPIC_NAME[t]}: ${v.r} giuste, ${v.w} sbagliate, ${v.s} non date</li>`).join("")}</ul>` : ""}
+    ${stTot ? `<h3>Ragionamento in «Quale formula uso?»</h3><ul><li>Conta l'ordine: ${st.order[0]}/${st.order[0] + st.order[1]} giuste</li><li>Ripetizioni: ${st.rep[0]}/${st.rep[0] + st.rep[1]} giuste</li><li>Formula: ${st.form[0]}/${st.form[0] + st.form[1]} giuste</li></ul>` : ""}
+    <p class="mut small">Imposta una nuova sessione qui sopra.</p>`;
+  window.scrollTo({ top: 0 });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+/* Barra "Indietro" aggiunta ai moduli. Usa le variabili del modulo: --accent/--line (INT-1) o --acc/--line (combinatoria). */
+.tolc-nav{max-width:800px;margin:0 auto;padding:8px 16px 0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px}
+.tolc-back{display:inline-flex;align-items:center;min-height:48px;padding:8px 14px;border:1px solid var(--line);border-radius:10px;color:var(--accent,var(--acc));font-weight:700;font-size:1.05rem;text-decoration:none}
+.tolc-back:focus-visible{outline:3px solid var(--accent,var(--acc));outline-offset:2px}
+.tolc-stato{font-size:.9rem;opacity:.85}
