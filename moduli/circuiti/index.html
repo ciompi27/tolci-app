@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Circuiti elettrici · TOLC-I</title>
+<link rel="stylesheet" href="../../assets/fonts/atkinson-hyperlegible.css">
+<link rel="stylesheet" href="../modulo.css">
+<script src="../modulo.js"></script>
+<style>
+:root{--bg:#F2F4F6;--surface:#FFFFFF;--ink:#17212B;--muted:#56626F;--line:#D2D9E0;--accent:#2350B5;--accent-soft:#E2EAF8;
+ --ok:#15704A;--ok-soft:#E1F1E8;--ko:#B3261E;--ko-soft:#FBE6E4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11161C;--surface:#1A2129;--ink:#E7ECF1;--muted:#A2AEBB;--line:#334050;--accent:#93B2F4;--accent-soft:#22324E;
+ --ok:#63C996;--ok-soft:#163223;--ko:#F2918A;--ko-soft:#3A1F1D;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11161C;--surface:#1A2129;--ink:#E7ECF1;--muted:#A2AEBB;--line:#334050;--accent:#93B2F4;--accent-soft:#22324E;
+ --ok:#63C996;--ok-soft:#163223;--ko:#F2918A;--ko-soft:#3A1F1D;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:19px;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto;padding:12px 16px 48px}
+header h1{font-size:1.6em;line-height:1.2;margin:8px 0 4px}
+header p{margin:0 0 14px;color:var(--muted)}
+h2{font-size:1.25em;margin:0 0 10px}
+h3{font-size:1.08em;margin:18px 0 8px}
+p{margin:8px 0}
+sup,sub{font-size:.72em;line-height:0}
+.muted{color:var(--muted)}.small{font-size:.88em}
+.modes{display:flex;border:2px solid var(--ink);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.modetab{flex:1;font:inherit;font-weight:700;font-size:1.05em;padding:12px;border:0;background:var(--surface);color:var(--ink);cursor:pointer}
+.modetab[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.pills button{font:inherit;font-size:.92em;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer;min-height:44px}
+.pills button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 16px}
+.keys{margin:0;padding-left:1.2em}.keys li{margin:7px 0}
+.btn{font:inherit;font-size:1em;min-height:46px;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700}
+.btn:disabled{opacity:.5;cursor:default}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.field{display:block;margin:6px 0 10px;font-size:.9em;color:var(--muted)}
+select,input[type=number]{display:block;width:100%;font:inherit;font-size:1em;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:4px;min-height:44px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.row2{grid-template-columns:1fr}}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.92em}
+.verifica{display:inline-block;font-size:.72em;font-weight:700;color:var(--ko);border:1.5px solid var(--ko);border-radius:5px;padding:0 6px;vertical-align:.1em}
+.ok{color:var(--ok)}.ko{color:var(--ko)}
+table.tt{border-collapse:collapse;font-size:.92em;margin:8px 0}
+.tt th,.tt td{border:1px solid var(--line);padding:5px 10px;text-align:center;white-space:nowrap}
+.tt th{background:var(--bg)}
+.ttw{overflow-x:auto}
+ol.steps{padding-left:1.3em}ol.steps li{margin:8px 0}
+/* esempio guidato */
+.guidato ol li[hidden]{display:none}
+/* circuito */
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:520px){.row3{grid-template-columns:1fr 1fr}}
+.circ{margin:8px 0;overflow-x:auto}
+svg.circuito{width:100%;max-width:520px;height:auto;display:block;margin:8px 0}
+.c-filo{stroke:var(--ink);stroke-width:2}
+.c-res{fill:none;stroke:var(--accent);stroke-width:2.4;stroke-linejoin:round}
+.c-pila{stroke:var(--ink);stroke-width:3}
+.c-nodo,.c-freccia{fill:var(--ink)}
+.c-nome{font:700 12px "Atkinson Hyperlegible",system-ui,sans-serif;fill:var(--ink)}
+.c-val{font:12px "Atkinson Hyperlegible",system-ui,sans-serif;fill:var(--accent)}
+/* allenamento */
+.bar{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:12px;position:sticky;top:0;z-index:2}
+.bar .sp2{flex:1}
+#tm.low{color:var(--ko)}
+.tag{display:inline-block;font-size:.85em;color:var(--muted);margin-bottom:6px}
+.qtext{font-size:1.08em}
+.masse{display:block;font-size:.86em;color:var(--muted);margin-top:6px}
+.opts{list-style:none;padding:0;margin:14px 0}.opts li{margin:8px 0}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;font-size:1.05em;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);cursor:pointer;min-height:52px}
+.opt:disabled{cursor:default}
+.opt.is-ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.is-ko{border-color:var(--ko);background:var(--ko-soft)}
+.lt{flex:0 0 auto;display:inline-grid;place-items:center;width:1.8em;height:1.8em;border-radius:50%;border:1.5px solid currentColor;font-weight:700;font-size:.85em}
+.verdict{font-size:1.15em;font-weight:700;padding:10px 12px;border-radius:10px;margin-top:6px}
+.verdict.good{background:var(--ok-soft);color:var(--ok)}.verdict.bad{background:var(--ko-soft);color:var(--ko)}.verdict.blank{background:var(--accent-soft);color:var(--accent)}
+.why{list-style:none;padding:0}.why li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.why .val{min-width:6.5em;font-weight:700}
+.sumgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:10px 0}
+.sumgrid div{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.sumgrid b{display:block;font-size:1.5em}
+.hist{padding-left:1.4em}.hist li{margin:8px 0}
+.badge{display:inline-block;font-size:.8em;font-weight:700;padding:1px 8px;border-radius:999px;margin-right:6px}
+.b-ok{background:var(--ok-soft);color:var(--ok)}.b-ko{background:var(--ko-soft);color:var(--ko)}.b-bl{background:var(--accent-soft);color:var(--accent)}
+summary{cursor:pointer}
+.check{display:flex;gap:10px;align-items:center;margin:8px 0;cursor:pointer}
+.check input{width:22px;height:22px;accent-color:var(--accent)}
+@media (max-width:480px){body{font-size:18px}.card{padding:14px}}
+</style>
+</head>
+<body>
+<nav class="tolc-nav"><a class="tolc-back" href="../../index.html" data-tolc-back>← Indietro</a><span class="tolc-stato" data-tolc-stato role="status"></span></nav>
+<div class="wrap">
+<header>
+  <h1>Circuiti elettrici</h1>
+  <p>Teoria del PDF (3.7). Esercizi generati: la soluzione la calcola il programma.</p>
+  <div class="modes" role="tablist"><button class="modetab" role="tab" data-mode="impara" aria-selected="true">Impara</button><button class="modetab" role="tab" data-mode="allenati" aria-selected="false">Allenati</button></div>
+</header>
+
+<!-- ======================= IMPARA ======================= -->
+<section id="impara">
+  <nav class="pills" id="temi" aria-label="Argomento">
+    <button data-t="ohm" aria-pressed="true">1 · Legge di Ohm</button>
+    <button data-t="sp" aria-pressed="false">2 · Serie e parallelo</button>
+    <button data-t="pot" aria-pressed="false">3 · Potenza</button>
+  </nav>
+
+  <div class="tema" id="T-ohm">
+    <section class="card"><h2>Punti chiave</h2><ul class="keys">
+      <li>Un circuito si capisce bene con l'analogia idraulica: <b>tensione V</b> = la pressione che spinge (la pompa, il dislivello); <b>corrente I</b> = quanta acqua passa al secondo; <b>resistenza R</b> = quanto il tubo è stretto e ostacola il passaggio.</li>
+      <li>Corrente: I = q/t, si misura in <b>ampere (A)</b>. Tensione in <b>volt (V)</b>, resistenza in <b>ohm (Ω)</b>.</li>
+      <li><b>Legge di Ohm: V = R·I</b>. Da qui I = V/R e R = V/I.</li>
+      <li>Prefissi: m = 10<sup>−3</sup> e k = 10<sup>3</sup>. Quindi 1 mA = 0,001 A e 1 kΩ = 1000 Ω. Converti <b>prima</b> di usare la formula. Scorciatoia: volt diviso kΩ dà mA.</li>
+    </ul></section>
+    <section class="card guidato"><h2>Esempio guidato</h2>
+      <p><b>Un resistore da 2 kΩ è collegato a una pila da 10 V. Quanta corrente lo attraversa?</b></p>
+      <ol class="steps">
+        <li hidden>Converto: R = 2 kΩ = 2000 Ω.</li>
+        <li hidden>I = V / R = 10 / 2000 = 0,005 A.</li>
+        <li hidden>0,005 A = <b>5 mA</b>.</li>
+        <li hidden><b>Errore tipico:</b> 10 / 2 = 5 A, cioè usare i kΩ come se fossero Ω (corrente mille volte più grande).</li>
+      </ol>
+      <div class="btnrow"><button class="btn primary g-next">Passo successivo</button><button class="btn g-all">Mostra tutto</button></div>
+    </section>
+  </div>
+
+  <div class="tema" id="T-sp" hidden>
+    <section class="card"><h2>Punti chiave</h2><ul class="keys">
+      <li><b>In serie</b> (una dopo l'altra, un solo percorso): R<sub>tot</sub> = R<sub>1</sub> + R<sub>2</sub> + … La <b>corrente è la stessa</b> ovunque, le tensioni si sommano.</li>
+      <li><b>In parallelo</b> (percorsi separati): 1/R<sub>tot</sub> = 1/R<sub>1</sub> + 1/R<sub>2</sub> + … La <b>tensione è la stessa</b> su ognuna, le correnti si sommano. R<sub>tot</sub> è sempre <b>minore</b> della resistenza più piccola.</li>
+      <li>Due resistori in parallelo: R = R<sub>1</sub>·R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>). Due uguali: metà del valore.</li>
+      <li><b>Partitore di tensione:</b> in serie ogni resistore prende una parte della tensione proporzionale alla sua resistenza: I = V / (R<sub>1</sub> + R<sub>2</sub>), poi V<sub>1</sub> = R<sub>1</sub>·I.</li>
+      <li><b>Circuito misto:</b> prima si calcola il gruppo in parallelo, poi lo si somma in serie.</li>
+      <li>In casa gli apparecchi sono in <b>parallelo</b>: così ognuno riceve i 230 V pieni e se ne stacchi uno gli altri restano accesi. Le vecchie luci dell'albero erano in serie: una bruciata, tutte spente.</li>
+    </ul></section>
+    <section class="card guidato"><h2>Esempio guidato</h2>
+      <p><b>Due resistenze da 6 Ω e una batteria da 12 V: prima in serie, poi in parallelo.</b></p>
+      <ol class="steps">
+        <li hidden>In serie: R = 6 + 6 = <b>12 Ω</b> → I = 12/12 = 1 A, la stessa in tutte e due; ognuna ha 6 V (6 V + 6 V = 12 V).</li>
+        <li hidden>In parallelo: 1/R = 1/6 + 1/6 = 2/6 → R = <b>3 Ω</b>.</li>
+        <li hidden>I = V/R = 12/3 = <b>4 A</b>: 2 A in ogni ramo, con 12 V su ognuna.</li>
+        <li hidden><b>Errori tipici:</b> in parallelo sommare 6 + 6 = 12 Ω, oppure fermarsi a 2/6 senza capovolgere.</li>
+      </ol>
+      <div class="btnrow"><button class="btn primary g-next">Passo successivo</button><button class="btn g-all">Mostra tutto</button></div>
+    </section>
+    <section class="card"><h2>Circuito interattivo</h2>
+      <p class="small muted">Cambia il collegamento, la pila e le resistenze: il programma calcola resistenza equivalente, corrente totale, e tensione e corrente su ogni resistore.</p>
+      <div class="row2"><label class="field">Collegamento<select id="w-conf">
+        <option value="s2">2 in serie</option><option value="s3">3 in serie</option><option value="p2">2 in parallelo</option><option value="p3">3 in parallelo</option><option value="m3">R₁ in serie con (R₂ ∥ R₃)</option></select></label>
+        <label class="field">Pila<select id="w-v"></select></label></div>
+      <div class="row3"><label class="field">R₁<select id="w-r1"></select></label><label class="field">R₂<select id="w-r2"></select></label><label class="field" id="w-l3">R₃<select id="w-r3"></select></label></div>
+      <div class="circ" id="w-svg"></div>
+      <div id="w-out"></div>
+    </section>
+  </div>
+
+  <div class="tema" id="T-pot" hidden>
+    <section class="card"><h2>Punti chiave</h2><ul class="keys">
+      <li><b>Potenza: P = V·I = R·I<sup>2</sup> = V<sup>2</sup>/R</b>, si misura in <b>watt (W = J/s)</b>. Scegli la forma che usa i dati che hai.</li>
+      <li><b>Effetto Joule:</b> una corrente che attraversa una resistenza produce <b>calore</b> (P = R·I<sup>2</sup>). È il principio di stufette, phon, forno elettrico e lampadine a incandescenza.</li>
+      <li>Con la stessa resistenza, corrente doppia → potenza quadrupla: nella formula c'è I<sup>2</sup>.</li>
+      <li>V/I non è una potenza: è la resistenza (legge di Ohm).</li>
+    </ul></section>
+    <section class="card guidato"><h2>Esempio guidato</h2>
+      <p><b>Una batteria da 12 V alimenta una resistenza da 3 Ω. Che potenza dissipa?</b></p>
+      <ol class="steps">
+        <li hidden>Corrente: I = V/R = 12/3 = 4 A.</li>
+        <li hidden>P = V·I = 12 · 4 = <b>48 W</b>.</li>
+        <li hidden>Controllo con le altre forme: R·I<sup>2</sup> = 3 · 16 = 48 W; V<sup>2</sup>/R = 144/3 = 48 W.</li>
+        <li hidden><b>Errori tipici:</b> V/I = 3 (è la resistenza, non la potenza) oppure R·I = 12 (manca il quadrato).</li>
+      </ol>
+      <div class="btnrow"><button class="btn primary g-next">Passo successivo</button><button class="btn g-all">Mostra tutto</button></div>
+    </section>
+  </div>
+</section>
+
+<!-- ======================= ALLENATI ======================= -->
+<section id="allenati" hidden>
+  <div id="setup" class="card">
+    <h2>Nuova sessione</h2>
+    <p class="small muted">Argomento</p>
+    <div class="pills" id="s-tipo"></div>
+    <label class="field">Domande<select id="s-n"><option>5</option><option selected>10</option><option>20</option></select></label>
+    <label class="check"><input type="checkbox" id="s-timer"> Timer: 2 minuti a domanda (Scienze al TOLC-I: 10 domande in 20 minuti)</label>
+    <p class="small muted">Punteggio come al TOLC: giusta +1, non data 0, sbagliata −0,25.</p>
+    <button class="btn primary" id="s-go">Inizia</button>
+  </div>
+  <div id="sessione" hidden>
+    <div class="bar"><span id="qn"></span><span id="sc"></span><span id="tm"></span><span class="sp2"></span><button class="btn" id="quit">Termina</button></div>
+    <div id="qbox" class="card"></div>
+  </div>
+  <div id="riepilogo" class="card" hidden></div>
+</section>
+</div>
+
+<!-- ============ MOTORE (nessun accesso alla pagina: calcoli, disegni, generatori) ============ -->
+<script id="core">
+"use strict";
+let RNG = Math.random;
+let STRICT = false; // nelle prove automatiche gli errori dei generatori non vengono nascosti
+
+/* ---------- utilità ---------- */
+const rnd = (a, b) => a + Math.floor(RNG() * (b - a + 1));
+const pick = a => a[Math.floor(RNG() * a.length)];
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(RNG() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; };
+const lcm = (a, b) => a / gcd(a, b) * b;
+function num(x, dec = 2) {
+  if (!Number.isFinite(x)) return "?";
+  const r = Math.round(x * 10 ** dec) / 10 ** dec;
+  let [i, d] = Math.abs(r).toFixed(dec).split(".");
+  d = (d || "").replace(/0+$/, "");
+  if (i.length > 4) i = i.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return (r < 0 ? "−" : "") + i + (d ? "," + d : "");
+}
+const pulito = (x, dec = 2) => Number.isFinite(x) && Math.abs(x * 10 ** dec - Math.round(x * 10 ** dec)) < 1e-6;
+const circa = (x, dec = 2) => (pulito(x, dec) ? "" : "≈ ") + num(x, dec);
+const somma = a => a.reduce((s, x) => s + x, 0);
+const ohm = r => r >= 1000 ? `${num(r / 1000)} kΩ` : `${num(r)} Ω`;
+const PED = ["₁", "₂", "₃"];
+
+/* ---------- valori usati negli esercizi ---------- */
+const R_SET = [2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60];
+const V_SET = [3, 6, 9, 12, 18, 24, 30, 36, 48, 60];
+const I_SET = [0.5, 1, 1.5, 2, 2.5, 3, 4, 5];
+
+/* 1/R = 1/a + 1/b = … con il denominatore comune (resistenze intere) */
+function parallelo(Rs) {
+  const L = Rs.reduce(lcm), s = somma(Rs.map(r => L / r)), g = gcd(s, L);
+  const comune = Rs.some(r => r !== L) ? ` = ${Rs.map(r => (L / r) + "/" + L).join(" + ")}` : "";
+  const capovolto = s / g === 1 ? "" : `${L / g}/${s / g} = `;
+  return { R: L / s, testo: `1/R = ${Rs.map(r => "1/" + r).join(" + ")}${comune} = ${s}/${L}${g > 1 ? ` = ${L / g === 1 ? s / g : s / g + "/" + L / g}` : ""} → R = ${capovolto}${circa(L / s)} Ω` };
+}
+
+/* Risolve il circuito: conf "s2", "s3", "p2", "p3" oppure "m3" (R1 in serie con R2 ∥ R3) */
+function risolvi(conf, R, V) {
+  if (conf[0] === "s") { const Req = somma(R), I = V / Req; return { Req, I, el: R.map(r => ({ R: r, V: r * I, I })) }; }
+  if (conf[0] === "p") { const Req = 1 / somma(R.map(r => 1 / r)); return { Req, I: V / Req, el: R.map(r => ({ R: r, V, I: V / r })) }; }
+  const Rp = R[1] * R[2] / (R[1] + R[2]), Req = R[0] + Rp, I = V / Req, Vp = Rp * I;
+  return { Req, I, el: [{ R: R[0], V: R[0] * I, I }, { R: R[1], V: Vp, I: Vp / R[1] }, { R: R[2], V: Vp, I: Vp / R[2] }] };
+}
+
+/* ---------- disegno del circuito (SVG) ---------- */
+const filo = (x1, y1, x2, y2) => `<line class="c-filo" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+const resO = (cx, y) => `<path class="c-res" d="M${cx - 25},${y} l4,-6 l7,12 l7,-12 l7,12 l7,-12 l7,12 l7,-12 l4,6"/>`;
+const resV = (x, cy) => `<path class="c-res" d="M${x},${cy - 25} l-6,4 l12,7 l-12,7 l12,7 l-12,7 l12,7 l-12,7 l6,4"/>`;
+const nodo = (x, y) => `<circle class="c-nodo" cx="${x}" cy="${y}" r="3.5"/>`;
+const testo = (x, y, t, cls = "c-nome", anchor = "middle") => `<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}">${t}</text>`;
+function circuitoSVG(conf, R, V, sol) {
+  const T = 50, B = 190, n = R.length;
+  const val = i => sol ? `${circa(sol.el[i].V)} V · ${circa(sol.el[i].I)} A` : "";
+  let s = "";
+  // pila
+  s += filo(40, T, 40, 112) + filo(40, 124, 40, B) + `<line class="c-pila" x1="28" y1="112" x2="52" y2="112"/><line class="c-pila" x1="34" y1="124" x2="46" y2="124"/>`;
+  s += testo(22, 110, "+", "c-nome") + testo(58, 123, V == null ? "V" : `${num(V)} V`, "c-nome", "start");
+  const orizz = (cx, i) => resO(cx, T) + testo(cx, T - 14, `R${PED[i]} = ${ohm(R[i])}`) + (sol ? testo(cx, T + 26, val(i), "c-val") : "");
+  const vert = (x, i, lato) => {
+    const ax = lato === "s" ? x - 12 : x + 12, an = lato === "s" ? "end" : "start";
+    return filo(x, T, x, 95) + resV(x, 120) + filo(x, 145, x, B) + testo(ax, 112, `R${PED[i]} = ${ohm(R[i])}`, "c-nome", an) +
+      (sol ? testo(ax, 129, `${circa(sol.el[i].V)} V`, "c-val", an) + testo(ax, 145, `${circa(sol.el[i].I)} A`, "c-val", an) : "");
+  };
+  if (conf[0] === "s") {
+    s += filo(40, T, 100, T) + orizz(125, 0) + filo(150, T, 210, T) + orizz(235, 1);
+    if (n === 3) s += filo(260, T, 330, T) + vert(330, 2, "s") + filo(330, B, 40, B);
+    else s += filo(260, T, 330, T) + filo(330, T, 330, B) + filo(330, B, 40, B);
+  } else if (conf[0] === "p") {
+    const xs = n === 3 ? [140, 220, 300] : [170, 300];
+    s += filo(40, T, xs[n - 1], T) + filo(40, B, xs[n - 1], B);
+    xs.forEach((x, i) => { s += vert(x, i, "d"); if (i < n - 1) s += nodo(x, T) + nodo(x, B); });
+  } else {
+    s += filo(40, T, 90, T) + orizz(115, 0) + filo(140, T, 300, T) + filo(40, B, 300, B);
+    s += vert(220, 1, "d") + nodo(220, T) + nodo(220, B) + vert(300, 2, "d");
+  }
+  if (sol) s += `<path class="c-freccia" d="M104,${B} l9,-5 v10 z"/>` + testo(118, B + 22, `I = ${circa(sol.I)} A`, "c-val", "start");
+  return `<svg class="circuito" viewBox="0 0 380 ${sol ? 220 : 205}" role="img" aria-label="Schema del circuito">${s}</svg>`;
+}
+
+/* ---------- opzioni ---------- */
+const C = (v, why) => ({ v, why });
+/* 1 risposta giusta + 4 errori tipici diversi; se non ce ne sono 4 l'esercizio si scarta */
+function opzioniNum(giusto, cands, unita, dec = 2) {
+  if (!Number.isFinite(giusto) || giusto <= 0 || !pulito(giusto, dec)) return null;
+  const t = v => `${num(v, dec)} ${unita}`;
+  const visti = new Set([t(giusto)]), pool = [];
+  for (const c of cands) {
+    if (!c || !Number.isFinite(c.v) || c.v <= 0 || c.v > 1e5) continue;   // niente valori assurdi
+    const r = Math.round(c.v * 10 ** dec) / 10 ** dec;
+    if (r <= 0 || Math.abs(r - c.v) / c.v > 0.02) continue;   // l'arrotondamento la falserebbe
+    const k = t(c.v);
+    if (visti.has(k)) continue;
+    visti.add(k); pool.push({ t: k, v: c.v, ok: false, why: c.why });
+  }
+  if (pool.length < 4) return null;
+  return shuffle([{ t: t(giusto), v: giusto, ok: true, why: "" }, ...shuffle(pool).slice(0, 4)]);
+}
+const POT = "Hai usato una formula della potenza, non la legge di Ohm.";
+
+/* ---------- generatori ---------- */
+function genOhm() {
+  const caso = pick(["I", "V", "R"]), milli = RNG() < 0.4;
+  let giusto, cands, unita, testoQ, passi, meta;
+  if (caso === "I" && milli) {
+    const Rk = pick([1, 2, 4, 5, 10]), V = pick([2, 4, 5, 6, 8, 10, 12, 20]);
+    giusto = V / Rk; unita = "mA";
+    cands = [C(Rk / V, "Hai fatto R/V: la corrente è I = V/R."), C(V * Rk, "Hai moltiplicato V per R: la corrente è I = V/R."),
+      C(1000 * V / Rk, "Hai usato i kΩ come se fossero Ω: 1 kΩ = 1000 Ω, la corrente viene mille volte più piccola."),
+      C(V / Rk / 1000, "Hai diviso per 1000 di troppo: volt diviso kΩ dà già mA."), C(V * V / Rk, POT)];
+    testoQ = `Un resistore da ${Rk} kΩ è collegato a una pila da ${V} V. Quanta corrente lo attraversa?`;
+    passi = [`Converto: R = ${Rk} kΩ = ${Rk * 1000} Ω.`, `I = V / R = ${V} / ${Rk * 1000} = ${num(giusto / 1000, 4)} A = <b>${num(giusto)} mA</b>.`];
+    meta = { caso, V, R: Rk * 1000, I: giusto / 1000 };
+  } else if (caso === "I") {
+    const R = pick(R_SET), V = pick(V_SET);
+    giusto = V / R; unita = "A";
+    cands = [C(R / V, "Hai fatto R/V: la corrente è I = V/R."), C(V * R, "Hai moltiplicato V per R: la corrente è I = V/R."), C(V * V / R, POT),
+      C(1000 * V / R, "Hai moltiplicato per 1000 come se dovessi passare ai mA, ma la risposta è in ampere.")];
+    testoQ = `Ai capi di un resistore da ${R} Ω c'è una tensione di ${V} V. Quanta corrente lo attraversa?`;
+    passi = [`Legge di Ohm: I = V / R.`, `I = ${V} / ${R} = <b>${num(giusto)} A</b>.`];
+    meta = { caso, V, R, I: giusto };
+  } else if (caso === "V" && milli) {
+    const ImA = pick([2, 4, 5, 10, 20, 25, 50]), R = pick([100, 200, 250, 400, 500, 1000]);
+    giusto = R * ImA / 1000; unita = "V";
+    cands = [C(R * ImA, "Non hai convertito i mA in A: 1 mA = 0,001 A."), C(R / (ImA / 1000), "Hai fatto R/I: la tensione è V = R·I."),
+      C((ImA / 1000) / R, "Hai fatto I/R: la tensione è V = R·I."), C(giusto / 1000, "Hai diviso per 1000 due volte."), C(R * (ImA / 1000) ** 2, POT)];
+    testoQ = `In un resistore da ${ohm(R)} passa una corrente di ${ImA} mA. Quanto vale la tensione ai suoi capi?`;
+    passi = [`Converto: I = ${ImA} mA = ${num(ImA / 1000, 3)} A.`, `V = R · I = ${R} × ${num(ImA / 1000, 3)} = <b>${num(giusto)} V</b>.`];
+    meta = { caso, V: giusto, R, I: ImA / 1000 };
+  } else if (caso === "V") {
+    const R = pick(R_SET), I = pick(I_SET);
+    giusto = R * I; unita = "V";
+    cands = [C(R / I, "Hai fatto R/I: la tensione è V = R·I."), C(I / R, "Hai fatto I/R: la tensione è V = R·I."), C(R * I * I, POT), C(R + I, "Hai sommato R e I: vanno moltiplicati.")];
+    testoQ = `In un resistore da ${R} Ω passa una corrente di ${num(I)} A. Quanto vale la tensione ai suoi capi?`;
+    passi = [`Legge di Ohm: V = R · I.`, `V = ${R} × ${num(I)} = <b>${num(giusto)} V</b>.`];
+    meta = { caso, V: giusto, R, I };
+  } else if (caso === "R" && milli) {
+    const V = pick([2, 4, 5, 6, 8, 10, 12, 20, 24]), ImA = pick([2, 4, 5, 8, 10, 20, 40, 50]);
+    const R = V / (ImA / 1000), kilo = R >= 1000, f = kilo ? 0.001 : 1;
+    giusto = R * f; unita = kilo ? "kΩ" : "Ω";
+    cands = [C(V / ImA * f, "Non hai convertito i mA in A: la resistenza viene mille volte troppo piccola."), C((ImA / 1000) / V * f, "Hai fatto I/V: la resistenza è R = V/I."),
+      C(V * (ImA / 1000) * f, POT), C(R * f * 1000, kilo ? "Hai scritto gli ohm come se fossero kΩ." : "Hai moltiplicato per 1000 di troppo.")];
+    testoQ = `Una pila da ${V} V fa passare ${ImA} mA in un resistore. Quanto vale la sua resistenza?`;
+    passi = [`Converto: I = ${ImA} mA = ${num(ImA / 1000, 3)} A.`,
+      kilo ? `R = V / I = ${V} / ${num(ImA / 1000, 3)} = ${num(R)} Ω = <b>${num(giusto)} kΩ</b>.` : `R = V / I = ${V} / ${num(ImA / 1000, 3)} = <b>${num(R)} Ω</b>.`];
+    meta = { caso, V, R, I: ImA / 1000 };
+  } else {
+    const V = pick(V_SET), I = pick([0.5, 1, 1.5, 2, 3, 4, 5, 6]);
+    giusto = V / I; unita = "Ω";
+    cands = [C(I / V, "Hai fatto I/V: la resistenza è R = V/I."), C(V * I, POT), C(V - I, "Hai sottratto: la resistenza è R = V/I."),
+      C(1000 * V / I, "Hai moltiplicato per 1000 come se la corrente fosse in mA, ma è in ampere.")];
+    testoQ = `Una pila da ${V} V fa passare ${num(I)} A in un resistore. Quanto vale la sua resistenza?`;
+    passi = [`Legge di Ohm: R = V / I.`, `R = ${V} / ${num(I)} = <b>${num(giusto)} Ω</b>.`];
+    meta = { caso, V, R: V / I, I };
+  }
+  const opzioni = opzioniNum(giusto, cands, unita); if (!opzioni) return null;
+  return { tipo: "ohm", sub: TIPI.ohm, testo: testoQ, opzioni, passi, meta: { ...meta, unita } };
+}
+
+function scegliR(k) { return Array.from({ length: k }, () => pick(R_SET)); }
+const elenco = Rs => Rs.slice(0, -1).map(r => r + " Ω").join(", ") + " e " + Rs[Rs.length - 1] + " Ω";
+const nomi = k => k === 3 ? "Tre resistori" : "Due resistori";
+
+function genSerie() {
+  const k = pick([2, 2, 3]), Rs = scegliR(k), Req = somma(Rs), conf = "s" + k;
+  const Rpar = 1 / somma(Rs.map(r => 1 / r));
+  const fig = circuitoSVG(conf, Rs, null, null);
+  if (RNG() < 0.5) {
+    const cands = [C(Rpar, "Hai usato la formula del parallelo: in serie le resistenze si sommano."),
+      C(somma(Rs.map(r => 1 / r)), "Hai sommato gli inversi: è la formula del parallelo (e senza capovolgere)."),
+      C(Rs.reduce((a, b) => a * b, 1), "Hai moltiplicato le resistenze: in serie si sommano."),
+      C(Req / k, "Hai fatto la media: in serie le resistenze si sommano."),
+      k === 3 ? C(Rs[0] + Rs[1], "Hai dimenticato una delle tre resistenze.") : null];
+    const opzioni = opzioniNum(Req, cands, "Ω"); if (!opzioni) return null;
+    return { tipo: "serie", sub: TIPI.serie, testo: `${nomi(k)} da ${elenco(Rs)} sono collegati in serie. Quanto vale la resistenza equivalente?`, fig,
+      opzioni, passi: [`In serie (un solo percorso) le resistenze si sommano: R = ${Rs.join(" + ")} = <b>${num(Req)} Ω</b>.`], meta: { conf, Rs, chiede: "R" } };
+  }
+  const V = pick(V_SET), I = V / Req;
+  const cands = [C(V / Rpar, "Hai usato la resistenza del parallelo: in serie le resistenze si sommano."), C(V * Req, "Hai moltiplicato: I = V/R."),
+    C(Req / V, "Hai fatto R/V: la corrente è I = V/R."), C(V / Rs[0], "Hai considerato solo R₁: la corrente attraversa tutte le resistenze."),
+    C(somma(Rs.map(r => V / r)), "Hai sommato le correnti come in un parallelo: in serie la corrente è una sola.")];
+  const opzioni = opzioniNum(I, cands, "A"); if (!opzioni) return null;
+  return { tipo: "serie", sub: TIPI.serie, testo: `${nomi(k)} da ${elenco(Rs)} sono collegati in serie a una pila da ${V} V. Quanta corrente esce dalla pila?`,
+    fig: circuitoSVG(conf, Rs, V, null), opzioni,
+    passi: [`In serie: R = ${Rs.join(" + ")} = ${num(Req)} Ω.`, `I = V / R = ${V} / ${num(Req)} = <b>${num(I)} A</b>, la stessa in ogni resistore.`], meta: { conf, Rs, V, chiede: "I" } };
+}
+
+function genParallelo() {
+  const k = pick([2, 2, 3]), Rs = scegliR(k), conf = "p" + k;
+  const P = parallelo(Rs), Req = P.R;
+  if (!pulito(Req, 2) || Req < 0.5) return null;
+  if (RNG() < 0.5) {
+    const cands = [C(somma(Rs), "Hai sommato le resistenze come in serie: in parallelo si sommano gli inversi."),
+      C(somma(Rs.map(r => 1 / r)), "Hai sommato gli inversi ma non hai capovolto: quello è 1/R, non R."),
+      k === 3 ? C(Rs.reduce((a, b) => a * b, 1) / somma(Rs), "Prodotto diviso somma vale solo per due resistori.") : C(Rs[0] * Rs[1], "Hai fatto il prodotto senza dividere per la somma."),
+      C(somma(Rs) / k, "Hai fatto la media delle resistenze."),
+      C(Math.min(...Rs), "Hai preso la resistenza più piccola: il totale in parallelo è ancora più piccolo.")];
+    const opzioni = opzioniNum(Req, cands, "Ω"); if (!opzioni) return null;
+    return { tipo: "parallelo", sub: TIPI.parallelo, testo: `${nomi(k)} da ${elenco(Rs)} sono collegati in parallelo. Quanto vale la resistenza equivalente?`,
+      fig: circuitoSVG(conf, Rs, null, null), opzioni,
+      passi: [`In parallelo si sommano gli inversi: ${P.testo}.`, `Controllo: ${num(Req)} Ω è minore della resistenza più piccola (${Math.min(...Rs)} Ω).`], meta: { conf, Rs, chiede: "R" } };
+  }
+  const V = pick(V_SET), I = V / Req;
+  const cands = [C(V / somma(Rs), "Hai sommato le resistenze come in serie."), C(V / Rs[0], "È la corrente del solo ramo di R₁: le correnti dei rami si sommano."),
+    C(V * Req, "Hai moltiplicato: I = V/R."), C(Req / V, "Hai fatto R/V: la corrente è I = V/R."), C(V / Rs[k - 1], `È la corrente del solo ramo di R${PED[k - 1]}: le correnti dei rami si sommano.`)];
+  const opzioni = opzioniNum(I, cands, "A"); if (!opzioni) return null;
+  return { tipo: "parallelo", sub: TIPI.parallelo, testo: `${nomi(k)} da ${elenco(Rs)} sono collegati in parallelo a una pila da ${V} V. Quanta corrente esce dalla pila?`,
+    fig: circuitoSVG(conf, Rs, V, null), opzioni,
+    passi: [`In parallelo: ${P.testo}.`, `I = V / R = ${V} / ${num(Req)} = <b>${num(I)} A</b>.`, `Controllo: le correnti dei rami (${Rs.map(r => circa(V / r)).join(" + ")}) danno ${num(I)} A.`], meta: { conf, Rs, V, chiede: "I" } };
+}
+
+function genMisto() {
+  const Rs = scegliR(3), [R1, R2, R3] = Rs, P = parallelo([R2, R3]), Rp = P.R, Req = R1 + Rp;
+  if (!pulito(Rp, 2)) return null;
+  const tuttoPar = 1 / (1 / R1 + 1 / R2 + 1 / R3), sbagliato = (R1 + R2) * R3 / (R1 + R2 + R3);
+  const intro = `R₁ = ${R1} Ω è in serie con il parallelo di R₂ = ${R2} Ω e R₃ = ${R3} Ω`;
+  if (RNG() < 0.5) {
+    const cands = [C(R1 + R2 + R3, "Hai messo tutto in serie: R₂ e R₃ sono in parallelo."), C(tuttoPar, "Hai messo tutto in parallelo: R₁ è in serie."),
+      C(R1 + 1 / R2 + 1 / R3, "Nel parallelo non hai capovolto 1/R."), C(Rp, "Hai calcolato solo il parallelo e dimenticato R₁."),
+      C(sbagliato, "Hai raggruppato male: è R₁ + R₂ in parallelo con R₃.")];
+    const opzioni = opzioniNum(Req, cands, "Ω"); if (!opzioni) return null;
+    return { tipo: "misto", sub: TIPI.misto, testo: `Nel circuito ${intro}. Quanto vale la resistenza equivalente?`, fig: circuitoSVG("m3", Rs, null, null), opzioni,
+      passi: [`Prima il parallelo di R₂ e R₃: ${P.testo}.`, `Poi la serie con R₁: R = ${R1} + ${num(Rp)} = <b>${num(Req)} Ω</b>.`], meta: { conf: "m3", Rs, chiede: "R" } };
+  }
+  const V = pick(V_SET), I = V / Req;
+  const cands = [C(V / (R1 + R2 + R3), "Hai messo tutto in serie."), C(V / Rp, "Hai dimenticato R₁."), C(V / R1, "Hai usato solo R₁."),
+    C(V * Req, "Hai moltiplicato: I = V/R."), C(V / tuttoPar, "Hai messo tutto in parallelo."), C(V / sbagliato, "Hai raggruppato male le resistenze.")];
+  const opzioni = opzioniNum(I, cands, "A"); if (!opzioni) return null;
+  return { tipo: "misto", sub: TIPI.misto, testo: `Nel circuito ${intro}, con una pila da ${V} V. Quanta corrente esce dalla pila?`, fig: circuitoSVG("m3", Rs, V, null), opzioni,
+    passi: [`Parallelo di R₂ e R₃: ${P.testo}.`, `Serie con R₁: R = ${R1} + ${num(Rp)} = ${num(Req)} Ω.`, `I = V / R = ${V} / ${num(Req)} = <b>${num(I)} A</b>.`], meta: { conf: "m3", Rs, V, chiede: "I" } };
+}
+
+function genPotenza() {
+  const caso = pick(["VI", "RI", "VR"]);
+  let giusto, cands, testoQ, passi, meta;
+  if (caso === "VI") {
+    const milli = RNG() < 0.35, V = pick([3, 6, 9, 12, 24, 230]), I = milli ? pick([100, 200, 250, 500]) / 1000 : pick(I_SET);
+    giusto = V * I;
+    cands = [C(V / I, "V/I non è una potenza: è la resistenza."), C(I / V, "Hai diviso: la potenza è P = V·I."), C(V * I * I, "Hai elevato al quadrato la corrente: con V e I basta P = V·I."),
+      C(V * V * I, "Hai elevato al quadrato la tensione: con V e I basta P = V·I."), milli ? C(V * I * 1000, "Non hai convertito i mA in A.") : C(V + I, "Hai sommato: la potenza è P = V·I.")];
+    testoQ = `Un apparecchio collegato a ${V} V assorbe ${milli ? I * 1000 + " mA" : num(I) + " A"}. Che potenza assorbe?`;
+    passi = [...(milli ? [`Converto: I = ${I * 1000} mA = ${num(I, 3)} A.`] : []), `P = V · I = ${V} × ${num(I, 3)} = <b>${num(giusto)} W</b>.`];
+    meta = { caso, V, I };
+  } else if (caso === "RI") {
+    const R = pick(R_SET), I = pick(I_SET);
+    giusto = R * I * I;
+    cands = [C(R * I, "Hai dimenticato il quadrato: P = R·I²."), C(R * R * I, "Hai messo al quadrato la resistenza invece della corrente."), C(R / (I * I), "Hai diviso: P = R·I²."),
+      C((R * I) ** 2, "Hai elevato al quadrato anche R."), C(I * I / R, "Hai diviso per R: P = R·I².")];
+    testoQ = `In una resistenza da ${R} Ω passa una corrente di ${num(I)} A. Quanta potenza dissipa per effetto Joule?`;
+    passi = [`Con R e I: P = R · I².`, `P = ${R} × ${num(I)}² = ${R} × ${num(I * I)} = <b>${num(giusto)} W</b>.`];
+    meta = { caso, R, I };
+  } else {
+    const V = pick(V_SET), R = pick(R_SET);
+    giusto = V * V / R;
+    cands = [C(V / R, "V/R è la corrente, non la potenza."), C(V * R, "Hai moltiplicato: P = V²/R."), C(V * V * R, "Hai moltiplicato per R invece di dividere."),
+      C(R / (V * V), "Hai capovolto la formula: P = V²/R."), C((V / R) ** 2, "Hai fatto (V/R)²: manca un fattore R.")];
+    testoQ = `Una resistenza da ${R} Ω è collegata a ${V} V. Che potenza dissipa?`;
+    passi = [`Con V e R: P = V² / R.`, `P = ${V}² / ${R} = ${V * V} / ${R} = <b>${num(giusto)} W</b>.`];
+    meta = { caso, V, R };
+  }
+  const opzioni = opzioniNum(giusto, cands, "W"); if (!opzioni) return null;
+  return { tipo: "potenza", sub: TIPI.potenza, testo: testoQ, opzioni, passi, meta };
+}
+
+function genPartitore() {
+  const R1 = pick(R_SET), R2 = pick(R_SET), V = pick(V_SET), k = pick([0, 1]);
+  if (R1 === R2) return null;
+  const Rk = k ? R2 : R1, Ro = k ? R1 : R2, I = V / (R1 + R2), Vk = Rk * I;
+  const cands = [C(Ro * I, "Hai preso la resistenza sbagliata: ai capi della più grande c'è la tensione maggiore."), C(V / 2, "La tensione si divide a metà solo se le resistenze sono uguali."),
+    C(V, "In serie ogni resistore ha solo una parte della tensione."), C(V * Rk / Ro, "Hai diviso per l'altra resistenza invece che per la somma."),
+    C(I, "Questa è la corrente (in A), non la tensione.")];
+  const opzioni = opzioniNum(Vk, cands, "V"); if (!opzioni) return null;
+  const n = k ? "R₂" : "R₁";
+  return { tipo: "partitore", sub: TIPI.partitore, testo: `Due resistori, R₁ = ${R1} Ω e R₂ = ${R2} Ω, sono in serie con una pila da ${V} V. Che tensione c'è ai capi di ${n}?`,
+    fig: circuitoSVG("s2", [R1, R2], V, null), opzioni,
+    passi: [`Corrente (la stessa nei due): I = V / (R₁ + R₂) = ${V} / ${R1 + R2}${pulito(I, 3) ? " = " + num(I, 3) : ""} A.`, `Tensione su ${n}: V = ${n} · I = ${Rk} × ${V}/${R1 + R2} = <b>${num(Vk)} V</b>.`,
+      `Controllo: ${circa(R1 * I)} V + ${circa(R2 * I)} V = ${V} V.`], meta: { R1, R2, V, k } };
+}
+
+const TIPI = { ohm: "Legge di Ohm", serie: "Serie", parallelo: "Parallelo", misto: "Circuito misto", potenza: "Potenza", partitore: "Partitore di tensione" };
+const GEN = { ohm: genOhm, serie: genSerie, parallelo: genParallelo, misto: genMisto, potenza: genPotenza, partitore: genPartitore };
+function genera(tipo) {
+  for (let t = 0; t < 400; t++) {
+    let q = null;
+    try { q = GEN[tipo](); } catch (e) { if (STRICT) throw e; q = null; }
+    if (q) return q;
+  }
+  throw new Error("Generazione fallita: " + tipo);
+}
+</script>
+
+<!-- ======================= INTERFACCIA ======================= -->
+<script>
+"use strict";
+const MODULO = "circuiti";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const L5 = "ABCDE";
+const fmtPunti = x => num(x, 2);
+
+/* ---------- navigazione ---------- */
+$$(".modetab").forEach(b => b.onclick = () => {
+  $$(".modetab").forEach(x => x.setAttribute("aria-selected", x === b));
+  $("#impara").hidden = b.dataset.mode !== "impara";
+  $("#allenati").hidden = b.dataset.mode !== "allenati";
+  window.scrollTo(0, 0);
+});
+$$("#temi button").forEach(b => b.onclick = () => {
+  $$("#temi button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  $$(".tema").forEach(t => t.hidden = t.id !== "T-" + b.dataset.t);
+});
+$$(".guidato").forEach(g => {
+  const items = $$("ol li", g), next = $(".g-next", g), all = $(".g-all", g);
+  const upd = () => { const fine = items.every(i => !i.hidden); next.disabled = fine; all.disabled = fine; };
+  next.onclick = () => { const h = items.find(i => i.hidden); if (h) h.hidden = false; upd(); };
+  all.onclick = () => { items.forEach(i => i.hidden = false); upd(); };
+});
+
+/* ---------- widget: circuito interattivo ---------- */
+const W_R = [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 50, 60, 100];
+$("#w-v").innerHTML = [1.5, 3, 4.5, 6, 9, 12, 24].map(v => `<option value="${v}"${v === 12 ? " selected" : ""}>${num(v)} V</option>`).join("");
+["#w-r1", "#w-r2", "#w-r3"].forEach((id, i) => { $(id).innerHTML = W_R.map(r => `<option value="${r}"${r === [6, 6, 12][i] ? " selected" : ""}>${r} Ω</option>`).join(""); });
+function wCalcola() {
+  const conf = $("#w-conf").value, k = +conf[1], V = +$("#w-v").value;
+  $("#w-l3").hidden = k < 3;
+  const R = ["#w-r1", "#w-r2", "#w-r3"].slice(0, k).map(id => +$(id).value);
+  const sol = risolvi(conf, R, V);
+  $("#w-svg").innerHTML = circuitoSVG(conf, R, V, sol);
+  const formula = conf[0] === "s" ? `In serie: R = ${R.join(" + ")} = ${circa(sol.Req)} Ω.`
+    : conf[0] === "p" ? `In parallelo: ${parallelo(R).testo}.`
+    : `Parallelo di R₂ e R₃: ${parallelo(R.slice(1)).testo}; poi in serie con R₁: R = ${R[0]} + ${circa(R[1] * R[2] / (R[1] + R[2]))} = ${circa(sol.Req)} Ω.`;
+  $("#w-out").innerHTML = `<p>${formula}</p><p>Resistenza equivalente <b>${circa(sol.Req)} Ω</b> · corrente totale I = V/R = <b>${circa(sol.I)} A</b></p>
+    <div class="ttw"><table class="tt"><tr><th>Resistore</th><th>R</th><th>Tensione</th><th>Corrente</th></tr>${sol.el.map((e, i) => `<tr><td>R${PED[i]}</td><td>${num(e.R)} Ω</td><td>${circa(e.V)} V</td><td>${circa(e.I)} A</td></tr>`).join("")}</table></div>
+    <p class="small muted">${conf[0] === "s" ? "In serie la corrente è la stessa e le tensioni si sommano." : conf[0] === "p" ? "In parallelo la tensione è la stessa e le correnti si sommano." : "R₂ e R₃ hanno la stessa tensione; la corrente di R₁ è la somma delle loro."}</p>`;
+}
+["#w-conf", "#w-v", "#w-r1", "#w-r2", "#w-r3"].forEach(id => $(id).onchange = wCalcola);
+wCalcola();
+
+/* =================== ALLENAMENTO =================== */
+let S = null;
+$("#s-tipo").innerHTML = `<button data-v="mix" aria-pressed="true">Tutti misti</button>` + Object.keys(TIPI).map(k => `<button data-v="${k}" aria-pressed="false">${TIPI[k]}</button>`).join("");
+$$("#s-tipo button").forEach(b => b.onclick = () => $$("#s-tipo button").forEach(x => x.setAttribute("aria-pressed", x === b)));
+$("#s-go").onclick = inizia;
+$("#quit").onclick = () => fine(false);
+
+function inizia() {
+  const tipo = $("#s-tipo [aria-pressed=true]").dataset.v, n = +$("#s-n").value, timer = $("#s-timer").checked;
+  let seq;
+  if (tipo === "mix") { seq = []; while (seq.length < n) seq.push(...shuffle(Object.keys(TIPI))); seq = seq.slice(0, n); }
+  else seq = Array(n).fill(tipo);
+  S = { n, i: 0, seq, res: [], ok: 0, ko: 0, bl: 0, testi: new Set(), end: timer ? Date.now() + n * 120000 : null, tick: null, over: false, q: null, risposto: false };
+  $("#setup").hidden = true; $("#riepilogo").hidden = true; $("#sessione").hidden = false;
+  if (S.end) { S.tick = setInterval(tick, 500); tick(); } else $("#tm").textContent = "";
+  prossima();
+}
+function tick() {
+  if (!S || !S.end || S.over) return;
+  const ms = S.end - Date.now();
+  if (ms <= 0) { $("#tm").textContent = "⏱ 0:00"; fine(true); return; }
+  const s = Math.ceil(ms / 1000);
+  $("#tm").textContent = `⏱ ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  $("#tm").classList.toggle("low", s <= 60);
+}
+const punti = () => S.ok - 0.25 * S.ko;
+function barra() { $("#qn").textContent = `Domanda ${Math.min(S.i + 1, S.n)} di ${S.n}`; $("#sc").textContent = `Punti ${fmtPunti(punti())}`; }
+function prossima() {
+  if (S.i >= S.n) { fine(false); return; }
+  let q; for (let t = 0; t < 40; t++) { q = genera(S.seq[S.i]); if (!S.testi.has(q.testo)) break; }
+  S.testi.add(q.testo); S.q = q; S.risposto = false; mostra(); barra(); window.scrollTo(0, 0);
+}
+function mostra() {
+  const q = S.q;
+  $("#qbox").innerHTML = `<span class="tag">${q.sub}</span><div class="qtext">${q.testo}</div>${q.fig || ""}
+    <ol class="opts">${q.opzioni.map((o, i) => `<li><button class="opt" data-i="${i}"><span class="lt">${L5[i]}</span><span>${o.t}</span></button></li>`).join("")}</ol>
+    <button class="btn" id="skip">Non rispondo (0 punti)</button><div id="fb"></div>`;
+  $$("#qbox .opt").forEach(b => b.onclick = () => rispondi(+b.dataset.i));
+  $("#skip").onclick = () => rispondi(-1);
+}
+function spiegazione(q, scelta) {
+  return `<h3>Svolgimento</h3><ol class="steps">${q.passi.map(p => `<li>${p}</li>`).join("")}</ol>
+    <h3>Da dove viene ogni risposta</h3><ul class="why">${q.opzioni.map((o, i) => `<li><span class="lt">${L5[i]}</span><span class="val">${o.t}</span><span>${o.ok ? '<b class="ok">Corretta.</b>' : o.why}${i === scelta ? " <i>(la tua scelta)</i>" : ""}</span></li>`).join("")}</ul>`;
+}
+function rispondi(idx) {
+  if (S.risposto || S.over) return; S.risposto = true;
+  const q = S.q, ci = q.opzioni.findIndex(o => o.ok);
+  let stato;
+  if (idx < 0) { stato = "s"; S.bl++; } else if (idx === ci) { stato = "r"; S.ok++; } else { stato = "w"; S.ko++; }
+  S.res.push({ q, scelta: idx, stato }); S.i++;
+  $$("#qbox .opt").forEach((b, i) => { b.disabled = true; if (i === ci) b.classList.add("is-ok"); if (i === idx && idx !== ci) b.classList.add("is-ko"); });
+  $("#skip").remove();
+  const v = stato === "r" ? `<div class="verdict good">✓ Giusto: +1</div>` : stato === "w" ? `<div class="verdict bad">✗ Sbagliato: −0,25. La risposta giusta è la ${L5[ci]}.</div>` : `<div class="verdict blank">Non data: 0 punti. La risposta giusta è la ${L5[ci]}.</div>`;
+  $("#fb").innerHTML = v + spiegazione(q, idx) + `<button class="btn primary" id="next">${S.i < S.n ? "Domanda successiva" : "Vedi il riepilogo"}</button>`;
+  $("#next").onclick = prossima;
+  barra();
+}
+function salva() {
+  if (!window.TOLC) return;
+  const arg = {};
+  for (const r of S.res) { const t = TIPI[r.q.tipo]; arg[t] = arg[t] || { esercizi: 0, errori: 0 }; arg[t].esercizi++; if (r.stato === "w") arg[t].errori++; }
+  TOLC.salvaSessione({ modulo: MODULO, esercizi: S.res.length, errori: S.ko, giuste: S.ok, nonDate: S.bl, punti: punti(), argomenti: arg });
+}
+function fine(tempo) {
+  if (!S || S.over) return; S.over = true;
+  if (S.tick) clearInterval(S.tick);
+  salva();
+  const nonViste = S.n - S.res.length;
+  const per = {};
+  for (const r of S.res) { const t = TIPI[r.q.tipo]; per[t] = per[t] || { r: 0, w: 0, s: 0 }; per[t][r.stato]++; }
+  $("#sessione").hidden = true; $("#setup").hidden = false; $("#riepilogo").hidden = false;
+  $("#riepilogo").innerHTML = `<h2>${tempo ? "Tempo scaduto" : "Riepilogo"}</h2>
+    <div class="sumgrid"><div><b>${fmtPunti(punti())}</b>punti su ${S.n}</div><div><b>${S.ok}</b>giuste</div><div><b>${S.ko}</b>sbagliate</div><div><b>${S.bl + nonViste}</b>non date</div></div>
+    ${nonViste ? `<p class="small muted">${nonViste} domande non viste contano come non date.</p>` : ""}
+    ${Object.keys(per).length ? `<div class="ttw"><table class="tt"><tr><th>Argomento</th><th>Giuste</th><th>Sbagliate</th><th>Non date</th></tr>${Object.entries(per).map(([t, v]) => `<tr><td>${t}</td><td>${v.r}</td><td>${v.w}</td><td>${v.s}</td></tr>`).join("")}</table></div>` : ""}
+    ${S.res.length ? `<h3>Le tue risposte</h3><ol class="hist">${S.res.map((r, i) => {
+      const ci = r.q.opzioni.findIndex(o => o.ok), et = r.stato === "r" ? ["b-ok", "giusta"] : r.stato === "w" ? ["b-ko", "sbagliata"] : ["b-bl", "non data"];
+      return `<li><details><summary><span class="badge ${et[0]}">${et[1]}</span> ${r.q.sub}: tua ${r.scelta < 0 ? "—" : L5[r.scelta]}, giusta ${L5[ci]}</summary>
+        <div class="qtext">${r.q.testo}</div>${r.q.fig || ""}${spiegazione(r.q, r.scelta)}</details></li>`;
+    }).join("")}</ol>` : ""}
+    <p class="small muted">Imposta una nuova sessione qui sopra.</p>`;
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

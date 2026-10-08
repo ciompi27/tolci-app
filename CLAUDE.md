@@ -31,6 +31,13 @@ App web personale per preparare il **TOLC-I (CISIA) del 12 novembre 2026**: 1 or
 - Stato "letto" in localStorage, chiave `tolc-i:letti`, incluso nel backup JSON (versione 2; i backup della versione 1 si importano ancora).
 - Se si aggiunge un file all'app va aggiunto alla lista `FILE` di `sw.js` e va cambiata `VERSIONE`.
 
+## Pagine interattive nuove (fase 3)
+- `moduli/mole/` (Mole, stechiometria e bilanciamento) e `moduli/circuiti/` (Circuiti elettrici): un solo `index.html` ciascuno, stesso schema di logica e combinatoria (Impara / Allenati, timer, punteggio +1 / 0 / −0,25, riepilogo con revisione, `TOLC.salvaSessione` con gli argomenti per sotto-tema).
+- In ogni modulo lo `<script id="core">` contiene solo dati, calcoli e generatori (nessun accesso alla pagina): così si può provare da Node.
+- Prova automatica: `node test/esercizi.test.js` (200 esercizi per tipo; risposta giusta unica, nessun doppione, niente NaN o negativi, soluzione ricalcolata con codice indipendente). Va rifatta dopo ogni modifica ai generatori.
+- Le reazioni del modulo mole sono scritte senza coefficienti: li calcola il programma e all'avvio controlla che ogni reazione sia bilanciabile in un solo modo.
+- Masse atomiche: H, C, O come nel PDF; le altre arrotondate (Cl 35,5), segnate DA VERIFICARE nella pagina.
+
 ## Regole per importare INT-1
 - Non riscriverla e non cambiarne il comportamento: spostarla in `moduli/logica/` (index, css, js separati solo se il comportamento resta identico) e collegarla alla barra in basso e al piano.
 - Unico difetto da correggere: carica **Atkinson Hyperlegible da Google Fonts** (non funziona offline). Scaricare il font e metterlo in `assets/fonts/` (formato woff2), oppure usare il font di sistema.

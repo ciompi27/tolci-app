@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mole, stechiometria e bilanciamento · TOLC-I</title>
+<link rel="stylesheet" href="../../assets/fonts/atkinson-hyperlegible.css">
+<link rel="stylesheet" href="../modulo.css">
+<script src="../modulo.js"></script>
+<style>
+:root{--bg:#F2F4F6;--surface:#FFFFFF;--ink:#17212B;--muted:#56626F;--line:#D2D9E0;--accent:#2350B5;--accent-soft:#E2EAF8;
+ --ok:#15704A;--ok-soft:#E1F1E8;--ko:#B3261E;--ko-soft:#FBE6E4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11161C;--surface:#1A2129;--ink:#E7ECF1;--muted:#A2AEBB;--line:#334050;--accent:#93B2F4;--accent-soft:#22324E;
+ --ok:#63C996;--ok-soft:#163223;--ko:#F2918A;--ko-soft:#3A1F1D;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11161C;--surface:#1A2129;--ink:#E7ECF1;--muted:#A2AEBB;--line:#334050;--accent:#93B2F4;--accent-soft:#22324E;
+ --ok:#63C996;--ok-soft:#163223;--ko:#F2918A;--ko-soft:#3A1F1D;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:19px;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto;padding:12px 16px 48px}
+header h1{font-size:1.6em;line-height:1.2;margin:8px 0 4px}
+header p{margin:0 0 14px;color:var(--muted)}
+h2{font-size:1.25em;margin:0 0 10px}
+h3{font-size:1.08em;margin:18px 0 8px}
+p{margin:8px 0}
+sup,sub{font-size:.72em;line-height:0}
+.muted{color:var(--muted)}.small{font-size:.88em}
+.modes{display:flex;border:2px solid var(--ink);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.modetab{flex:1;font:inherit;font-weight:700;font-size:1.05em;padding:12px;border:0;background:var(--surface);color:var(--ink);cursor:pointer}
+.modetab[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.pills button{font:inherit;font-size:.92em;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer;min-height:44px}
+.pills button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 16px}
+.keys{margin:0;padding-left:1.2em}.keys li{margin:7px 0}
+.btn{font:inherit;font-size:1em;min-height:46px;padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700}
+.btn:disabled{opacity:.5;cursor:default}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.field{display:block;margin:6px 0 10px;font-size:.9em;color:var(--muted)}
+select,input[type=number]{display:block;width:100%;font:inherit;font-size:1em;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:4px;min-height:44px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.row2{grid-template-columns:1fr}}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;padding:8px 12px;font-size:.92em}
+.verifica{display:inline-block;font-size:.72em;font-weight:700;color:var(--ko);border:1.5px solid var(--ko);border-radius:5px;padding:0 6px;vertical-align:.1em}
+.ok{color:var(--ok)}.ko{color:var(--ko)}
+table.tt{border-collapse:collapse;font-size:.92em;margin:8px 0}
+.tt th,.tt td{border:1px solid var(--line);padding:5px 10px;text-align:center;white-space:nowrap}
+.tt th{background:var(--bg)}
+.ttw{overflow-x:auto}
+ol.steps{padding-left:1.3em}ol.steps li{margin:8px 0}
+/* esempio guidato */
+.guidato ol li[hidden]{display:none}
+/* bilanciamento */
+.eqw{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:12px 0}
+.sp{display:flex;flex-direction:column;align-items:center;gap:4px}
+.sp .f{font-size:1.15em;font-weight:700}
+.cf{display:flex;align-items:center;gap:4px}
+.cf button{font:inherit;font-weight:700;width:40px;height:40px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.cf b{min-width:1.6em;text-align:center;font-size:1.15em}
+.op{font-size:1.2em;font-weight:700;color:var(--muted)}
+.msg{font-weight:700;padding:8px 12px;border-radius:10px;margin-top:8px}
+.msg.good{background:var(--ok-soft);color:var(--ok)}.msg.bad{background:var(--ko-soft);color:var(--ko)}
+/* catena */
+.chain{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.ch-box{border:1.5px solid var(--accent);border-radius:10px;padding:8px 12px;background:var(--accent-soft)}
+.ch-box b{font-size:1.1em}
+.ch-op{color:var(--muted);font-size:.92em;padding-left:14px}
+/* allenamento */
+.bar{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-bottom:12px;position:sticky;top:0;z-index:2}
+.bar .sp2{flex:1}
+#tm.low{color:var(--ko)}
+.tag{display:inline-block;font-size:.85em;color:var(--muted);margin-bottom:6px}
+.qtext{font-size:1.08em}
+.masse{display:block;font-size:.86em;color:var(--muted);margin-top:6px}
+.opts{list-style:none;padding:0;margin:14px 0}.opts li{margin:8px 0}
+.opt{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;font-size:1.05em;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);cursor:pointer;min-height:52px}
+.opt:disabled{cursor:default}
+.opt.is-ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.is-ko{border-color:var(--ko);background:var(--ko-soft)}
+.lt{flex:0 0 auto;display:inline-grid;place-items:center;width:1.8em;height:1.8em;border-radius:50%;border:1.5px solid currentColor;font-weight:700;font-size:.85em}
+.verdict{font-size:1.15em;font-weight:700;padding:10px 12px;border-radius:10px;margin-top:6px}
+.verdict.good{background:var(--ok-soft);color:var(--ok)}.verdict.bad{background:var(--ko-soft);color:var(--ko)}.verdict.blank{background:var(--accent-soft);color:var(--accent)}
+.why{list-style:none;padding:0}.why li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.why .val{min-width:6.5em;font-weight:700}
+.sumgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:10px 0}
+.sumgrid div{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.sumgrid b{display:block;font-size:1.5em}
+.hist{padding-left:1.4em}.hist li{margin:8px 0}
+.badge{display:inline-block;font-size:.8em;font-weight:700;padding:1px 8px;border-radius:999px;margin-right:6px}
+.b-ok{background:var(--ok-soft);color:var(--ok)}.b-ko{background:var(--ko-soft);color:var(--ko)}.b-bl{background:var(--accent-soft);color:var(--accent)}
+summary{cursor:pointer}
+.check{display:flex;gap:10px;align-items:center;margin:8px 0;cursor:pointer}
+.check input{width:22px;height:22px;accent-color:var(--accent)}
+@media (max-width:480px){body{font-size:18px}.card{padding:14px}}
+</style>
+</head>
+<body>
+<nav class="tolc-nav"><a class="tolc-back" href="../../index.html" data-tolc-back>← Indietro</a><span class="tolc-stato" data-tolc-stato role="status"></span></nav>
+<div class="wrap">
+<header>
+  <h1>Mole, stechiometria e bilanciamento</h1>
+  <p>Teoria del PDF (4.5-4.6). Esercizi generati: la soluzione la calcola il programma.</p>
+  <div class="modes" role="tablist"><button class="modetab" role="tab" data-mode="impara" aria-selected="true">Impara</button><button class="modetab" role="tab" data-mode="allenati" aria-selected="false">Allenati</button></div>
+</header>
+
+<!-- ======================= IMPARA ======================= -->
+<section id="impara">
+  <nav class="pills" id="temi" aria-label="Argomento">
+    <button data-t="mole" aria-pressed="true">1 · Mole e massa molare</button>
+    <button data-t="bil" aria-pressed="false">2 · Bilanciare</button>
+    <button data-t="stech" aria-pressed="false">3 · Calcoli con le reazioni</button>
+  </nav>
+
+  <div class="tema" id="T-mole">
+    <section class="card"><h2>Punti chiave</h2><ul class="keys">
+      <li>Gli atomi sono troppo piccoli per contarli uno a uno: si usa un numero-pacchetto, la <b>mole</b>. <b>1 mole = 6,022 · 10<sup>23</sup> particelle</b> (numero di Avogadro).</li>
+      <li>La <b>massa molare</b> in grammi/mole è numericamente uguale alla massa atomica che leggi sulla tavola periodica: il carbonio pesa 12 u per atomo → una mole di carbonio pesa 12 g.</li>
+      <li>Per un composto si sommano le masse atomiche, ognuna moltiplicata per il suo indice: massa molare H<sub>2</sub>O = (2 × 1) + 16 = 18 g/mol.</li>
+      <li><b>n = massa (g) / massa molare (g/mol)</b>. Al contrario: massa = n × massa molare.</li>
+      <li>Numero di particelle = n · 6,022·10<sup>23</sup>.</li>
+      <li>1 mole di <b>gas</b> a condizioni normali (0 °C, 1 atm) occupa <b>22,4 L</b>.</li>
+    </ul></section>
+    <section class="card"><h2>Masse atomiche usate negli esercizi</h2>
+      <div class="ttw" id="tab-masse"></div>
+      <p class="small muted">H = 1, C = 12, O = 16 sono quelle del PDF. Le altre sono arrotondate (Cl a 35,5) <span class="verifica">DA VERIFICARE</span> con la tavola del tuo libro.</p>
+    </section>
+    <section class="card guidato"><h2>Esempio guidato</h2>
+      <p><b>Quante moli sono 36 g di acqua?</b></p>
+      <ol class="steps">
+        <li hidden>Massa molare H<sub>2</sub>O = (2 × 1) + 16 = <b>18 g/mol</b>.</li>
+        <li hidden>n = massa / massa molare = 36 / 18 = <b>2 mol</b>.</li>
+        <li hidden>Sono 2 · 6,022·10<sup>23</sup> ≈ 1,2·10<sup>24</sup> molecole d'acqua.</li>
+        <li hidden><b>Errori tipici:</b> 36 × 18 = 648 (moltiplicare invece di dividere) oppure 36 / 16 (usare solo la massa dell'ossigeno).</li>
+      </ol>
+      <div class="btnrow"><button class="btn primary g-next">Passo successivo</button><button class="btn g-all">Mostra tutto</button></div>
+    </section>
+  </div>
+
+  <div class="tema" id="T-bil" hidden>
+    <section class="card"><h2>Punti chiave</h2><ul class="keys">
+      <li>In una reazione gli atomi non si creano né si distruggono: si <b>ricombinano</b>. Ogni elemento deve comparire con lo <b>stesso numero di atomi</b> a sinistra e a destra.</li>
+      <li>Si modificano <b>solo i coefficienti</b> davanti alle formule; gli <b>indici dentro le formule non si toccano mai</b>, perché cambierebbero la sostanza (H<sub>2</sub>O è acqua, H<sub>2</sub>O<sub>2</sub> è acqua ossigenata).</li>
+      <li>Atomi di un elemento = coefficiente × indice: in 2 H<sub>2</sub>O ci sono 2 × 2 = 4 atomi di H e 2 × 1 = 2 atomi di O.</li>
+      <li>Si cercano i coefficienti interi più piccoli. Alla fine si contano di nuovo gli atomi di ogni elemento, da tutte e due le parti.</li>
+    </ul></section>
+    <section class="card guidato"><h2>Esempio guidato</h2>
+      <p><b>Combustione del metano: CH<sub>4</sub> + O<sub>2</sub> → CO<sub>2</sub> + H<sub>2</sub>O</b></p>
+      <ol class="steps">
+        <li hidden>C: 1 a sinistra, 1 a destra. Va già bene.</li>
+        <li hidden>A destra servono 4 H → metto <b>2</b> H<sub>2</sub>O.</li>
+        <li hidden>Ora a destra ho 2 + 2 = 4 O → metto <b>2</b> O<sub>2</sub> a sinistra.</li>
+        <li hidden><b>CH<sub>4</sub> + 2 O<sub>2</sub> → CO<sub>2</sub> + 2 H<sub>2</sub>O</b>. Verifica: 1 C, 4 H, 4 O da entrambe le parti. ✓</li>
+      </ol>
+      <div class="btnrow"><button class="btn primary g-next">Passo successivo</button><button class="btn g-all">Mostra tutto</button></div>
+    </section>
+    <section class="card"><h2>Prova a bilanciare</h2>
+      <p class="small muted">Scegli i coefficienti con − e +. Il programma conta gli atomi di ogni elemento a sinistra e a destra.</p>
+      <label class="field">Reazione<select id="b-reaz"></select></label>
+      <div class="eqw" id="b-eq"></div>
+      <div class="ttw" id="b-tab"></div>
+      <div id="b-msg"></div>
+      <div class="btnrow"><button class="btn" id="b-sol">Mostra la soluzione</button><button class="btn" id="b-zero">Azzera</button></div>
+      <p class="small ko" id="b-err" hidden></p>
+    </section>
+  </div>
+
+  <div class="tema" id="T-stech" hidden>
+    <section class="card"><h2>Punti chiave</h2><ul class="keys">
+      <li>I coefficienti della reazione bilanciata danno il rapporto tra le <b>moli</b>, non tra i grammi: in CH<sub>4</sub> + 2 O<sub>2</sub> → CO<sub>2</sub> + 2 H<sub>2</sub>O, 1 mol di CH<sub>4</sub> reagisce con 2 mol di O<sub>2</sub> e dà 1 mol di CO<sub>2</sub>.</li>
+      <li>Lo schema è sempre lo stesso: <b>grammi → moli → (coefficienti) → moli → grammi</b>.</li>
+      <li><b>Reagente limitante:</b> è quello che si esaurisce per primo e stabilisce quanto prodotto si ottiene. Non è quello presente in minor massa: va confrontato in moli, tenendo conto dei coefficienti.</li>
+    </ul></section>
+    <section class="card guidato"><h2>Esempio guidato</h2>
+      <p><b>Quanti grammi di CO<sub>2</sub> si ottengono bruciando 32 g di metano?</b> CH<sub>4</sub> + 2 O<sub>2</sub> → CO<sub>2</sub> + 2 H<sub>2</sub>O</p>
+      <ol class="steps">
+        <li hidden>Moli di CH<sub>4</sub>: massa molare = 12 + 4 = 16 g/mol → n = 32/16 = <b>2 mol</b>.</li>
+        <li hidden>Dalla reazione bilanciata, 1 CH<sub>4</sub> dà 1 CO<sub>2</sub> → <b>2 mol</b> di CO<sub>2</sub>.</li>
+        <li hidden>Massa molare CO<sub>2</sub> = 12 + 32 = 44 g/mol → massa = 2 · 44 = <b>88 g</b>.</li>
+        <li hidden><b>Errori tipici:</b> rispondere 32 g (stessa massa del metano) oppure 2 g (le moli scambiate per grammi).</li>
+      </ol>
+      <div class="btnrow"><button class="btn primary g-next">Passo successivo</button><button class="btn g-all">Mostra tutto</button></div>
+    </section>
+    <section class="card"><h2>La catena, passo per passo</h2>
+      <p class="small muted">Scegli la reazione, la sostanza di partenza, quella che cerchi e la massa: il programma fa i passaggi.</p>
+      <label class="field">Reazione<select id="c-reaz"></select></label>
+      <div class="row2"><label class="field">Parto da<select id="c-a"></select></label><label class="field">Voglio trovare<select id="c-b"></select></label></div>
+      <label class="field">Massa di partenza (g)<input type="number" id="c-m" min="0" step="any" inputmode="decimal" value="32"></label>
+      <div id="c-out"></div>
+    </section>
+  </div>
+</section>
+
+<!-- ======================= ALLENATI ======================= -->
+<section id="allenati" hidden>
+  <div id="setup" class="card">
+    <h2>Nuova sessione</h2>
+    <p class="small muted">Argomento</p>
+    <div class="pills" id="s-tipo"></div>
+    <label class="field">Domande<select id="s-n"><option>5</option><option selected>10</option><option>20</option></select></label>
+    <label class="check"><input type="checkbox" id="s-timer"> Timer: 2 minuti a domanda (Scienze al TOLC-I: 10 domande in 20 minuti)</label>
+    <p class="small muted">Punteggio come al TOLC: giusta +1, non data 0, sbagliata −0,25.</p>
+    <button class="btn primary" id="s-go">Inizia</button>
+  </div>
+  <div id="sessione" hidden>
+    <div class="bar"><span id="qn"></span><span id="sc"></span><span id="tm"></span><span class="sp2"></span><button class="btn" id="quit">Termina</button></div>
+    <div id="qbox" class="card"></div>
+  </div>
+  <div id="riepilogo" class="card" hidden></div>
+</section>
+</div>
+
+<!-- ============ MOTORE (nessun accesso alla pagina: dati, calcoli, generatori) ============ -->
+<script id="core">
+"use strict";
+let RNG = Math.random;
+let STRICT = false; // nelle prove automatiche gli errori dei generatori non vengono nascosti
+
+/* ---------- utilità ---------- */
+const rnd = (a, b) => a + Math.floor(RNG() * (b - a + 1));
+const pick = a => a[Math.floor(RNG() * a.length)];
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(RNG() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; };
+/* numero in formato italiano, al massimo dec decimali */
+function num(x, dec = 2) {
+  if (!Number.isFinite(x)) return "?";
+  const r = Math.round(x * 10 ** dec) / 10 ** dec;
+  let [i, d] = Math.abs(r).toFixed(dec).split(".");
+  d = (d || "").replace(/0+$/, "");
+  if (i.length > 4) i = i.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return (r < 0 ? "−" : "") + i + (d ? "," + d : "");
+}
+const pulito = (x, dec = 2) => Number.isFinite(x) && Math.abs(x * 10 ** dec - Math.round(x * 10 ** dec)) < 1e-6;
+const circa = (x, dec = 2) => (pulito(x, dec) ? "" : "≈ ") + num(x, dec);
+
+/* ---------- masse atomiche (H, C, O come nel PDF; le altre arrotondate: DA VERIFICARE) ---------- */
+const MASSE = { H: 1, C: 12, N: 14, O: 16, Na: 23, Mg: 24, Al: 27, S: 32, Cl: 35.5, K: 39, Ca: 40, Fe: 56 };
+const ZETA = { H: 1, C: 6, N: 7, O: 8, Na: 11, Mg: 12, Al: 13, S: 16, Cl: 17, K: 19, Ca: 20, Fe: 26 };
+const BIATOMICI = ["H", "N", "O", "Cl"]; // da soli formano molecole H2, N2, O2, Cl2
+
+/* Formula -> { elemento: atomi }. Con soloUltimo l'indice dopo una parentesi moltiplica solo l'ultimo elemento (errore tipico). */
+function analizza(f, soloUltimo = false) {
+  let i = 0;
+  function gruppo() {
+    const c = {};
+    while (i < f.length && f[i] !== ")") {
+      let parte, par = false;
+      if (f[i] === "(") {
+        i++; parte = gruppo(); par = true;
+        if (f[i] !== ")") throw new Error("parentesi non chiusa: " + f);
+        i++;
+      } else {
+        const m = /^[A-Z][a-z]?/.exec(f.slice(i));
+        if (!m || !(m[0] in MASSE)) throw new Error("elemento sconosciuto in " + f);
+        i += m[0].length; parte = { [m[0]]: 1 };
+      }
+      const d = /^\d+/.exec(f.slice(i)); const k = d ? +d[0] : 1; if (d) i += d[0].length;
+      const chiavi = Object.keys(parte), ultimo = chiavi[chiavi.length - 1];
+      for (const e of chiavi) c[e] = (c[e] || 0) + parte[e] * (par && soloUltimo && e !== ultimo ? 1 : k);
+    }
+    return c;
+  }
+  const c = gruppo();
+  if (i !== f.length) throw new Error("formula non valida: " + f);
+  return c;
+}
+const massaDa = c => Object.keys(c).reduce((s, e) => s + c[e] * MASSE[e], 0);
+const massaMolare = f => massaDa(analizza(f));
+const atomiTot = f => Object.values(analizza(f)).reduce((a, b) => a + b, 0);
+/* l'atomo più pesante della formula: chi usa "la massa atomica invece della molare" di solito prende quello */
+const pesante = f => Object.keys(analizza(f)).reduce((x, e) => MASSE[e] > MASSE[x] ? e : x);
+const sub = f => f.replace(/(\d+)/g, "<sub>$1</sub>");
+function scomposizione(f) {
+  const c = analizza(f);
+  return Object.keys(c).map(e => c[e] > 1 ? `(${c[e]} × ${num(MASSE[e], 1)})` : num(MASSE[e], 1)).join(" + ");
+}
+function masseTesto(formule) {
+  const el = new Set(formule.flatMap(f => Object.keys(analizza(f))));
+  return "Masse atomiche: " + Object.keys(MASSE).filter(e => el.has(e)).map(e => `${e} = ${num(MASSE[e], 1)}`).join("; ") + ".";
+}
+
+/* ---------- sostanze ---------- */
+const NOMI = {
+  H2O: "acqua", CO2: "anidride carbonica", CO: "monossido di carbonio", NH3: "ammoniaca", CH4: "metano", C2H6: "etano", C3H8: "propano",
+  C4H10: "butano", C2H4: "etilene", C2H5OH: "etanolo", C6H12O6: "glucosio", NaCl: "cloruro di sodio", KCl: "cloruro di potassio",
+  NaOH: "idrossido di sodio", KOH: "idrossido di potassio", HCl: "acido cloridrico", H2SO4: "acido solforico", HNO3: "acido nitrico",
+  CaCO3: "carbonato di calcio", "Ca(OH)2": "idrossido di calcio", "Mg(OH)2": "idrossido di magnesio", "Al(OH)3": "idrossido di alluminio",
+  Al2O3: "ossido di alluminio", Fe2O3: "ossido di ferro(III)", MgO: "ossido di magnesio", CaO: "ossido di calcio", Na2O: "ossido di sodio",
+  SO2: "anidride solforosa", SO3: "anidride solforica", Na2SO4: "solfato di sodio", K2SO4: "solfato di potassio", CaCl2: "cloruro di calcio",
+  MgCl2: "cloruro di magnesio", AlCl3: "cloruro di alluminio", FeCl3: "cloruro di ferro(III)", KNO3: "nitrato di potassio",
+  NaHCO3: "bicarbonato di sodio", Na2CO3: "carbonato di sodio", "Al2(SO4)3": "solfato di alluminio", "Ca(NO3)2": "nitrato di calcio",
+  H2O2: "acqua ossigenata", KClO3: "clorato di potassio", O2: "ossigeno", N2: "azoto", H2: "idrogeno", Cl2: "cloro",
+  Na: "sodio", Mg: "magnesio", Ca: "calcio", Al: "alluminio", Fe: "ferro"
+};
+const nome = f => NOMI[f] || f;
+const nomeF = f => `${nome(f)} (${sub(f)})`;
+const COMPOSTI = Object.keys(NOMI).filter(f => Object.keys(analizza(f)).length >= 2);           // per la massa molare
+const SOSTANZE = Object.keys(NOMI).filter(f => atomiTot(f) >= 2);                              // per grammi <-> moli
+
+/* ---------- reazioni (i coefficienti li calcola il programma) ---------- */
+const REAZIONI = [
+  ["CH4 + O2 -> CO2 + H2O", "combustione del metano", "combustione"],
+  ["C2H6 + O2 -> CO2 + H2O", "combustione dell'etano", "combustione"],
+  ["C3H8 + O2 -> CO2 + H2O", "combustione del propano", "combustione"],
+  ["C4H10 + O2 -> CO2 + H2O", "combustione del butano", "combustione"],
+  ["C2H4 + O2 -> CO2 + H2O", "combustione dell'etilene", "combustione"],
+  ["C2H5OH + O2 -> CO2 + H2O", "combustione dell'etanolo", "combustione"],
+  ["C6H12O6 + O2 -> CO2 + H2O", "ossidazione del glucosio", "combustione"],
+  ["CO + O2 -> CO2", "combustione del monossido di carbonio", "combustione"],
+  ["H2 + O2 -> H2O", "sintesi dell'acqua", "sintesi"],
+  ["N2 + H2 -> NH3", "sintesi dell'ammoniaca", "sintesi"],
+  ["Na + Cl2 -> NaCl", "sintesi del cloruro di sodio", "sintesi"],
+  ["Mg + O2 -> MgO", "sintesi dell'ossido di magnesio", "sintesi"],
+  ["Ca + O2 -> CaO", "sintesi dell'ossido di calcio", "sintesi"],
+  ["Na + O2 -> Na2O", "sintesi dell'ossido di sodio", "sintesi"],
+  ["Al + O2 -> Al2O3", "sintesi dell'ossido di alluminio", "sintesi"],
+  ["Fe + O2 -> Fe2O3", "sintesi dell'ossido di ferro(III)", "sintesi"],
+  ["Al + Cl2 -> AlCl3", "sintesi del cloruro di alluminio", "sintesi"],
+  ["Fe + Cl2 -> FeCl3", "sintesi del cloruro di ferro(III)", "sintesi"],
+  ["SO2 + O2 -> SO3", "sintesi dell'anidride solforica", "sintesi"],
+  ["H2O2 -> H2O + O2", "decomposizione dell'acqua ossigenata", "decomposizione"],
+  ["KClO3 -> KCl + O2", "decomposizione del clorato di potassio", "decomposizione"],
+  ["H2O -> H2 + O2", "decomposizione dell'acqua", "decomposizione"],
+  ["CaCO3 -> CaO + CO2", "decomposizione del carbonato di calcio", "decomposizione"],
+  ["NaHCO3 -> Na2CO3 + H2O + CO2", "decomposizione del bicarbonato di sodio", "decomposizione"],
+  ["HCl + NaOH -> NaCl + H2O", "neutralizzazione", "neutralizzazione"],
+  ["H2SO4 + NaOH -> Na2SO4 + H2O", "neutralizzazione", "neutralizzazione"],
+  ["H2SO4 + KOH -> K2SO4 + H2O", "neutralizzazione", "neutralizzazione"],
+  ["HCl + Ca(OH)2 -> CaCl2 + H2O", "neutralizzazione", "neutralizzazione"],
+  ["HCl + Mg(OH)2 -> MgCl2 + H2O", "neutralizzazione", "neutralizzazione"],
+  ["HNO3 + Ca(OH)2 -> Ca(NO3)2 + H2O", "neutralizzazione", "neutralizzazione"],
+  ["HCl + Al(OH)3 -> AlCl3 + H2O", "neutralizzazione", "neutralizzazione"],
+  ["H2SO4 + Al(OH)3 -> Al2(SO4)3 + H2O", "neutralizzazione", "neutralizzazione"]
+].map(([t, nomeR, tipo]) => {
+  const [a, b] = t.split("->");
+  return { r: a.split("+").map(s => s.trim()), p: b.split("+").map(s => s.trim()), nome: nomeR, tipo, testo: t };
+});
+const specie = R => [...R.r, ...R.p];
+
+/* Atomi di ogni elemento a sinistra (s) e a destra (d) con i coefficienti dati */
+function conta(R, coeff) {
+  const out = {};
+  specie(R).forEach((f, j) => {
+    const c = analizza(f), lato = j < R.r.length ? "s" : "d";
+    for (const e in c) { out[e] = out[e] || { s: 0, d: 0 }; out[e][lato] += c[e] * coeff[j]; }
+  });
+  return out;
+}
+const bilanciata = (R, coeff) => Object.values(conta(R, coeff)).every(x => x.s === x.d);
+
+/* Cerca i coefficienti interi più piccoli (fino a max) e controlla che siano gli unici, a meno di multipli */
+function bilancia(R, max = 13) {
+  const sp = specie(R), sol = [], c = new Array(sp.length).fill(1);
+  const comp = sp.map(f => analizza(f));
+  const el = [...new Set(comp.flatMap(x => Object.keys(x)))];
+  const A = el.map(e => comp.map((x, j) => (x[e] || 0) * (j < R.r.length ? 1 : -1)));
+  (function rec(j) {
+    if (j === sp.length) { if (A.every(row => row.reduce((s, a, k) => s + a * c[k], 0) === 0)) sol.push(c.slice()); return; }
+    for (let v = 1; v <= max; v++) { c[j] = v; rec(j + 1); }
+  })(0);
+  const min = sol.find(s => s.reduce(gcd) === 1) || null;
+  const unica = !!min && sol.every(s => s.every((x, i) => x * min[0] === min[i] * s[0]));
+  return { coeff: min, unica };
+}
+
+/* Controllo automatico all'avvio: ogni reazione deve essere scritta bene e bilanciabile in un solo modo */
+function controllaReazioni() {
+  const valide = [], errori = [];
+  for (const R of REAZIONI) {
+    try {
+      const b = bilancia(R);
+      if (!b.coeff) errori.push(R.testo + ": non bilanciabile");
+      else if (!b.unica) errori.push(R.testo + ": bilanciamento non unico");
+      else { R.coeff = b.coeff; R.banale = b.coeff.every(x => x === 1); valide.push(R); }
+    } catch (e) { errori.push(R.testo + ": " + e.message); }
+  }
+  return { valide, errori };
+}
+const CONTROLLO = controllaReazioni();
+const VALIDE = CONTROLLO.valide;
+
+function eqHTML(R, coeff) {
+  const lato = (fs, off) => fs.map((f, j) => (coeff[off + j] > 1 ? coeff[off + j] + " " : "") + sub(f)).join(" + ");
+  return lato(R.r, 0) + " → " + lato(R.p, R.r.length);
+}
+function squilibrio(R, coeff) {
+  const n = conta(R, coeff);
+  const no = Object.keys(n).filter(e => n[e].s !== n[e].d);
+  return no.length ? "Non tornano: " + no.map(e => `${e} (${n[e].s} a sinistra, ${n[e].d} a destra)`).join(", ") + "." : "";
+}
+/* "2 × 2 + 1 × 1" per gli atomi di e su un lato */
+function dettaglio(R, coeff, e, lato) {
+  const parti = [];
+  specie(R).forEach((f, j) => {
+    if ((j < R.r.length) !== (lato === "s")) return;
+    const k = analizza(f)[e]; if (k) parti.push(coeff[j] === 1 && k === 1 ? "1" : `${coeff[j]} × ${k}`);
+  });
+  return parti.join(" + ");
+}
+
+/* ---------- opzioni ---------- */
+const C = (v, why) => ({ v, why });
+/* 1 risposta giusta + 4 errori tipici diversi; se non ce ne sono 4 l'esercizio si scarta */
+function opzioniNum(giusto, cands, unita, dec = 2) {
+  if (!Number.isFinite(giusto) || giusto <= 0 || !pulito(giusto, dec)) return null;
+  const t = v => `${num(v, dec)} ${unita}`;
+  const visti = new Set([t(giusto)]), pool = [];
+  for (const c of cands) {
+    if (!c || !Number.isFinite(c.v) || c.v <= 0 || c.v > 1e5) continue;   // niente valori assurdi
+    const r = Math.round(c.v * 10 ** dec) / 10 ** dec;
+    if (r <= 0 || Math.abs(r - c.v) / c.v > 0.02) continue;   // l'arrotondamento la falserebbe
+    const k = t(c.v);
+    if (visti.has(k)) continue;
+    visti.add(k); pool.push({ t: k, v: c.v, ok: false, why: c.why });
+  }
+  if (pool.length < 4) return null;
+  return shuffle([{ t: t(giusto), v: giusto, ok: true, why: "" }, ...shuffle(pool).slice(0, 4)]);
+}
+
+/* ---------- generatori ---------- */
+function genMassa() {
+  const f = pick(COMPOSTI), c = analizza(f), el = Object.keys(c), M = massaDa(c);
+  const cands = [
+    C(el.reduce((s, e) => s + MASSE[e], 0), "Hai ignorato gli indici: ogni massa atomica va moltiplicata per il numero di atomi."),
+    ...el.filter(e => c[e] > 1).map(e => C(M - (c[e] - 1) * MASSE[e], `Hai contato un solo atomo di ${e}: nella formula ce ne sono ${c[e]}.`)),
+    f.includes("(") ? C(massaDa(analizza(f, true)), "L'indice dopo la parentesi moltiplica tutto il gruppo, non solo l'ultimo elemento.") : null,
+    C(el.reduce((s, e) => s + c[e] * ZETA[e], 0), "Hai usato il numero atomico Z (i protoni) invece della massa atomica."),
+    el.some(e => c[e] > 1) ? C(el.reduce((s, e) => s + (c[e] > 1 ? MASSE[e] + c[e] : MASSE[e]), 0), "Hai sommato l'indice alla massa atomica invece di moltiplicarli.") : null,
+    el.some(e => BIATOMICI.includes(e)) ? C(el.reduce((s, e) => s + c[e] * MASSE[e] * (BIATOMICI.includes(e) ? 2 : 1), 0), "Hai usato la massa delle molecole biatomiche (O₂ = 32, H₂ = 2…) per ogni atomo: nei composti si usa la massa del singolo atomo.") : null
+  ];
+  const opzioni = opzioniNum(M, cands, "g/mol", 1); if (!opzioni) return null;
+  return {
+    tipo: "massa", sub: TIPI.massa,
+    testo: `Qual è la massa molare di ${nomeF(f)}?<span class="masse">${masseTesto([f])}</span>`,
+    opzioni,
+    passi: [`Atomi nella formula: ${el.map(e => `${e} ${c[e]}`).join(", ")}${f.includes("(") ? " (l'indice dopo la parentesi moltiplica tutto il gruppo)" : ""}.`,
+      `Ogni massa atomica per il suo numero di atomi, poi la somma: ${scomposizione(f)} = <b>${num(M, 1)} g/mol</b>.`],
+    meta: { f, M }
+  };
+}
+
+function genConv() {
+  const f = pick(SOSTANZE), c = analizza(f), M = massaDa(c);
+  const n = pick([0.1, 0.2, 0.25, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5]), m = n * M;
+  if (!pulito(m, 2)) return null;
+  const e1 = pesante(f), A1 = MASSE[e1], Mni = Object.keys(c).reduce((s, e) => s + MASSE[e], 0);
+  const passoM = `Massa molare: M(${sub(f)}) = ${scomposizione(f)} = ${num(M, 1)} g/mol.`;
+  if (RNG() < 0.5) {
+    const cands = [
+      C(m * M, "Hai moltiplicato per la massa molare invece di dividere."),
+      C(M / m, "Hai diviso la massa molare per la massa: è il rapporto rovesciato."),
+      C(m / A1, `Hai usato la massa atomica di ${e1} (${num(A1, 1)}) invece della massa molare di ${sub(f)} (${num(M, 1)} g/mol).`),
+      Mni !== M ? C(m / Mni, "Hai calcolato la massa molare senza gli indici.") : null,
+      C(m, "Hai confuso grammi e moli: la massa in grammi non è il numero di moli.")
+    ];
+    const opzioni = opzioniNum(n, cands, "mol", 2); if (!opzioni) return null;
+    return { tipo: "conv", sub: TIPI.conv, testo: `Quante moli ci sono in ${num(m)} g di ${nomeF(f)}?<span class="masse">${masseTesto([f])}</span>`,
+      opzioni, passi: [passoM, `n = massa / massa molare = ${num(m)} / ${num(M, 1)} = <b>${num(n)} mol</b>.`], meta: { f, verso: "mol", m, n, M } };
+  }
+  const cands = [
+    C(n / M, "Hai diviso per la massa molare invece di moltiplicare."),
+    C(M / n, "Hai diviso la massa molare per le moli."),
+    C(n * A1, `Hai usato la massa atomica di ${e1} (${num(A1, 1)}) invece della massa molare di ${sub(f)} (${num(M, 1)} g/mol).`),
+    Mni !== M ? C(n * Mni, "Hai calcolato la massa molare senza gli indici.") : null,
+    C(n, "Hai confuso moli e grammi: il numero di moli non è la massa.")
+  ];
+  const opzioni = opzioniNum(m, cands, "g", 2); if (!opzioni) return null;
+  return { tipo: "conv", sub: TIPI.conv, testo: `Quanti grammi pesano ${num(n)} mol di ${nomeF(f)}?<span class="masse">${masseTesto([f])}</span>`,
+    opzioni, passi: [passoM, `massa = n × massa molare = ${num(n)} × ${num(M, 1)} = <b>${num(m)} g</b>.`], meta: { f, verso: "g", m, n, M } };
+}
+
+function genBil() {
+  const R = pick(VALIDE.filter(x => !x.banale)), c = R.coeff, sp = specie(R);
+  const cand = [];
+  const uno = c.map(() => 1);
+  cand.push({ k: uno, why: "È la reazione di partenza: non l'hai bilanciata." });
+  sp.forEach((f, i) => {
+    const piu = c.slice(); piu[i]++; cand.push({ k: piu, why: `Il coefficiente di ${sub(f)} è troppo grande.` });
+    if (c[i] > 1) { const meno = c.slice(); meno[i]--; cand.push({ k: meno, why: `Il coefficiente di ${sub(f)} è troppo piccolo.` }); }
+    for (let j = i + 1; j < sp.length; j++) if (c[i] !== c[j]) {
+      const sc = c.slice(); [sc[i], sc[j]] = [sc[j], sc[i]];
+      cand.push({ k: sc, why: `Hai scambiato i coefficienti di ${sub(f)} e ${sub(sp[j])}.` });
+    }
+  });
+  const visti = new Set([c.join(",")]), pool = [];
+  for (const x of cand) {
+    const key = x.k.join(",");
+    if (visti.has(key) || bilanciata(R, x.k)) continue;
+    visti.add(key); pool.push(x);
+  }
+  if (pool.length < 4) return null;
+  const scelti = [pool[0].k.every(v => v === 1) ? pool[0] : null, ...shuffle(pool.filter(x => !x.k.every(v => v === 1)))].filter(Boolean).slice(0, 4);
+  const opzioni = shuffle([{ t: eqHTML(R, c), k: c, ok: true, why: "" },
+    ...scelti.map(x => ({ t: eqHTML(R, x.k), k: x.k, ok: false, why: x.why + " " + squilibrio(R, x.k) }))]);
+  const n = conta(R, c);
+  return {
+    tipo: "bil", sub: TIPI.bil,
+    testo: `Bilancia con i coefficienti interi più piccoli (${R.nome}):<br><b>${eqHTML(R, uno)}</b>`,
+    opzioni,
+    passi: [`Si cambiano solo i coefficienti, mai gli indici. Elementi da far tornare: ${Object.keys(n).join(", ")}.`,
+      `Con i coefficienti ${c.join(", ")}: ` + Object.keys(n).map(e => `${e}: ${dettaglio(R, c, e, "s")} = ${n[e].s} a sinistra, ${dettaglio(R, c, e, "d")} = ${n[e].d} a destra`).join("; ") + ".",
+      `Ogni elemento torna e i coefficienti non hanno divisori comuni: <b>${eqHTML(R, c)}</b>.`],
+    meta: { testo: R.testo, coeff: c }
+  };
+}
+
+function genStech() {
+  const R = pick(VALIDE), sp = specie(R);
+  const ia = rnd(0, R.r.length - 1), A = sp[ia], cA = R.coeff[ia];
+  const jb = pick(sp.map((_, j) => j).filter(j => j !== ia)), B = sp[jb], cB = R.coeff[jb];
+  const prodotto = jb >= R.r.length;
+  const MA = massaMolare(A), MB = massaMolare(B);
+  const nA = pick([0.25, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5]), mA = nA * MA, nB = nA * cB / cA, mB = nB * MB;
+  if (!pulito(mA, 2) || !pulito(nB, 3) || !pulito(mB, 2) || mA > 2000 || mB > 2000) return null;
+  const eB = pesante(B);
+  const cands = [
+    cA !== cB ? C(nA * MB, `Hai dimenticato i coefficienti: a ${cA} mol di ${sub(A)} corrispondono ${cB} mol di ${sub(B)}, non 1 a 1.`) : null,
+    cA !== cB ? C(nA * cA / cB * MB, `Hai invertito il rapporto: si moltiplica per ${cB}/${cA}, non per ${cA}/${cB}.`) : null,
+    cA !== cB ? C(mA * cB / cA, "Hai applicato i coefficienti ai grammi: valgono per le moli, non per le masse.") : null,
+    C(mA, `Hai dato la stessa massa di ${sub(A)}: si deve passare dalle moli.`),
+    C(nB, `${num(nB, 3)} sono le moli di ${sub(B)}, non i grammi: manca l'ultimo passaggio (× massa molare).`),
+    C(mA * MA * cB / cA * MB, `Hai moltiplicato per la massa molare di ${sub(A)} invece di dividere.`),
+    atomiTot(B) > 1 ? C(nB * MASSE[eB], `Hai usato la massa atomica di ${eB} invece della massa molare di ${sub(B)}.`) : null
+  ];
+  const opzioni = opzioniNum(mB, cands, "g", 2); if (!opzioni) return null;
+  const domanda = prodotto
+    ? `quanti grammi di ${nomeF(B)} si ottengono da ${num(mA)} g di ${nomeF(A)}? Gli altri reagenti sono in eccesso.`
+    : `quanti grammi di ${nomeF(B)} servono per far reagire completamente ${num(mA)} g di ${nomeF(A)}?`;
+  return {
+    tipo: "stech", sub: TIPI.stech,
+    testo: `Nella reazione ${eqHTML(R, R.coeff)} (${R.nome}), ${domanda}<span class="masse">${masseTesto([A, B])}</span>`,
+    opzioni,
+    passi: [`Moli di ${sub(A)}: M = ${scomposizione(A)} = ${num(MA, 1)} g/mol → n = ${num(mA)} / ${num(MA, 1)} = ${num(nA)} mol.`,
+      `Coefficienti: ${cA} ${sub(A)} ↔ ${cB} ${sub(B)} → n(${sub(B)}) = ${num(nA)} × ${cB}/${cA} = ${num(nB, 3)} mol.`,
+      `Massa di ${sub(B)}: M = ${scomposizione(B)} = ${num(MB, 1)} g/mol → ${num(nB, 3)} × ${num(MB, 1)} = <b>${num(mB)} g</b>.`],
+    meta: { testo: R.testo, A, B, cA, cB, mA, mB }
+  };
+}
+
+const TIPI = { massa: "Massa molare", conv: "Grammi ↔ moli", bil: "Bilanciamento", stech: "Problemi stechiometrici" };
+const GEN = { massa: genMassa, conv: genConv, bil: genBil, stech: genStech };
+function genera(tipo) {
+  for (let t = 0; t < 400; t++) {
+    let q = null;
+    try { q = GEN[tipo](); } catch (e) { if (STRICT) throw e; q = null; }
+    if (q) return q;
+  }
+  throw new Error("Generazione fallita: " + tipo);
+}
+</script>
+
+<!-- ======================= INTERFACCIA ======================= -->
+<script>
+"use strict";
+const MODULO = "mole";
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const L5 = "ABCDE";
+const fmtPunti = x => num(x, 2);
+
+/* ---------- navigazione ---------- */
+$$(".modetab").forEach(b => b.onclick = () => {
+  $$(".modetab").forEach(x => x.setAttribute("aria-selected", x === b));
+  $("#impara").hidden = b.dataset.mode !== "impara";
+  $("#allenati").hidden = b.dataset.mode !== "allenati";
+  window.scrollTo(0, 0);
+});
+$$("#temi button").forEach(b => b.onclick = () => {
+  $$("#temi button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  $$(".tema").forEach(t => t.hidden = t.id !== "T-" + b.dataset.t);
+});
+$$(".guidato").forEach(g => {
+  const items = $$("ol li", g), next = $(".g-next", g), all = $(".g-all", g);
+  const upd = () => { const fine = items.every(i => !i.hidden); next.disabled = fine; all.disabled = fine; };
+  next.onclick = () => { const h = items.find(i => i.hidden); if (h) h.hidden = false; upd(); };
+  all.onclick = () => { items.forEach(i => i.hidden = false); upd(); };
+});
+
+/* ---------- tabella delle masse ---------- */
+$("#tab-masse").innerHTML = `<table class="tt"><tr>${Object.keys(MASSE).map(e => `<th>${e}</th>`).join("")}</tr><tr>${Object.keys(MASSE).map(e => `<td>${num(MASSE[e], 1)}</td>`).join("")}</tr></table>`;
+
+/* ---------- widget: bilanciamento ---------- */
+const WB = { R: null, c: [] };
+$("#b-reaz").innerHTML = VALIDE.map((R, i) => `<option value="${i}">${R.nome}: ${R.testo.replace("->", "→")}</option>`).join("");
+if (CONTROLLO.errori.length) { $("#b-err").hidden = false; $("#b-err").textContent = "Reazioni escluse dal controllo automatico: " + CONTROLLO.errori.join("; "); }
+function bScegli() { WB.R = VALIDE[+$("#b-reaz").value]; WB.c = specie(WB.R).map(() => 1); bDisegna(); }
+function bDisegna() {
+  const R = WB.R, sp = specie(R);
+  $("#b-eq").innerHTML = sp.map((f, j) => `${j === R.r.length ? '<span class="op">→</span>' : j > 0 ? '<span class="op">+</span>' : ""}
+    <div class="sp"><div class="cf"><button type="button" data-j="${j}" data-d="-1" aria-label="${f}: meno uno">−</button><b>${WB.c[j]}</b><button type="button" data-j="${j}" data-d="1" aria-label="${f}: più uno">+</button></div><div class="f">${sub(f)}</div></div>`).join("");
+  const n = conta(R, WB.c), el = Object.keys(n);
+  $("#b-tab").innerHTML = `<table class="tt"><tr><th>Elemento</th><th>Sinistra</th><th>Destra</th><th></th></tr>${el.map(e => `<tr><td><b>${e}</b></td><td>${n[e].s}</td><td>${n[e].d}</td><td>${n[e].s === n[e].d ? '<span class="ok">✓</span>' : '<span class="ko">✗</span>'}</td></tr>`).join("")}</table>`;
+  const no = el.filter(e => n[e].s !== n[e].d), g = WB.c.reduce(gcd);
+  $("#b-msg").innerHTML = no.length
+    ? `<p class="msg bad">Non tornano: ${no.join(", ")}.</p>`
+    : `<p class="msg good">Bilanciata! ${g > 1 ? `Però tutti i coefficienti si possono dividere per ${g}: cerca i più piccoli.` : ""}</p>`;
+  $$("#b-eq button").forEach(b => b.onclick = () => { const j = +b.dataset.j; WB.c[j] = Math.max(1, Math.min(20, WB.c[j] + +b.dataset.d)); bDisegna(); });
+}
+$("#b-reaz").onchange = bScegli;
+$("#b-sol").onclick = () => { WB.c = WB.R.coeff.slice(); bDisegna(); };
+$("#b-zero").onclick = () => { WB.c = specie(WB.R).map(() => 1); bDisegna(); };
+bScegli();
+
+/* ---------- widget: catena grammi → moli → moli → grammi ---------- */
+$("#c-reaz").innerHTML = VALIDE.map((R, i) => `<option value="${i}">${R.nome}: ${R.testo.replace("->", "→")}</option>`).join("");
+function cSpecie(keep) {
+  const R = VALIDE[+$("#c-reaz").value], sp = specie(R);
+  const opt = (sel, def) => { $(sel).innerHTML = sp.map((f, j) => `<option value="${j}">${nome(f)} (${f})</option>`).join(""); $(sel).value = def; };
+  if (!keep) { opt("#c-a", 0); opt("#c-b", R.r.length); }
+  cCalcola();
+}
+function cCalcola() {
+  const R = VALIDE[+$("#c-reaz").value], sp = specie(R), ia = +$("#c-a").value, ib = +$("#c-b").value;
+  const mA = parseFloat(String($("#c-m").value).replace(",", "."));
+  if (ia === ib) { $("#c-out").innerHTML = `<p class="msg bad">Scegli due sostanze diverse.</p>`; return; }
+  if (!(mA > 0)) { $("#c-out").innerHTML = `<p class="msg bad">Scrivi una massa maggiore di zero.</p>`; return; }
+  const A = sp[ia], B = sp[ib], cA = R.coeff[ia], cB = R.coeff[ib], MA = massaMolare(A), MB = massaMolare(B);
+  const nA = mA / MA, nB = nA * cB / cA, mB = nB * MB;
+  $("#c-out").innerHTML = `<p><b>${eqHTML(R, R.coeff)}</b></p><div class="chain">
+    <div class="ch-box">massa di ${sub(A)}: <b>${circa(mA)} g</b></div>
+    <div class="ch-op">↓ ÷ massa molare di ${sub(A)}: ${scomposizione(A)} = ${num(MA, 1)} g/mol</div>
+    <div class="ch-box">moli di ${sub(A)}: ${circa(mA)} / ${num(MA, 1)} = <b>${circa(nA, 3)} mol</b></div>
+    <div class="ch-op">↓ × coefficienti: ${cA} ${sub(A)} ↔ ${cB} ${sub(B)}, cioè × ${cB}/${cA}</div>
+    <div class="ch-box">moli di ${sub(B)}: ${circa(nA, 3)} × ${cB}/${cA} = <b>${circa(nB, 3)} mol</b></div>
+    <div class="ch-op">↓ × massa molare di ${sub(B)}: ${scomposizione(B)} = ${num(MB, 1)} g/mol</div>
+    <div class="ch-box">massa di ${sub(B)}: ${circa(nB, 3)} × ${num(MB, 1)} = <b>${circa(mB)} g</b></div></div>`;
+}
+$("#c-reaz").onchange = () => cSpecie(false);
+$("#c-a").onchange = $("#c-b").onchange = cCalcola;
+$("#c-m").oninput = cCalcola;
+$("#c-reaz").value = String(VALIDE.findIndex(R => R.testo.startsWith("CH4 +")));
+cSpecie(false);
+
+/* =================== ALLENAMENTO =================== */
+let S = null;
+$("#s-tipo").innerHTML = `<button data-v="mix" aria-pressed="true">Tutti misti</button>` + Object.keys(TIPI).map(k => `<button data-v="${k}" aria-pressed="false">${TIPI[k]}</button>`).join("");
+$$("#s-tipo button").forEach(b => b.onclick = () => $$("#s-tipo button").forEach(x => x.setAttribute("aria-pressed", x === b)));
+$("#s-go").onclick = inizia;
+$("#quit").onclick = () => fine(false);
+
+function inizia() {
+  const tipo = $("#s-tipo [aria-pressed=true]").dataset.v, n = +$("#s-n").value, timer = $("#s-timer").checked;
+  let seq;
+  if (tipo === "mix") { seq = []; while (seq.length < n) seq.push(...shuffle(Object.keys(TIPI))); seq = seq.slice(0, n); }
+  else seq = Array(n).fill(tipo);
+  S = { n, i: 0, seq, res: [], ok: 0, ko: 0, bl: 0, testi: new Set(), end: timer ? Date.now() + n * 120000 : null, tick: null, over: false, q: null, risposto: false };
+  $("#setup").hidden = true; $("#riepilogo").hidden = true; $("#sessione").hidden = false;
+  if (S.end) { S.tick = setInterval(tick, 500); tick(); } else $("#tm").textContent = "";
+  prossima();
+}
+function tick() {
+  if (!S || !S.end || S.over) return;
+  const ms = S.end - Date.now();
+  if (ms <= 0) { $("#tm").textContent = "⏱ 0:00"; fine(true); return; }
+  const s = Math.ceil(ms / 1000);
+  $("#tm").textContent = `⏱ ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  $("#tm").classList.toggle("low", s <= 60);
+}
+const punti = () => S.ok - 0.25 * S.ko;
+function barra() { $("#qn").textContent = `Domanda ${Math.min(S.i + 1, S.n)} di ${S.n}`; $("#sc").textContent = `Punti ${fmtPunti(punti())}`; }
+function prossima() {
+  if (S.i >= S.n) { fine(false); return; }
+  let q; for (let t = 0; t < 40; t++) { q = genera(S.seq[S.i]); if (!S.testi.has(q.testo)) break; }
+  S.testi.add(q.testo); S.q = q; S.risposto = false; mostra(); barra(); window.scrollTo(0, 0);
+}
+function mostra() {
+  const q = S.q;
+  $("#qbox").innerHTML = `<span class="tag">${q.sub}</span><div class="qtext">${q.testo}</div>${q.fig || ""}
+    <ol class="opts">${q.opzioni.map((o, i) => `<li><button class="opt" data-i="${i}"><span class="lt">${L5[i]}</span><span>${o.t}</span></button></li>`).join("")}</ol>
+    <button class="btn" id="skip">Non rispondo (0 punti)</button><div id="fb"></div>`;
+  $$("#qbox .opt").forEach(b => b.onclick = () => rispondi(+b.dataset.i));
+  $("#skip").onclick = () => rispondi(-1);
+}
+function spiegazione(q, scelta) {
+  return `<h3>Svolgimento</h3><ol class="steps">${q.passi.map(p => `<li>${p}</li>`).join("")}</ol>
+    <h3>Da dove viene ogni risposta</h3><ul class="why">${q.opzioni.map((o, i) => `<li><span class="lt">${L5[i]}</span><span class="val">${o.t}</span><span>${o.ok ? '<b class="ok">Corretta.</b>' : o.why}${i === scelta ? " <i>(la tua scelta)</i>" : ""}</span></li>`).join("")}</ul>`;
+}
+function rispondi(idx) {
+  if (S.risposto || S.over) return; S.risposto = true;
+  const q = S.q, ci = q.opzioni.findIndex(o => o.ok);
+  let stato;
+  if (idx < 0) { stato = "s"; S.bl++; } else if (idx === ci) { stato = "r"; S.ok++; } else { stato = "w"; S.ko++; }
+  S.res.push({ q, scelta: idx, stato }); S.i++;
+  $$("#qbox .opt").forEach((b, i) => { b.disabled = true; if (i === ci) b.classList.add("is-ok"); if (i === idx && idx !== ci) b.classList.add("is-ko"); });
+  $("#skip").remove();
+  const v = stato === "r" ? `<div class="verdict good">✓ Giusto: +1</div>` : stato === "w" ? `<div class="verdict bad">✗ Sbagliato: −0,25. La risposta giusta è la ${L5[ci]}.</div>` : `<div class="verdict blank">Non data: 0 punti. La risposta giusta è la ${L5[ci]}.</div>`;
+  $("#fb").innerHTML = v + spiegazione(q, idx) + `<button class="btn primary" id="next">${S.i < S.n ? "Domanda successiva" : "Vedi il riepilogo"}</button>`;
+  $("#next").onclick = prossima;
+  barra();
+}
+function salva() {
+  if (!window.TOLC) return;
+  const arg = {};
+  for (const r of S.res) { const t = TIPI[r.q.tipo]; arg[t] = arg[t] || { esercizi: 0, errori: 0 }; arg[t].esercizi++; if (r.stato === "w") arg[t].errori++; }
+  TOLC.salvaSessione({ modulo: MODULO, esercizi: S.res.length, errori: S.ko, giuste: S.ok, nonDate: S.bl, punti: punti(), argomenti: arg });
+}
+function fine(tempo) {
+  if (!S || S.over) return; S.over = true;
+  if (S.tick) clearInterval(S.tick);
+  salva();
+  const nonViste = S.n - S.res.length;
+  const per = {};
+  for (const r of S.res) { const t = TIPI[r.q.tipo]; per[t] = per[t] || { r: 0, w: 0, s: 0 }; per[t][r.stato]++; }
+  $("#sessione").hidden = true; $("#setup").hidden = false; $("#riepilogo").hidden = false;
+  $("#riepilogo").innerHTML = `<h2>${tempo ? "Tempo scaduto" : "Riepilogo"}</h2>
+    <div class="sumgrid"><div><b>${fmtPunti(punti())}</b>punti su ${S.n}</div><div><b>${S.ok}</b>giuste</div><div><b>${S.ko}</b>sbagliate</div><div><b>${S.bl + nonViste}</b>non date</div></div>
+    ${nonViste ? `<p class="small muted">${nonViste} domande non viste contano come non date.</p>` : ""}
+    ${Object.keys(per).length ? `<div class="ttw"><table class="tt"><tr><th>Argomento</th><th>Giuste</th><th>Sbagliate</th><th>Non date</th></tr>${Object.entries(per).map(([t, v]) => `<tr><td>${t}</td><td>${v.r}</td><td>${v.w}</td><td>${v.s}</td></tr>`).join("")}</table></div>` : ""}
+    ${S.res.length ? `<h3>Le tue risposte</h3><ol class="hist">${S.res.map((r, i) => {
+      const ci = r.q.opzioni.findIndex(o => o.ok), et = r.stato === "r" ? ["b-ok", "giusta"] : r.stato === "w" ? ["b-ko", "sbagliata"] : ["b-bl", "non data"];
+      return `<li><details><summary><span class="badge ${et[0]}">${et[1]}</span> ${r.q.sub}: tua ${r.scelta < 0 ? "—" : L5[r.scelta]}, giusta ${L5[ci]}</summary>
+        <div class="qtext">${r.q.testo}</div>${r.q.fig || ""}${spiegazione(r.q, r.scelta)}</details></li>`;
+    }).join("")}</ol>` : ""}
+    <p class="small muted">Imposta una nuova sessione qui sopra.</p>`;
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

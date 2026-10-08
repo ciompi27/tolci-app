@@ -2,7 +2,7 @@
    Strategia: prima la rete (così le modifiche a plan.json si vedono subito), con la cache come riserva
    se la rete manca o non risponde entro 3 secondi.
    Quando si aggiunge un file all'app va aggiunto a FILE e va cambiato VERSIONE. */
-const VERSIONE = "tolc-i-v2";
+const VERSIONE = "tolc-i-v3";
 const FILE = [
   "./",
   "./index.html",
@@ -29,6 +29,8 @@ const FILE = [
   "./moduli/modulo.css",
   "./moduli/logica/index.html",
   "./moduli/combinatoria/index.html",
+  "./moduli/mole/index.html",
+  "./moduli/circuiti/index.html",
   "./assets/figure/1-2-1a.png",
   "./assets/figure/1-2-1b.png",
   "./assets/figure/1-2-1c.png",
