@@ -38,6 +38,24 @@ App web personale per preparare il **TOLC-I (CISIA) del 12 novembre 2026**: 1 or
 - Le reazioni del modulo mole sono scritte senza coefficienti: li calcola il programma e all'avvio controlla che ogni reazione sia bilanciabile in un solo modo.
 - Masse atomiche: H, C, O come nel PDF; le altre arrotondate (Cl 35,5), segnate DA VERIFICARE nella pagina.
 
+## Stato finale (fase 4)
+Le 4 fasi sono fatte. File principali:
+- `index.html` + `js/versione.js` (costante `VERSIONE`, condivisa con `sw.js`), `js/store.js` (dati, backup, unione),
+  `js/teoria.js`, `js/diario.js` (Errori: diario e statistiche), `js/simulazioni.js` (timer e risultati), `js/app.js` (Oggi, Piano, navigazione, backup, aggiornamenti).
+- Schermate: `#oggi`, `#piano`, `#teoria[/paragrafi | /trappola[/paragrafi] | /formula]`, `#errori[/darifare | /nuovo]`, `#simulazioni` (dalla sezione Moduli di Oggi).
+- localStorage: `tolc-i:giorni`, `tolc-i:sessioni`, `tolc-i:letti`, `tolc-i:errori`, `tolc-i:simulazioni` (tutti nel backup, versione 3);
+  `tolc-i:timer` e `tolc-i:backup` (data dell'ultimo backup) restano fuori dal backup.
+- Diario: errore = `{ id, data, argomento, dove (tf|alfa|sim|modulo), tipo (formula|calcolo|regola|distrazione|tempo|altro), nota, stato (darifare|rifatto), rifattoIl, ricadute, chiave, modulo, aggiornato }`.
+  I moduli aggiungono gli sbagliati con `TOLC.pulsanteDiario` (moduli/modulo.js); la `chiave` evita i doppioni.
+- Statistiche per argomento: contatori di The Faculty + sessioni dei moduli (sotto-temi tradotti con `argomenti` dei moduli in `plan.json`) + errori nel diario.
+- `plan.json`: `teoriaArgomenti` (argomento → paragrafi, per i box TRAPPOLA dei più deboli), `diario: true` nei giorni di ripasso errori,
+  `box: "trappola-deboli"` il 31 ottobre, modulo `simulazioni` nei giorni 2, 3, 5, 6, 9 novembre.
+- Simulazioni: timer con l'ora di fine salvata (giusto anche a schermo spento), sezioni 20/50', 10/20', 10/20', 10/20', punteggio +1 / 0 / −0,25, totale su 50.
+- Backup: "Condividi / salva" (Web Share API, se manca scarica il file), promemoria dopo 7 giorni, importazione con anteprima e scelta "unisci" / "sostituisci tutto".
+- Aggiornamenti: il service worker chiede sempre al server i file (no-cache) e usa la cache solo offline; quando arriva una versione nuova compare "Nuova versione disponibile" → "Aggiorna".
+- Prove automatiche: `node test/esercizi.test.js` e `node test/app.test.js`.
+- `moduli_esistenti/` resta come copia degli originali (non va in cache e non si cancella).
+
 ## Regole per importare INT-1
 - Non riscriverla e non cambiarne il comportamento: spostarla in `moduli/logica/` (index, css, js separati solo se il comportamento resta identico) e collegarla alla barra in basso e al piano.
 - Unico difetto da correggere: carica **Atkinson Hyperlegible da Google Fonts** (non funziona offline). Scaricare il font e metterlo in `assets/fonts/` (formato woff2), oppure usare il font di sistema.

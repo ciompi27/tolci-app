@@ -1171,7 +1171,7 @@ function answer(idx) {
   const q = S.q, ci = q.options.findIndex(o => o.correct);
   let status;
   if (idx < 0) { status = "s"; S.blank++; } else if (idx === ci) { status = "r"; S.right++; } else { status = "w"; S.wrong++; }
-  S.res.push({ topic: q.topic, status }); S.i++;
+  S.res.push({ topic: q.topic, status, q }); S.i++;
   const st = $("#stages"); if (st) st.querySelectorAll("button").forEach(b => b.disabled = true);
   const sk = $("#skipst"); if (sk) sk.parentElement.remove();
   $$("#opts .opts button").forEach((b, i) => { b.disabled = true; if (i === ci) b.classList.add("good"); if (i === idx && idx !== ci) b.classList.add("badc"); });
@@ -1199,7 +1199,14 @@ function endSession(timeUp) {
     ${Object.keys(by).length ? `<h3>Per argomento</h3><ul>${Object.entries(by).map(([t, v]) => `<li>${TOPIC_NAME[t]}: ${v.r} giuste, ${v.w} sbagliate, ${v.s} non date</li>`).join("")}</ul>` : ""}
     ${stTot ? `<h3>Ragionamento in «Quale formula uso?»</h3><ul><li>Conta l'ordine: ${st.order[0]}/${st.order[0] + st.order[1]} giuste</li><li>Ripetizioni: ${st.rep[0]}/${st.rep[0] + st.rep[1]} giuste</li><li>Formula: ${st.form[0]}/${st.form[0] + st.form[1]} giuste</li></ul>` : ""}
     <p class="mut small">Imposta una nuova sessione qui sopra.</p>`;
+  diarioTolc();
   window.scrollTo({ top: 0 });
+}
+/* App TOLC-I: pulsante per copiare nel diario le domande sbagliate (moduli/modulo.js). */
+function diarioTolc() {
+  if (!window.TOLC || !TOLC.pulsanteDiario) return;
+  const sb = S.res.filter(r => r.status === "w").map(r => ({ argomento: TOPIC_NAME[r.topic], testo: r.q.text, corretta: fh(r.q.options.find(o => o.correct).v), chiave: r.q.text }));
+  TOLC.pulsanteDiario($("#summary"), "combinatoria", sb);
 }
 /* App TOLC-I: a fine sessione salva esercizi, errori e data (moduli/modulo.js). */
 function salvaTolc() {

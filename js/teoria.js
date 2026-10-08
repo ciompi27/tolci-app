@@ -60,6 +60,7 @@ const Teoria = (() => {
 
   /* Per il piano: link ai paragrafi del giorno, quanti letti e pulsante. */
   function pianoHtml(g) {
+    if (g.box === "trappola-deboli") return `<a href="${Diario.linkTrappola(Diario.deboli().map(v => v.argomento))}">${esc(g.teoria)}</a>`;   // js/diario.js
     if (g.box && FILTRI[g.box]) return `<a href="#teoria/${g.box}">${esc(g.teoria)}</a>`;
     if (!g.paragrafi) return esc(g.teoria || "—");
     const link = `<a href="#teoria/${encodeURIComponent(g.paragrafi)}">${esc(g.teoria || g.paragrafi)}</a>`;
@@ -86,7 +87,8 @@ const Teoria = (() => {
 
   function renderLettura(main, arg) {
     if (!pronta) return attesa(main);
-    if (FILTRI[arg]) return renderFiltro(main, arg);
+    const [base, solo] = arg.split("/");
+    if (FILTRI[base]) return renderFiltro(main, base, solo);
     const ps = intervallo(arg);
     if (!ps.length) {
       main.innerHTML = `<p><a href="#teoria">← Teoria</a></p><p class="warn">Paragrafo «${esc(arg)}» non trovato.</p>`;
@@ -107,19 +109,22 @@ const Teoria = (() => {
     avvisoScorri(main);
   }
 
-  function renderFiltro(main, tipo) {
+  /* solo: paragrafi a cui limitare il filtro (es. "1.8, 3.7"), per i box degli argomenti più deboli */
+  function renderFiltro(main, tipo, solo) {
     const nome = FILTRI[tipo];
     let n = 0;
     const box = document.createElement("div");
     box.className = "teoria";
+    const ammessi = solo ? new Set(intervallo(solo).map(p => p.num)) : null;
     for (const p of paragrafi) {
+      if (ammessi && !ammessi.has(p.num)) continue;
       const trovati = p.el.querySelectorAll(`.box.${tipo}`);
       if (!trovati.length) continue;
       n += trovati.length;
       box.insertAdjacentHTML("beforeend", `<h3 class="filtro-par"><a href="#teoria/${p.num}">${esc(p.num)} ${esc(p.titolo)}</a></h3>`);
       trovati.forEach(b => box.appendChild(b.cloneNode(true)));
     }
-    main.innerHTML = `<p class="indietro"><a href="#teoria">← Teoria</a></p><h1>Box ${nome}</h1><p class="small muted">${n} box, paragrafo per paragrafo. Tocca il titolo per aprire il paragrafo.</p>`;
+    main.innerHTML = `<p class="indietro"><a href="#teoria">← Teoria</a></p><h1>Box ${nome}</h1><p class="small muted">${n} box, paragrafo per paragrafo${ammessi ? ` (solo i paragrafi ${esc(solo)}: <a href="#teoria/${tipo}">vedi tutti</a>)` : ""}. Tocca il titolo per aprire il paragrafo.</p>`;
     main.appendChild(box);
   }
 

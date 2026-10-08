@@ -883,7 +883,12 @@ function renderSummary(main){const q=S.quiz,sc=score(q),tot=q.order.length,unsee
   return `<li><details><summary><span class="badge ${r==='giusta'?'b-ok':r==='sbagliata'?'b-ko':'b-mid'}">${r}</span> ${TOPICS[it.ex.topic]}: tua ${it.ch===-1?'—':L5[it.ch]}, giusta ${L5[ci]}</summary><div class="stem">${it.ex.stem}</div><div class="hrev" data-h="${i}"></div></details></li>`;}).join('')}</ol>
  <div class="btnrow"><button class="btn primary big" id="again">Nuovo allenamento</button></div></section>`;
  main.querySelectorAll('details').forEach(d=>d.ontoggle=()=>{const box=$('.hrev',d);if(d.open&&!box.dataset.on){const it=q.items[+box.dataset.h];box.dataset.on=1;box.innerHTML=reviewHtml(it.ex,it.ch);bindReview(box,it.ex);}});
- $('#again').onclick=()=>{S.quiz=null;render();};}
+ $('#again').onclick=()=>{S.quiz=null;render();};
+ diarioTolc(main.querySelector('.card'),q);}
+/* App TOLC-I: pulsante per copiare nel diario le domande sbagliate (moduli/modulo.js). */
+function diarioTolc(box,q){if(!window.TOLC||!TOLC.pulsanteDiario)return;
+ const sb=q.items.filter(it=>it.ch>=0&&!it.ex.options[it.ch].correct).map(it=>({argomento:TOPICS[it.ex.topic],testo:it.ex.stem,corretta:it.ex.options.find(o=>o.correct).html,chiave:it.ex.key}));
+ TOLC.pulsanteDiario(box,'logica',sb);}
 
 document.addEventListener('keydown',e=>{
  if(S.mode!=='practice'||!S.quiz||S.quiz.over)return;

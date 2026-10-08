@@ -713,7 +713,14 @@ function fine(tempo) {
         <div class="qtext">${r.q.testo}</div>${r.q.fig || ""}${spiegazione(r.q, r.scelta)}</details></li>`;
     }).join("")}</ol>` : ""}
     <p class="small muted">Imposta una nuova sessione qui sopra.</p>`;
+  diarioTolc();
   window.scrollTo(0, 0);
+}
+/* Pulsante per copiare nel diario dell'app le domande sbagliate (moduli/modulo.js). */
+function diarioTolc() {
+  if (!window.TOLC || !TOLC.pulsanteDiario) return;
+  const sb = S.res.filter(r => r.stato === "w").map(r => ({ argomento: TIPI[r.q.tipo], testo: r.q.testo, corretta: r.q.opzioni.find(o => o.ok).t, chiave: r.q.testo }));
+  TOLC.pulsanteDiario($("#riepilogo"), MODULO, sb);
 }
 </script>
 </body>

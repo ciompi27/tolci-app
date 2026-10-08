@@ -1,10 +1,27 @@
 {
   "esame": "2026-11-12",
   "moduli": {
-    "logica": { "nome": "Logica (INT-1)", "descrizione": "Implicazioni, condizioni, quantificatori e sillogismi", "url": "moduli/logica/index.html" },
-    "combinatoria": { "nome": "Combinatoria e probabilità", "descrizione": "Quale formula uso, albero di probabilità, almeno uno e condizionata", "url": "moduli/combinatoria/index.html" },
-    "mole": { "nome": "Mole, stechiometria e bilanciamento", "descrizione": "Massa molare, grammi e moli, bilanciare, calcoli con le reazioni", "url": "moduli/mole/index.html" },
-    "circuiti": { "nome": "Circuiti elettrici", "descrizione": "Legge di Ohm, serie e parallelo, potenza, partitore di tensione", "url": "moduli/circuiti/index.html" }
+    "logica": { "nome": "Logica (INT-1)", "descrizione": "Implicazioni, condizioni, quantificatori e sillogismi", "url": "moduli/logica/index.html",
+      "argomenti": { "*": "logica" } },
+    "combinatoria": { "nome": "Combinatoria e probabilità", "descrizione": "Quale formula uso, albero di probabilità, almeno uno e condizionata", "url": "moduli/combinatoria/index.html",
+      "argomenti": { "Quale formula uso?": "combinatoria", "Albero di probabilità": "probabilità", "Almeno uno e condizionata": "probabilità" } },
+    "mole": { "nome": "Mole, stechiometria e bilanciamento", "descrizione": "Massa molare, grammi e moli, bilanciare, calcoli con le reazioni", "url": "moduli/mole/index.html",
+      "argomenti": { "Massa molare": "stechiometria", "Grammi ↔ moli": "stechiometria", "Bilanciamento": "bilanciamento", "Problemi stechiometrici": "stechiometria" } },
+    "circuiti": { "nome": "Circuiti elettrici", "descrizione": "Legge di Ohm, serie e parallelo, potenza, partitore di tensione", "url": "moduli/circuiti/index.html",
+      "argomenti": { "*": "circuiti" } },
+    "simulazioni": { "nome": "Simulazioni", "descrizione": "Timer delle sezioni con le durate ufficiali e risultati (i quesiti sono su The Faculty)", "url": "#simulazioni",
+      "argomenti": { "Matematica": "matematica: esercizi misti", "Logica": "logica", "Scienze": "fisica e chimica miste", "Comprensione verbale": "comprensione verbale" } }
+  },
+  "teoriaArgomenti": {
+    "logica": "2.1-2.6", "comprensione verbale": "6.1-6.4",
+    "combinatoria": "1.8", "probabilità": "1.8", "statistica": "1.8",
+    "algebra": "1.1-1.2", "disequazioni": "1.2", "esponenziali e logaritmi": "1.3",
+    "geometria": "1.4-1.5", "geometria piana e solida": "1.4", "geometria analitica": "1.5",
+    "trigonometria": "1.6", "funzioni": "1.7", "matematica: esercizi misti": "1.1-1.8",
+    "meccanica": "3.1-3.5", "termodinamica": "3.6", "circuiti": "3.7", "elettromagnetismo": "3.7",
+    "onde": "3.8", "ottica": "3.9", "fisica e chimica miste": "3.1-3.9, 4.1-4.10",
+    "atomo": "4.1", "tavola periodica": "4.2", "legami": "4.3", "stechiometria": "4.5-4.6", "bilanciamento": "4.6",
+    "soluzioni": "4.7", "pH": "4.8", "ossidoriduzione": "4.9", "chimica: tutti gli argomenti": "4.1-4.10"
   },
   "giorni": [
     { "data": "2026-10-05", "tipo": "studio", "materia": "Logica", "teoria": "2.1-2.6", "paragrafi": "2.1-2.6", "esercizi": ["logica"], "moduli": ["logica"] },
@@ -33,17 +50,17 @@
     { "data": "2026-10-28", "tipo": "studio", "materia": "Matematica", "teoria": null, "esercizi": ["combinatoria", "statistica"], "moduli": ["combinatoria"] },
     { "data": "2026-10-29", "tipo": "studio", "materia": "Matematica", "teoria": null, "esercizi": ["matematica: esercizi misti"], "moduli": [] },
     { "data": "2026-10-30", "tipo": "studio", "materia": "Scienze", "teoria": null, "esercizi": ["fisica e chimica miste"], "moduli": [] },
-    { "data": "2026-10-31", "tipo": "ripasso", "materia": "Ripasso errori", "teoria": "box TRAPPOLA degli argomenti con più errori", "box": "trappola", "esercizi": [], "nota": "rifare gli errori del diario", "moduli": [] },
+    { "data": "2026-10-31", "tipo": "ripasso", "materia": "Ripasso errori", "teoria": "box TRAPPOLA degli argomenti con più errori", "box": "trappola-deboli", "esercizi": [], "nota": "rifare gli errori del diario", "moduli": [], "diario": true },
     { "data": "2026-11-01", "tipo": "pausa" },
-    { "data": "2026-11-02", "tipo": "simulazione", "materia": "Simulazione A: Matematica", "teoria": null, "esercizi": [], "nota": "50 min a tempo vero", "moduli": [] },
-    { "data": "2026-11-03", "tipo": "simulazione", "materia": "Simulazione A: Logica, Scienze, Verbale", "teoria": null, "esercizi": [], "nota": "3 x 20 min a tempo vero", "moduli": [] },
-    { "data": "2026-11-04", "tipo": "correzione", "materia": "Correzione simulazione A", "teoria": "PDF sugli errori", "esercizi": [], "moduli": [] },
-    { "data": "2026-11-05", "tipo": "simulazione", "materia": "Simulazione B: Matematica", "teoria": null, "esercizi": [], "nota": "50 min a tempo vero", "moduli": [] },
-    { "data": "2026-11-06", "tipo": "simulazione", "materia": "Simulazione B: Logica, Scienze, Verbale", "teoria": null, "esercizi": [], "nota": "3 x 20 min a tempo vero", "moduli": [] },
-    { "data": "2026-11-07", "tipo": "correzione", "materia": "Correzione simulazione B", "teoria": "PDF sugli errori", "esercizi": [], "moduli": [] },
+    { "data": "2026-11-02", "tipo": "simulazione", "materia": "Simulazione A: Matematica", "teoria": null, "esercizi": [], "nota": "50 min a tempo vero", "moduli": ["simulazioni"] },
+    { "data": "2026-11-03", "tipo": "simulazione", "materia": "Simulazione A: Logica, Scienze, Verbale", "teoria": null, "esercizi": [], "nota": "3 x 20 min a tempo vero", "moduli": ["simulazioni"] },
+    { "data": "2026-11-04", "tipo": "correzione", "materia": "Correzione simulazione A", "teoria": "PDF sugli errori", "esercizi": [], "moduli": [], "diario": true },
+    { "data": "2026-11-05", "tipo": "simulazione", "materia": "Simulazione B: Matematica", "teoria": null, "esercizi": [], "nota": "50 min a tempo vero", "moduli": ["simulazioni"] },
+    { "data": "2026-11-06", "tipo": "simulazione", "materia": "Simulazione B: Logica, Scienze, Verbale", "teoria": null, "esercizi": [], "nota": "3 x 20 min a tempo vero", "moduli": ["simulazioni"] },
+    { "data": "2026-11-07", "tipo": "correzione", "materia": "Correzione simulazione B", "teoria": "PDF sugli errori", "esercizi": [], "moduli": [], "diario": true },
     { "data": "2026-11-08", "tipo": "pausa" },
-    { "data": "2026-11-09", "tipo": "simulazione", "materia": "Simulazione C completa (circa 2 ore)", "teoria": null, "esercizi": [], "nota": "110 min di fila", "moduli": [] },
-    { "data": "2026-11-10", "tipo": "correzione", "materia": "Correzione simulazione C", "teoria": "tutti i box TRAPPOLA", "box": "trappola", "esercizi": [], "moduli": [] },
+    { "data": "2026-11-09", "tipo": "simulazione", "materia": "Simulazione C completa (circa 2 ore)", "teoria": null, "esercizi": [], "nota": "110 min di fila", "moduli": ["simulazioni"] },
+    { "data": "2026-11-10", "tipo": "correzione", "materia": "Correzione simulazione C", "teoria": "tutti i box TRAPPOLA", "box": "trappola", "esercizi": [], "moduli": [], "diario": true },
     { "data": "2026-11-11", "tipo": "ripasso", "materia": "Ripasso leggero (30-45 min)", "teoria": "figure e box FORMULA", "box": "formula", "esercizi": [], "nota": "niente quiz nuovi", "moduli": [] },
     { "data": "2026-11-12", "tipo": "esame", "materia": "TOLC-I" }
   ]

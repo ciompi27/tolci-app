@@ -1,15 +1,20 @@
 /* Service worker: tiene in cache tutti i file dell'app, moduli compresi, per l'uso offline.
-   Strategia: prima la rete (così le modifiche a plan.json si vedono subito), con la cache come riserva
-   se la rete manca o non risponde entro 3 secondi.
-   Quando si aggiunge un file all'app va aggiunto a FILE e va cambiato VERSIONE. */
-const VERSIONE = "tolc-i-v3";
+   Strategia: prima la rete (così le modifiche a plan.json e i file nuovi si vedono subito, senza la cache del browser),
+   con la cache come riserva se la rete manca o non risponde entro 3 secondi.
+   Quando si aggiunge un file all'app va aggiunto a FILE e va cambiata VERSIONE in js/versione.js
+   (la stessa costante che la pagina mostra in fondo al Piano). */
+importScripts("js/versione.js");
+const CACHE = "tolc-i-" + VERSIONE;
 const FILE = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./css/app.css",
+  "./js/versione.js",
   "./js/store.js",
   "./js/teoria.js",
+  "./js/diario.js",
+  "./js/simulazioni.js",
   "./js/app.js",
   "./data/plan.json",
   "./data/theory/indice.json",
@@ -98,12 +103,12 @@ const FILE = [
 ];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(VERSIONE).then(c => c.addAll(FILE.map(f => new Request(f, { cache: "reload" })))).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILE.map(f => new Request(f, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys.filter(k => k !== VERSIONE).map(k => caches.delete(k))))
+    .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 
@@ -118,8 +123,8 @@ self.addEventListener("fetch", e => {
     let fatto = false;
     const cache = () => dallaCache(req).then(r => { if (r && !fatto) { fatto = true; resolve(r); } return r; });
     const timer = setTimeout(cache, 3000);
-    fetch(req).then(res => {
-      if (res.ok) { const copia = res.clone(); caches.open(VERSIONE).then(c => c.put(req.url.split(/[?#]/)[0], copia)); }
+    fetch(req.url, { cache: "no-cache" }).then(res => {   // no-cache: chiede sempre al server se il file è cambiato
+      if (res.ok) { const copia = res.clone(); caches.open(CACHE).then(c => c.put(req.url.split(/[?#]/)[0], copia)); }
       clearTimeout(timer);
       if (!fatto) { fatto = true; resolve(res); }
     }).catch(() => {
